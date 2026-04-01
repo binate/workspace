@@ -1,0 +1,12 @@
+[submodule "explorations"]
+	path = explorations
+	url = https://github.com/binate/explorations.git
+[submodule "bootstrap"]
+	path = bootstrap
+	url = https://github.com/binate/bootstrap.git
+[submodule "binate"]
+	path = binate
+	url = https://github.com/binate/binate.git
+[submodule "website"]
+	path = website
+	url = https://github.com/binate/website.git
