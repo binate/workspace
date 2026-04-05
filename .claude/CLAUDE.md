@@ -53,6 +53,15 @@ Write plans and memory files to `explorations/` (and commit them), not to the de
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
 
+### Bug Discovery Protocol
+
+Whenever you discover a bug (whether or not you fix it immediately):
+1. **Add a test**: conformance test if it's a runtime behavior issue, unit test if it's an IR/codegen/type issue.
+2. **Mark it as failing**: add an `.xfail.<mode>` file for each mode where it fails (with a one-line description), or mark the unit test as expected-fail.
+3. **Add a TODO**: describe the bug, root cause (if known), and which test covers it in `explorations/claude-todo.md`.
+
+This ensures bugs are tracked, reproducible, and visible — even if the fix is deferred.
+
 ### Git
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
