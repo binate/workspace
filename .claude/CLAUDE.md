@@ -62,9 +62,21 @@ Whenever you discover a bug (whether or not you fix it immediately):
 
 This ensures bugs are tracked, reproducible, and visible — even if the fix is deferred.
 
+### Memory Management: Never Leak
+
+The compiler must NEVER generate code that leaks memory. If a managed allocation is created, it must eventually be RefDec'd. The only acceptable "leaks" are user-created reference cycles (which are user error — Binate uses refcounting, not GC).
+
+If user code creates a use-after-free (e.g., storing a temporary's raw slice in a variable and using it after the statement), that is **user error**, not a compiler bug. The compiler should not suppress RefDec to prevent UAF — that trades a detectable crash for a silent leak, which is worse.
+
+Concretely: `consumeTemp` should only be used when ownership genuinely transfers (e.g., `var x @T = make(T)` — the variable owns it). It must NOT be used to "borrow" backing for raw slices — the temp stays in cleanup and gets RefDec'd at end of statement.
+
 ### Git
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
+
+### Coding Guide
+
+Read `explorations/binate-coding-guide.md` before writing Binate code. Key rules: returning a raw slice (`[]T`) from a function that allocates is almost always wrong — use `@[]T` instead. Raw slices borrow; managed-slices own.
 
 ### Bootstrap Subset Constraint
 
