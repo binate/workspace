@@ -16,6 +16,8 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - `explorations/claude-discussion-detailed-notes.md` — Extended rationale and discussion
 - `explorations/grammar.ebnf` — Authoritative grammar specification
 - `explorations/claude-plan-2.md` — Self-hosted toolchain plan (Phase 5)
+- `explorations/ir-backend-guidelines.md` — IR vs backend responsibility split
+- `explorations/ir-backend-cleanup-plan.md` — Work plan for multi-backend support
 
 ## Language Overview
 
@@ -34,6 +36,8 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 ## Project Status
 
 Self-hosted toolchain (10 packages) is implemented. Self-hosted interpreter passes all 70 conformance tests. Self-hosted compiler produces native binaries via LLVM IR. Self-compilation works (bootstrap interprets compile.bn to compile compile.bn) but the resulting binary segfaults when actually compiling — debugging this is the current frontier.
+
+Next major direction: multi-backend support. Refactoring the IR/codegen boundary to extract shared logic, then adding a direct 32-bit ARM backend (tested via QEMU user-mode). See `explorations/ir-backend-cleanup-plan.md`.
 
 ## Conformance Tests
 
@@ -73,6 +77,17 @@ Concretely: `consumeTemp` should only be used when ownership genuinely transfers
 ### Git
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
+
+### IR/Backend Boundary
+
+When modifying the compiler backend (`pkg/codegen`) or IR layer (`pkg/ir`), respect the split defined in `explorations/ir-backend-guidelines.md`:
+
+- **Memory layout** (structs, arrays, slices, managed-slices, managed pointer headers, future interface values) is a **language-level contract** shared by all compiler backends AND the interpreter (for dual-mode interop). It belongs in `pkg/types`, not in any backend.
+- **Other language-semantic logic** (name mangling, string constant collection, runtime function manifest) belongs in a **shared layer** (IR, types, or shared packages), not in any specific backend.
+- **Target-specific logic** (instruction selection, register allocation, calling convention, type representation format, binary format, debug info) belongs in the **backend**.
+- **Type layout functions** (`types.SizeOf`, `types.AlignOf`, `types.FieldOffset`) must be parameterized by target (pointer size, int size, alignment) — do not hardcode 64-bit assumptions.
+
+If you're adding new functionality to `pkg/codegen`, ask: "would a different backend need this same logic?" If yes, put it in a shared location. For layout-related logic, also ask: "does the interpreter need to agree with this?" If yes, it must be in `pkg/types`.
 
 ### Coding Guide
 
