@@ -50,6 +50,10 @@ Run via `conformance/run.sh` in the bootstrap repo. Five modes: bootstrap, selfh
 - Binate source uses `pkg/` prefix for packages; `pkg/rt` is the runtime (written in Binate)
 - Builtins (`make`, `make_slice`, `box`, `cast`, `bit_cast`, `len`, `unsafe_index`) are keywords, not functions
 
+### Problem-Solving Approach
+
+Do NOT simply work around issues. In general, issues should be root-caused and addressed properly. Pragmatic, short-term fixes are sometimes acceptable, but the user should be consulted before taking that approach.
+
 ### Plans and Memories
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
@@ -78,6 +82,14 @@ Concretely: `consumeTemp` should only be used when ownership genuinely transfers
 ### Git
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
+
+### Worktree Discipline
+
+When told to work in a git worktree, **stay in that worktree**. Do not touch any other worktree or the main checkout unless explicitly told to do so. There may be ongoing work in other worktrees or the main checkout — modifying them (cherry-picking, pushing, syncing, etc.) without being asked risks disrupting that work.
+
+### Pre-Existing Test Failures
+
+If tests are already failing when you start work, that is still your problem. Do not assume your work is fine just because tests were already broken — pre-existing failures can mask new issues introduced by your changes. It is sometimes acceptable to temporarily set aside a pre-existing failure and commit your own work first, but in general you should work to address already-failing tests next (or first), unless there is a good, deliberate reason not to. Ignoring pre-existing failures and moving on compounds the problem.
 
 ### IR/Backend Boundary
 
