@@ -83,6 +83,10 @@ Concretely: `consumeTemp` should only be used when ownership genuinely transfers
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
 
+### Never Use Git Stash
+
+Do NOT use `git stash` — it constantly leads to lost work. Instead, create a temporary branch and commit your changes there.
+
 ### Worktree Discipline
 
 When told to work in a git worktree, **stay in that worktree**. Do not touch any other worktree or the main checkout unless explicitly told to do so. There may be ongoing work in other worktrees or the main checkout — modifying them (cherry-picking, pushing, syncing, etc.) without being asked risks disrupting that work.
