@@ -91,6 +91,12 @@ When told to work in a git worktree, **stay in that worktree**. Do not touch any
 
 **NEVER** cherry-pick commits to main, push to main, or modify the main branch in any way without the user explicitly telling you to do so in that moment. "Go ahead" or "cherry-pick now" is approval. Anything else is not. Do not infer approval. Do not assume. ASK every single time, even if the user approved a cherry-pick 30 seconds ago — each one requires separate approval.
 
+### Preserving Command Output
+
+Instead of directly grepping (etc.) the output of commands — especially ones that may take a long time, like test runs — pipe the output through `tee` to also write it to a temporary file, then grep the file. That way, if you want to see more of the output, you don't have to run the command again (which takes a long time). Worse, if the output isn't deterministic, re-running may not reproduce what you're looking for.
+
+Example: `go run ... --test pkg/foo 2>&1 | tee /tmp/test_foo.out | tail -5` then `grep FAIL /tmp/test_foo.out`.
+
 ### Pre-Existing Test Failures
 
 If tests are already failing when you start work, that is still your problem. Do not assume your work is fine just because tests were already broken — pre-existing failures can mask new issues introduced by your changes. It is sometimes acceptable to temporarily set aside a pre-existing failure and commit your own work first, but in general you should work to address already-failing tests next (or first), unless there is a good, deliberate reason not to. Ignoring pre-existing failures and moving on compounds the problem.
