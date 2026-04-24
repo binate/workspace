@@ -95,6 +95,17 @@ When told to work in a git worktree, **stay in that worktree**. Do not touch any
 
 **NEVER** cherry-pick commits to main, push to main, or modify the main branch in any way without the user explicitly telling you to do so in that moment. "Go ahead" or "cherry-pick now" is approval. Anything else is not. Do not infer approval. Do not assume. ASK every single time, even if the user approved a cherry-pick 30 seconds ago — each one requires separate approval.
 
+This includes **any** git operation in the main checkout (`~/binate/binate`): do NOT run `git fetch`, `git rebase`, `git pull`, `git reset`, `git add`, `git commit`, `git push`, etc. there without explicit instruction. The main checkout may be in use by the user or other workers; touching it risks disrupting their work. When told to "resync your worktree", run the git command with `git -C <worktree-path> ...` — never from the main checkout or without `-C`.
+
+### Resyncing a Worktree
+
+When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
+
+    git -C <worktree-path> fetch <main-checkout-path> main
+    git -C <worktree-path> rebase FETCH_HEAD
+
+Or equivalently, if the worktree already tracks the same repo, `git -C <worktree-path> rebase main` (but never `git rebase origin/main` unless explicitly told to). Do NOT run any git command inside `~/binate/binate` itself.
+
 ### Preserving Command Output
 
 Instead of directly grepping (etc.) the output of commands — especially ones that may take a long time, like test runs — pipe the output through `tee` to also write it to a temporary file, then grep the file. That way, if you want to see more of the output, you don't have to run the command again (which takes a long time). Worse, if the output isn't deterministic, re-running may not reproduce what you're looking for.
