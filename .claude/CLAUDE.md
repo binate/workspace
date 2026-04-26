@@ -75,6 +75,21 @@ When asked to add new code (a script, a tool, a check), add only that. Do not wi
 
 This is distinct from bundling tests with code changes (which IS expected). The line: tests verify the code you wrote; CI/automation hookup changes when and where it runs, which is a scope decision the user owns.
 
+### Don't Game Hygiene Checks
+
+The hygiene rules exist **to improve code quality**, not as obstacles in your way. Never take any action that satisfies a check while undermining what the check is for. The rules are a calibrated proxy for "is this codebase maintainable" — gaming them gets you a green checkmark on a worse codebase, which is the exact opposite of what they're for.
+
+Concretely on file length: the limits exist because YOU (this agent, in past sessions) repeatedly produce single-file blobs of thousands of lines, then later complain that they are hard to navigate or refactor — and then make them even longer rather than splitting them. The cap is a forcing function against that habit. When a file goes over, split it along natural boundaries. Don't shrink comments, fold lines, or otherwise camouflage the size to dodge the check.
+
+Hygiene rules (file length, line length, doc-comment requirements, naming, etc.) describe what the codebase should look like, not arbitrary regex patterns to dodge. When you trip a check, the correct fix is to address the underlying state — split a file along natural boundaries, shorten the actual concept, write a real doc — NOT to engineer around the heuristic.
+
+Specific anti-patterns that have come up and must not recur:
+- Wrapping individual `const` decls into a `const ( ... )` group purely because the script skips group members. The members are still undocumented; the group form has to reflect a real grouping (a single shared explanation that genuinely covers all members).
+- Trimming individual doc lines to bring a file back under the line/file-length cap. If a file is over cap, split it (and its tests) along natural boundaries; do not vandalize the docs you just added.
+- Reformatting code or rewording prose for the sole purpose of moving a counter under a threshold. If the threshold is in the way, the structural fix (split, refactor, raise the cap) is the right answer; ask if unsure which.
+
+If you find yourself thinking "I just need to shave a few lines so the script passes," stop and ask the user. The check exists because someone decided the property mattered; gaming it silently violates that decision.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
