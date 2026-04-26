@@ -54,6 +54,15 @@ Run via `conformance/run.sh` in the bootstrap repo. Five modes: bootstrap, selfh
 
 Do NOT simply work around issues. In general, issues should be root-caused and addressed properly. Pragmatic, short-term fixes are sometimes acceptable, but the user should be consulted before taking that approach.
 
+### Don't Optimize for Quick Wins
+
+Do NOT pick tasks based on "what's the cheapest unlock" or "what gives the most green checkmarks per unit effort." When triaging remaining work, the question is **what fix the codebase actually needs**, not what fix maximizes near-term test pass count. If a real bug requires a big change (ABI rework, IR refactor, layout extraction), say so and propose doing it — don't shop around the failure list for a smaller adjacent target so you can claim progress.
+
+Specifically:
+- Don't recommend deferring a real fix in favor of "easier" buckets unless the user has already expressed a deadline or scope constraint.
+- Don't frame substantive fixes as optional ("we could do X, or skip to Y") when X is the actual root cause and Y is unrelated. Frame the choice as "here's the fix; want me to start?"
+- Treat the user as a senior collaborator on a long-running project, not a stakeholder who needs morale-boosting deliverables. Most of the time, the right next step is the harder one.
+
 ### Plans and Memories
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
