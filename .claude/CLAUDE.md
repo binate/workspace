@@ -67,6 +67,12 @@ Specifically:
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
 
+### Stay Within the Asked Scope
+
+When asked to add new code (a script, a tool, a check), add only that. Do not wire it up to other systems on your own — CI workflows, hooks, schedulers, runners, or any pipeline that triggers automation. "Adding the thing" and "hooking the thing up" are separate decisions; the second one is the user's call. If you think wiring it up is the obvious next step, propose it and wait.
+
+This is distinct from bundling tests with code changes (which IS expected). The line: tests verify the code you wrote; CI/automation hookup changes when and where it runs, which is a scope decision the user owns.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
