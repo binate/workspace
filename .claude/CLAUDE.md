@@ -36,13 +36,15 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 
 ## Project Status
 
-Self-hosted toolchain (10 packages) is implemented. Self-hosted interpreter passes all 70 conformance tests. Self-hosted compiler produces native binaries via LLVM IR. Self-compilation works (bootstrap interprets compile.bn to compile compile.bn) but the resulting binary segfaults when actually compiling — debugging this is the current frontier.
+Self-hosted toolchain is implemented and stable. Self-hosted compiler produces native binaries via LLVM IR; self-compilation works through gen1 and gen2 (boot-comp-comp / boot-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
 
-Next major direction: multi-backend support. Refactoring the IR/codegen boundary to extract shared logic, then adding a direct 32-bit ARM backend (tested via QEMU user-mode). See `explorations/ir-backend-cleanup-plan.md`.
+Current frontiers (parallel, both high priority):
+1. **Language completeness beyond the bootstrap subset** — implementing the spec features the bootstrap doesn't yet support (interfaces, generics, closures, function values, etc.). See `explorations/bootstrap-subset.md` for the gap.
+2. **Multi-backend support** — refactoring the IR/codegen boundary to extract shared logic, then adding a direct 32-bit ARM backend (tested via QEMU user-mode). See `explorations/ir-backend-cleanup-plan.md`.
 
 ## Conformance Tests
 
-Run via `conformance/run.sh` in the bootstrap repo. Five modes: bootstrap, selfhost, compiled, compiled-interp, compiled-compiler.
+Run via `conformance/run.sh`. Modes (chains of: boot=bootstrap, int=bytecode VM, comp=compiler): boot, boot-comp, boot-comp-int, boot-comp-comp, boot-comp-comp-int, boot-comp-comp-comp. See `conformance/run.sh --help` for the full list.
 
 ## Working With This Codebase
 
