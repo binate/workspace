@@ -65,6 +65,17 @@ Specifically:
 - Don't frame substantive fixes as optional ("we could do X, or skip to Y") when X is the actual root cause and Y is unrelated. Frame the choice as "here's the fix; want me to start?"
 - Treat the user as a senior collaborator on a long-running project, not a stakeholder who needs morale-boosting deliverables. Most of the time, the right next step is the harder one.
 
+### Don't Unilaterally Defer Scope
+
+When a multi-step task includes a piece that looks hard, **do not** quietly carve it out and label it "deferred" / "follow-up" / "non-goal" without the user's explicit decision. This includes baking the deferral into a plan doc upfront so that the plan itself reads as already-ratified.
+
+Anti-patterns to avoid (these have come up):
+- "%g semantics are non-trivial to reproduce in pure Binate" — the same is true in any language; that is not a reason to skip. The hard part is the algorithm, not the implementation language.
+- Inventing a strict requirement (e.g. "must match libc exactly") so that the work looks bigger, then deferring on those grounds. **Check the actual requirements** — what do conformance tests actually pin down? What does the use case actually need? — before claiming the work is too big.
+- "We can revisit this later" / "this is acceptable for now" without an explicit user decision making it acceptable.
+
+If a piece looks hard, surface it: lay out the real requirements, the realistic effort, and let the user decide whether to do it now, defer with eyes open, or scope it differently. The user owns these scope calls. You do not.
+
 ### Plans and Memories
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
