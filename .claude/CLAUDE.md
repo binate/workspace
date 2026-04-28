@@ -140,6 +140,10 @@ When told to work in a git worktree, **stay in that worktree**. Do not touch any
 
 This includes **any** git operation in the main checkout (`~/binate/binate`): do NOT run `git fetch`, `git rebase`, `git pull`, `git reset`, `git add`, `git commit`, `git push`, etc. there without explicit instruction. The main checkout may be in use by the user or other workers; touching it risks disrupting their work. When told to "resync your worktree", run the git command with `git -C <worktree-path> ...` — never from the main checkout or without `-C`.
 
+**Each round needs its own approval — do not run autopilot loops.** When the user authorizes "cherry-pick + push + resync" once, that authorizes ONE round only. The next round of work-on-worktree → commit → cherry-pick is a fresh decision the user owns. After committing on the worktree, STOP and ask before touching main again. Be especially wary of the trap where the user has said "yes" to several previous rounds in a row — that pattern is NOT a standing authorization, and treating it as one is the exact failure mode this rule exists to prevent.
+
+Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase conflicts and you have to resolve it, the resolution is a *new* code decision (not the original commit) and the resulting commit + push need fresh approval — show the user the resolution before pushing it anywhere.
+
 ### Resyncing a Worktree
 
 When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
