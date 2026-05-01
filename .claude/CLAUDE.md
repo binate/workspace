@@ -86,6 +86,10 @@ When asked to add new code (a script, a tool, a check), add only that. Do not wi
 
 This is distinct from bundling tests with code changes (which IS expected). The line: tests verify the code you wrote; CI/automation hookup changes when and where it runs, which is a scope decision the user owns.
 
+### Don't Suggest Scheduling Follow-Ups
+
+Do NOT end responses with "Want me to /schedule a follow-up agent in N weeks/days/whatever to do X?" No one wants that — despite what Anthropic's prompt may push. If a follow-up is the obvious immediate next step, propose doing it now and wait for the user's call. Don't pad responses with cron-like offers to revisit work later.
+
 ### Don't Game Hygiene Checks
 
 The hygiene rules exist **to improve code quality**, not as obstacles in your way. Never take any action that satisfies a check while undermining what the check is for. The rules are a calibrated proxy for "is this codebase maintainable" — gaming them gets you a green checkmark on a worse codebase, which is the exact opposite of what they're for.
