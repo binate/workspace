@@ -105,6 +105,10 @@ Specific anti-patterns that have come up and must not recur:
 
 If you find yourself thinking "I just need to shave a few lines so the script passes," stop and ask the user. The check exists because someone decided the property mattered; gaming it silently violates that decision.
 
+### Take Warnings Seriously
+
+Take warnings seriously, and take action on them as soon as convenient. In all cases, don't make things even worse. For example, for file lengths, do not make files above the soft limit (length warning) even longer; instead, take time to split them properly (try to avoid putting them above the soft limit in the first place, but if you do then an immediate follow-up should be to split the file). That is, warnings give you time to act and are not meant to be ignored.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
