@@ -138,6 +138,10 @@ Since the repos are sibling directories (not a monorepo), use `git -C <path>` ra
 
 Do NOT use `git stash` — it constantly leads to lost work. Instead, create a temporary branch and commit your changes there.
 
+### Stay Close to Main
+
+When working in a branch (as one typically does), work as close to upstream (main) as possible. Typically, this entails frequent resynching/rebasing, working with small commits that are cherry-picked to main as soon as possible. (This also means that you should structure work so that each commit is self-contained and keeps everything green.)
+
 ### Worktree Discipline
 
 When told to work in a git worktree, **stay in that worktree**. Do not touch any other worktree or the main checkout unless explicitly told to do so. There may be ongoing work in other worktrees or the main checkout — modifying them (cherry-picking, pushing, syncing, etc.) without being asked risks disrupting that work.
