@@ -109,6 +109,14 @@ If you find yourself thinking "I just need to shave a few lines so the script pa
 
 Take warnings seriously, and take action on them as soon as convenient. In all cases, don't make things even worse. For example, for file lengths, do not make files above the soft limit (length warning) even longer; instead, take time to split them properly (try to avoid putting them above the soft limit in the first place, but if you do then an immediate follow-up should be to split the file). That is, warnings give you time to act and are not meant to be ignored.
 
+### Comments Stand Alone
+
+Comments should generally "stand alone" and make sense in the current snapshotted tree. Generally, they should not refer to things done in the past, unless it really helps explain something which is surprising/wrong in the current state of the tree; e.g.: "`<X>` because it used to be the case that `<Y>`, even though `<X>` is no longer required." (typically followed by a TODO or similar: "This should be refactored to avoid `<X>`.").
+
+In particular, "breadcrumbs" for when things are moved are not required: if `foo()` is moved to a separate file `foo.bn`, there's no need to leave a comment saying `// foo() was moved to foo.bn` — because in the snapshotted view, `foo.bn` is exactly where one would expect to find `foo()`. Similarly, there's no need to leave `// TestFoo is now in foo_test.bn` — because `foo_test.bn` is exactly where it should be.
+
+On a similar vein, instead of commenting that a change fixes bug X, instead say "Do Y because otherwise Z, which shows up as `<description of X or similar>`." "Fixing" is an action, which makes no sense in a snapshot; instead, explain the subtlety in its own terms.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
