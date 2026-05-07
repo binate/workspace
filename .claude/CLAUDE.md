@@ -156,6 +156,8 @@ This includes **any** git operation in the main checkout (`~/binate/binate`): do
 
 Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase conflicts and you have to resolve it, the resolution is a *new* code decision (not the original commit) and the resulting commit + push need fresh approval — show the user the resolution before pushing it anywhere.
 
+**Standing authorizations are scoped to the task the user named.** If the user says "cherry-pick/push/resync without asking again for the remainder of <X>," that authorization ends when <X> ends. The next task — even if it superficially looks like more of the same workflow (commit → cherry-pick → resync) — is a fresh task, and the first cherry-pick of that new task needs explicit approval. When in doubt, treat the authorization as narrow, not broad.
+
 ### Resyncing a Worktree
 
 When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
