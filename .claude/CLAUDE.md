@@ -150,6 +150,8 @@ Do NOT use `git stash` — it constantly leads to lost work. Instead, create a t
 
 When working in a branch (as one typically does), work as close to upstream (main) as possible. Typically, this entails frequent resynching/rebasing, working with small commits that are cherry-picked to main as soon as possible. (This also means that you should structure work so that each commit is self-contained and keeps everything green.)
 
+Concretely: avoid having multiple commits on your work branch that aren't on main, unless there's a particularly good reason to (e.g., a larger exploratory project where it's unclear whether the commits should ever land on main, or work that genuinely needs to be staged in a sequence the user has agreed to). The default cadence is: commit on the branch, cherry-pick to main, resync — then start the next piece. Don't accumulate a stack of unmerged commits "for later."
+
 ### Worktree Discipline
 
 When told to work in a git worktree, **stay in that worktree**. Do not touch any other worktree or the main checkout unless explicitly told to do so. There may be ongoing work in other worktrees or the main checkout — modifying them (cherry-picking, pushing, syncing, etc.) without being asked risks disrupting that work.
@@ -165,6 +167,8 @@ This includes **any** git operation in the main checkout (`~/binate/binate`): do
 Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase conflicts and you have to resolve it, the resolution is a *new* code decision (not the original commit) and the resulting commit + push need fresh approval — show the user the resolution before pushing it anywhere.
 
 **Standing authorizations are scoped to the task the user named.** If the user says "cherry-pick/push/resync without asking again for the remainder of <X>," that authorization ends when <X> ends. The next task — even if it superficially looks like more of the same workflow (commit → cherry-pick → resync) — is a fresh task, and the first cherry-pick of that new task needs explicit approval. When in doubt, treat the authorization as narrow, not broad.
+
+**The "carry-over from a wrapped-up series" trap.** When a multi-step task ends ("step 2 / 3 / 4 ... ditto"), the workflow doesn't carry. If the user then says "let's do 5" or "what's next" → "do X", that authorizes the *work*, not the cherry-pick. After committing on the worktree, STOP. Even — especially — if the previous N rounds all flowed `commit → cherry-pick → push → resync` without the user re-authorizing each one, the moment the named series ends the muscle-memory must reset. This trap has now bitten more than once; if you find yourself about to run `git -C ~/binate/binate cherry-pick` after a "let's do 5" / "what's next" type prompt, stop and ask first.
 
 ### Resyncing a Worktree
 
