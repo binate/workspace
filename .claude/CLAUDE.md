@@ -206,12 +206,16 @@ Read `explorations/binate-coding-guide.md` before writing Binate code. Key rules
 
 ### Bootstrap Subset Constraint
 
-The self-hosted interpreter and compiler (under `binate/`) are written in Binate but must currently be runnable by the Go bootstrap interpreter. This means all self-hosted code must:
+The bootstrap-supported surface is **`cmd/bnc` and its dependency tree (and their tests)** — nothing else. Everything else (bni, bnas, bnlint, the bytecode VM, the runtime, the linter library, asm/parse) is built by `bnc` first and then exercised. The xfail markers in `scripts/unittest/*.xfail.boot` enumerate the out-of-scope packages: cmd/bni, cmd/bnas, cmd/bnlint, pkg/vm, pkg/rt, pkg/lint, pkg/asm/parse. Anything in `cmd/bnc`'s transitive imports — pkg/{ast,bootstrap,buf,builtin/testing,codegen,debug,ir,lexer,loader,mangle,native,native/arm64,native/common,parser,token,types,asm,asm/aarch64,asm/macho} — must stay bootstrap-runnable. The asm subpackages not in that list (arm32, x64, elf) stay bootstrap-runnable too, because they'll be reached as soon as additional backends or platforms land.
 
-1. **Conform to the bootstrap subset** — no interfaces, no generics, no closures, no floats, no const-qualified types, no variadic parameters, no function values. See `explorations/bootstrap-subset.md` for the full list of what is and isn't supported.
+All bootstrap-runnable code must:
+
+1. **Conform to the bootstrap subset** — no interfaces, no generics, no closures, no floats, no const-qualified types, no variadic parameters, no function values, no managed-slice-of-managed-slice composite literals (e.g., `@[]@[]char{...}`), etc. See `explorations/bootstrap-subset.md` for the full list of what is and isn't supported.
 2. **Be correct with respect to the full language spec** — the code must not rely on bootstrap-specific behavior that diverges from the intended language semantics. See `explorations/claude-notes.md` for the language design decisions.
 
-In other words: write code that uses only bootstrap-supported features, but that would also be valid and correct under the full language as specified.
+For code that is *not* bootstrap-runnable (because it lives outside bnc's tree), you may use the full language. cmd/bnlint's tests use `@[]@[]char{...}` literals freely; cmd/bnc's tests must stick to the subset.
+
+When adding new dependencies to bnc's tree, audit the dep for bootstrap-subset conformance. When pulling a package out of bnc's tree (e.g., cmd/bnlint), follow the established workflow: add `scripts/unittest/<pkg-key>.xfail.boot`, switch any callers that previously interpreted it via bootstrap to build-via-bnc first (see `scripts/build-bnlint.sh`, `scripts/build-bnas.sh` etc.), and update this section.
 
 ### Tools
 
