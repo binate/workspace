@@ -225,6 +225,10 @@ When adding new dependencies to bnc's tree, audit the dep for bootstrap-subset c
 
 Don't make assumptions or value judgements about what's "worth doing" or "not worth the trouble." When unsure whether to do something (e.g., split a test file, refactor a helper, change an approach), ask the user instead of deciding unilaterally.
 
+### C-Free Target
+
+We are building a language that can operate in a C-free system. The *only* reason to ever use C is to interface with existing C-based systems (e.g., to do "syscalls", since we don't want to implement our own direct syscalls yet).
+
 ### Language Semantics
 
 **NEVER change language semantics (type system rules, implicit conversions, assignability, etc.) without explicitly asking the user first.** This includes adding new implicit conversions (e.g., `[]T → @[]T`), changing type compatibility rules, or modifying how the type checker accepts or rejects code. If a type error blocks your work, fix the code that's wrong — don't change the language rules to make it compile.
