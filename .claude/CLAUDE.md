@@ -36,15 +36,15 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 
 ## Project Status
 
-Self-hosted toolchain is implemented and stable. Self-hosted compiler produces native binaries via LLVM IR; self-compilation works through gen1 and gen2 (boot-comp-comp / boot-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
+Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION, currently `bnc-0.0.1`) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
 
 Current frontiers (parallel, both high priority):
-1. **Language completeness beyond the bootstrap subset** — implementing the spec features the bootstrap doesn't yet support (interfaces, generics, closures, function values, etc.). See `explorations/bootstrap-subset.md` for the gap.
+1. **Remaining language features** — interfaces (full plan + impl), generics, and closures + method values (Phase 2 of `plan-function-values.md`). Non-capturing function values (Phase 1) and cross-mode trampolines (Phase 3) are LANDED.
 2. **Multi-backend support** — refactoring the IR/codegen boundary to extract shared logic, then adding a direct 32-bit ARM backend (tested via QEMU user-mode). See `explorations/ir-backend-cleanup-plan.md`.
 
 ## Conformance Tests
 
-Run via `conformance/run.sh`. Modes (chains of: boot=bootstrap, int=bytecode VM, comp=compiler): boot, boot-comp, boot-comp-int, boot-comp-comp, boot-comp-comp-int, boot-comp-comp-comp. See `conformance/run.sh --help` for the full list.
+Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER bnc, `int` = bytecode VM, `comp` = compiler. Default modes: `builder-comp`, `builder-comp-int`, `builder-comp-int-int`, `builder-comp-comp`, `builder-comp-comp-int`, `builder-comp-comp-comp`. Cross-compile / alternate-backend modes: `builder-comp_native_aa64-comp_native_aa64`, `builder-comp_arm32_baremetal`, `builder-comp_arm32_linux`. See `conformance/run.sh --help` for the full list.
 
 ## Working With This Codebase
 
@@ -204,18 +204,20 @@ If you're adding new functionality to `pkg/codegen`, ask: "would a different bac
 
 Read `explorations/binate-coding-guide.md` before writing Binate code. Key rules: returning a raw slice (`[]T`) from a function that allocates is almost always wrong — use `@[]T` instead. Raw slices borrow; managed-slices own.
 
-### Bootstrap Subset Constraint
+### Builder Compatibility Constraint
 
-The bootstrap-supported surface is **`cmd/bnc` and its dependency tree (and their tests)** — nothing else. Everything else (bni, bnas, bnlint, the bytecode VM, the runtime, the linter library, asm/parse) is built by `bnc` first and then exercised. The xfail markers in `scripts/unittest/*.xfail.boot` enumerate the out-of-scope packages: cmd/bni, cmd/bnas, cmd/bnlint, pkg/vm, pkg/rt, pkg/lint, pkg/asm/parse. Anything in `cmd/bnc`'s transitive imports — pkg/{ast,bootstrap,buf,builtin/testing,codegen,debug,ir,lexer,loader,mangle,native,native/arm64,native/common,parser,token,types,asm,asm/aarch64,asm/macho} — must stay bootstrap-runnable. The asm subpackages not in that list (arm32, x64, elf) stay bootstrap-runnable too, because they'll be reached as soon as additional backends or platforms land.
+The Go bootstrap interpreter has been retired. The operative constraint for cmd/bnc's tree is no longer "the bootstrap subset" (that term was, by definition, what the Go interp supported); it's **"must be compilable by the current BUILDER bnc"** (`bnc-0.0.1` at time of writing). The BUILDER bnc is built from a source snapshot, so its supported language is richer than the old Go interp's subset (e.g., it accepts Phase 1 function values).
 
-All bootstrap-runnable code must:
+The BUILDER-compiled surface is **`cmd/bnc` and its dependency tree (and their tests)** — nothing else. Everything else (bni, bnas, bnlint, the bytecode VM, the runtime, the linter library, asm/parse) is built by `bnc` first and then exercised. Anything in `cmd/bnc`'s transitive imports — pkg/{ast,bootstrap,buf,builtin/testing,codegen,debug,ir,lexer,loader,mangle,native,native/arm64,native/common,parser,token,types,asm,asm/aarch64,asm/macho} — must stay BUILDER-compilable. The asm subpackages not in that list (arm32, x64, elf) stay BUILDER-compilable too, because they'll be reached as soon as additional backends or platforms land.
 
-1. **Conform to the bootstrap subset** — no interfaces, no generics, no closures, no floats, no const-qualified types, no variadic parameters, no function values, no managed-slice-of-managed-slice composite literals (e.g., `@[]@[]char{...}`), etc. See `explorations/bootstrap-subset.md` for the full list of what is and isn't supported.
-2. **Be correct with respect to the full language spec** — the code must not rely on bootstrap-specific behavior that diverges from the intended language semantics. See `explorations/claude-notes.md` for the language design decisions.
+All BUILDER-compilable code must:
 
-For code that is *not* bootstrap-runnable (because it lives outside bnc's tree), you may use the full language. cmd/bnlint's tests use `@[]@[]char{...}` literals freely; cmd/bnc's tests must stick to the subset.
+1. **Stay within what BUILDER accepts.** At `bnc-0.0.1`, the unsupported features are: no interfaces, no generics, no closures, no method values, no floats, no const-qualified types, no variadic parameters, no managed-slice-of-managed-slice composite literals (e.g., `@[]@[]char{...}`), etc. Non-capturing function values (`*func(...)` / `@func(...)`) ARE supported via Phase 1 of `plan-function-values.md`. See `explorations/bootstrap-subset.md` for a more detailed (if historically-framed) list.
+2. **Be correct with respect to the full language spec** — the code must not rely on BUILDER-specific quirks that diverge from the intended language semantics. See `explorations/claude-notes.md` for the language design decisions.
 
-When adding new dependencies to bnc's tree, audit the dep for bootstrap-subset conformance. When pulling a package out of bnc's tree (e.g., cmd/bnlint), follow the established workflow: add `scripts/unittest/<pkg-key>.xfail.boot`, switch any callers that previously interpreted it via bootstrap to build-via-bnc first (see `scripts/build-bnlint.sh`, `scripts/build-bnas.sh` etc.), and update this section.
+For code that is *not* BUILDER-compilable (because it lives outside bnc's tree), you may use the full language. cmd/bnlint's tests use `@[]@[]char{...}` literals freely; cmd/bnc's tests must stick to what BUILDER accepts.
+
+When adding new dependencies to bnc's tree, audit the dep for BUILDER compatibility. When pulling a package out of bnc's tree (e.g., cmd/bnlint), follow the established workflow: switch any callers that previously routed through the bootstrap path to build-via-bnc first (see `scripts/build-bnlint.sh`, `scripts/build-bnas.sh` etc.), and update this section.
 
 ### Tools
 
