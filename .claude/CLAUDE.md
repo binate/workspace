@@ -56,6 +56,23 @@ Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER 
 
 Do NOT simply work around issues. In general, issues should be root-caused and addressed properly. Pragmatic, short-term fixes are sometimes acceptable, but the user should be consulted before taking that approach.
 
+### Raise Critical and Major Bugs — Don't Work Around Them
+
+When you discover a critical or major bug — silent miscompilation, symbol collisions, data corruption, wrong-code generation, ABI mismatches, security holes, anything where "the workaround happens to make my current test pass" hides a real defect — you **MUST** raise it explicitly so the user can prioritize it. Do NOT silently work around it, even if the workaround is small and keeps the immediate task moving.
+
+Concretely, this means:
+
+1. **Stop and report it** with severity (critical / major), what's wrong, how you discovered it, and what the proper fix would look like. Do NOT include a "but I worked around it by …" as the conclusion — the workaround is for the user to authorize, not for you to assume.
+2. **Add a `claude-todo.md` entry** under a clearly-marked CRITICAL or MAJOR section (top of the file is fine for critical). Include: symptom, root cause (or "unknown — needs investigation"), what triggered the discovery, and the proposed fix.
+3. **Wait for the user to decide.** They may say "fix it now, that's blocking," or "workaround it for this task, fix it as a follow-up," or "stop everything and let me look." Whichever — it's their call.
+
+Anti-patterns this rule exists to prevent (these have all happened):
+- "I renamed the package to avoid the symbol collision and kept going" — symbol-prefix collisions between unrelated packages are a critical mangler bug, not a naming problem. The right move was to STOP, raise it as a critical mangler defect, and let the user prioritize between "fix the mangler now" and "rename + come back to it." Renaming silently hides the defect.
+- "The test was failing in a way I didn't understand so I marked it xfail and moved on" — xfails without a tracked root-cause investigation are a silent regression in disguise. Add a TODO with the symptom; let the user decide whether to investigate now or accept the xfail temporarily.
+- "I added a defensive `if !cond { return }` because the assertion would fire" — that's hiding the bug that triggers the bad cond. Find the bug; don't paper over it.
+
+The cost of pausing to surface a bug is low (one user round-trip). The cost of a workaround that hides a critical defect compounds — every later piece of work assumes the defect doesn't exist, and the eventual root-cause fix has to undo all of them.
+
 ### Don't Optimize for Quick Wins
 
 Do NOT pick tasks based on "what's the cheapest unlock" or "what gives the most green checkmarks per unit effort." When triaging remaining work, the question is **what fix the codebase actually needs**, not what fix maximizes near-term test pass count. If a real bug requires a big change (ABI rework, IR refactor, layout extraction), say so and propose doing it — don't shop around the failure list for a smaller adjacent target so you can claim progress.
