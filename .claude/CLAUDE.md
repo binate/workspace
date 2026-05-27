@@ -187,6 +187,8 @@ Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase
 
 **The "carry-over from a wrapped-up series" trap.** When a multi-step task ends ("step 2 / 3 / 4 ... ditto"), the workflow doesn't carry. If the user then says "let's do 5" or "what's next" → "do X", that authorizes the *work*, not the cherry-pick. After committing on the worktree, STOP. Even — especially — if the previous N rounds all flowed `commit → cherry-pick → push → resync` without the user re-authorizing each one, the moment the named series ends the muscle-memory must reset. This trap has now bitten more than once; if you find yourself about to run `git -C ~/binate/binate cherry-pick` after a "let's do 5" / "what's next" type prompt, stop and ask first.
 
+**Land THROUGH local main — never push to origin from a worktree.** The local main checkout (`~/binate/binate`) is the source of truth for `main`; landing means cherry-pick the worktree commit onto local main, then `git push` *from local main*. Do NOT `git -C <worktree> push origin HEAD:main` — that advances `origin/main` while leaving local main stale, desyncing the checkout other workers rely on (it only "works" if someone else happens to pull it forward, which is luck, not correctness). The push must originate from local main so local main and origin stay in lockstep.
+
 ### Resyncing a Worktree
 
 When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
