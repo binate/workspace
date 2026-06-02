@@ -36,11 +36,9 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 
 ## Project Status
 
-Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION, currently `bnc-0.0.1`) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
+Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
 
-Current frontiers (parallel, both high priority):
-1. **Remaining language features** — interfaces (full plan + impl), generics, and closures + method values (Phase 2 of `plan-function-values.md`). Non-capturing function values (Phase 1) and cross-mode trampolines (Phase 3) are LANDED.
-2. **Multi-backend support** — refactoring the IR/codegen boundary to extract shared logic, then adding a direct 32-bit ARM backend (tested via QEMU user-mode). See `explorations/ir-backend-cleanup-plan.md`.
+For active work items, open bugs, and what's next, see `explorations/claude-todo.md` (and `explorations/claude-todo-done.md` for what's been resolved). Plan docs for in-flight projects live in `explorations/plan-*.md`.
 
 ## Conformance Tests
 
