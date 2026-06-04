@@ -17,8 +17,6 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - `explorations/grammar.ebnf` — Authoritative grammar specification
 - `explorations/claude-plan-2.md` — Self-hosted toolchain plan (Phase 5)
 - `explorations/ir-backend-guidelines.md` — IR vs backend responsibility split
-- `explorations/ir-backend-cleanup-plan.md` — Work plan for multi-backend support
-- `explorations/layout-extraction-plan.md` — Detailed plan for extracting layout to shared layer
 
 ## Language Overview
 
