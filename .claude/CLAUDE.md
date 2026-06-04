@@ -95,6 +95,8 @@ If a piece looks hard, surface it: lay out the real requirements, the realistic 
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
 
+**`explorations/` is a SHARED checkout across all concurrent worker sessions — never leave edits there uncommitted (or even committed-but-unpushed) for any significant time.** Because every session shares the one `explorations/` working tree, an uncommitted edit you make will be swept into whatever commit another worker runs next (`git add` picks up your change), mislabeling and possibly losing it. The discipline is strict: edit a doc → `git -C explorations commit` it immediately → push. Do not batch explorations edits, and do not interleave other work between editing and committing them. (This is distinct from binate worktree commits, which are per-session and safe to accumulate; only `main` cherry-picks there need approval.)
+
 ### Stay Within the Asked Scope
 
 When asked to add new code (a script, a tool, a check), add only that. Do not wire it up to other systems on your own — CI workflows, hooks, schedulers, runners, or any pipeline that triggers automation. "Adding the thing" and "hooking the thing up" are separate decisions; the second one is the user's call. If you think wiring it up is the obvious next step, propose it and wait.
