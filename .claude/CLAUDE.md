@@ -27,7 +27,7 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 - Explicit interfaces with separate `impl` declarations, vtable-based dispatch
 - Monomorphized generics with interface constraints
 - No exceptions — errors are values (Go-style multiple returns)
-- `[]T` raw slices (2 words), `@[]T` managed-slices (3 words)
+- `[]T` raw slices (2 words), `@[]T` managed-slices (4 words)
 - No built-in maps, no string type, no `append` — growable collections are library concerns
 - `.bn` implementation files, `.bni` interface files
 - Targets 32-bit systems primarily, with 64-bit support
