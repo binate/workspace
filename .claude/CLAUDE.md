@@ -159,6 +159,10 @@ Concretely: `consumeTemp` should only be used when ownership genuinely transfers
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
 
+### Don't Routinely Bump Workspace Submodule Pointers
+
+Each submodule is an independent repo, pushed on its own — that push is the source of truth. The workspace repo's recorded submodule pointers are allowed to lag; don't commit a workspace pointer-bump after every submodule change. Update them only occasionally (in batches) or when explicitly asked (e.g. "bump the submodule hashes"). When you do bump, only record commits that are already pushed to the submodule's origin.
+
 ### Never Use Git Stash
 
 Do NOT use `git stash` — it constantly leads to lost work. Instead, create a temporary branch and commit your changes there.
