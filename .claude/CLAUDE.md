@@ -9,6 +9,7 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - **binate/** — Self-hosted interpreter and compiler written in Binate (`github.com/binate/binate`)
 - **website/** — Project website (`github.com/binate/website`)
 - **docs/** — Project documentation (`github.com/binate/docs`)
+- **examples/** — Example Binate programs (`github.com/binate/examples`)
 
 ## Key Reference Files
 

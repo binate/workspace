@@ -13,3 +13,6 @@
 [submodule "docs"]
 	path = docs
 	url = https://github.com/binate/docs.git
+[submodule "examples"]
+	path = examples
+	url = https://github.com/binate/examples.git
