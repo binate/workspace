@@ -8,6 +8,7 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - **bootstrap/** — Bootstrap interpreter written in Go (`github.com/binate/bootstrap`)
 - **binate/** — Self-hosted interpreter and compiler written in Binate (`github.com/binate/binate`)
 - **website/** — Project website (`github.com/binate/website`)
+- **docs/** — Project documentation (`github.com/binate/docs`)
 
 ## Key Reference Files
 
