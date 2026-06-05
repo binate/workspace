@@ -10,3 +10,6 @@
 [submodule "website"]
 	path = website
 	url = https://github.com/binate/website.git
+[submodule "docs"]
+	path = docs
+	url = https://github.com/binate/docs.git
