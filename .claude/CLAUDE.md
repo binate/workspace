@@ -202,6 +202,10 @@ When told to "resync your worktree" (for the binate repo), rebase against the **
 
 Or equivalently, if the worktree already tracks the same repo, `git -C <worktree-path> rebase main` (but never `git rebase origin/main` unless explicitly told to). Do NOT run any git command inside `~/binate/binate` itself.
 
+### Re-Run Hygiene After the Landing Rebase — Never Skip It on "Identical Content"
+
+The landing procedure is: rebase → **check hygiene** → quick smoke → cherry-pick → push → resync. The hygiene step after the rebase is NOT optional, and "my own files didn't change in the rebase, so hygiene is still green" is a FALSE shortcut. Hygiene checks **global, cross-file invariants** — unique conformance test numbers (`conformance-test-numbers`), version-sync, file-length, etc. — that another worker's just-rebased-in commit can violate even though your files are byte-identical. The classic failure (this has bitten): you pick `conformance/606_foo` when 606 is free; a concurrent worker lands `606_bar`; you rebase (no git conflict — different filenames), skip hygiene because "606_foo is unchanged," and land a DUPLICATE-number collision that `conformance-test-numbers` would have caught instantly. A smoke test does NOT catch this — it *runs* the tests (they pass) but never checks numbering/version/length invariants. So: after every landing rebase that pulls in any other commit, run `scripts/hygiene/run.sh` (it's fast — seconds) before cherry-picking. This is distinct from the "no slow test suites during landing" rule: hygiene is not a test suite.
+
 ### Preserving Command Output
 
 Instead of directly grepping (etc.) the output of commands — especially ones that may take a long time, like test runs — pipe the output through `tee` to also write it to a temporary file, then grep the file. That way, if you want to see more of the output, you don't have to run the command again (which takes a long time). Worse, if the output isn't deterministic, re-running may not reproduce what you're looking for.
