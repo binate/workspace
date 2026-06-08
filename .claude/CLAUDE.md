@@ -197,6 +197,35 @@ Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase
 
 **Land THROUGH local main — never push to origin from a worktree.** The local main checkout (`~/binate/binate`) is the source of truth for `main`; landing means cherry-pick the worktree commit onto local main, then `git push` *from local main*. Do NOT `git -C <worktree> push origin HEAD:main` — that advances `origin/main` while leaving local main stale, desyncing the checkout other workers rely on (it only "works" if someone else happens to pull it forward, which is luck, not correctness). The push must originate from local main so local main and origin stay in lockstep.
 
+### Landing Procedure
+
+The canonical, ordered steps for landing a worktree commit on `main`. They
+tie together the approval rule above and the resync/hygiene sections below.
+**Steps 1–7 must be executed as quickly as practical** — avoid lengthy
+procedures (no full test-suite runs) — because others may be waiting to land
+code too.
+
+1. **Get explicit approval to cherry-pick the commit** (per-instance, with
+   the verbatim-quote checkpoint above). The commit should be *ready*, modulo
+   any last-minute changes that might still be needed (e.g., renumbering a
+   conformance test to avoid a collision found during the rebase).
+2. **Rebase onto current local main** (`git -C <worktree> fetch
+   ~/binate/binate main && git -C <worktree> rebase FETCH_HEAD`). If there are
+   **substantial conflicts** that need resolving, the approval is **canceled**
+   until the commit is ready again — a conflict resolution is new code, so
+   re-seek approval.
+3. **Check hygiene** (`scripts/hygiene/run.sh`) and address any issues. If
+   there are **substantial issues** (e.g., a file needs to be split), the
+   approval is **canceled** until the commit is ready again.
+4. **Run smoke tests if necessary** — a quick, targeted check at most; avoid
+   lengthy procedures such as full test-suite runs.
+5. **Cherry-pick** the commit onto local main (in `~/binate/binate`).
+6. **Push** from local main.
+7. **Resync** the worktree against local main.
+8. **Review the landed commit for test coverage** and address any gaps. If
+   there are gaps, prepare the follow-up commit, then seek approval and get it
+   landed sooner rather than later (don't let coverage debt accumulate).
+
 ### Resyncing a Worktree
 
 When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
