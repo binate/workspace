@@ -91,6 +91,17 @@ Anti-patterns to avoid (these have come up):
 
 If a piece looks hard, surface it: lay out the real requirements, the realistic effort, and let the user decide whether to do it now, defer with eyes open, or scope it differently. The user owns these scope calls. You do not.
 
+### Call Out Deviations and Get Confirmation
+
+If you deviate from something that was specifically requested or indicated — because you don't think it's possible, you think it's a bad idea, or you think there's some blocker — you **MUST** explicitly call it out and get confirmation. Do NOT silently substitute your own judgment for what was asked, and do NOT proceed on a changed plan and only mention the change in passing (or not at all).
+
+Concretely:
+- Name the specific thing you were asked to do, state that you're not doing it (or doing it differently), and give the reason (impossible / bad idea / blocker).
+- Then **wait** for the user to confirm the deviation before proceeding. The user may agree, override your concern, or pick a third option — it's their call.
+- This applies even when you're confident you're right. Being right about the blocker doesn't authorize silently routing around the request; the user still decides what to do about it.
+
+This is the general case of the scope rules above: whether the deviation is "defer this piece," "do it a different way," or "skip it entirely," the discipline is the same — surface it explicitly and get a decision, don't decide unilaterally.
+
 ### Plans and Memories
 
 Write plans and memory files to `explorations/` (and commit them), not to the default hidden locations (e.g., `.claude/` memory directory). This keeps project knowledge visible, version-controlled, and accessible outside of Claude Code.
