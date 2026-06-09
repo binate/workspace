@@ -48,7 +48,7 @@ Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER 
 
 - When editing bootstrap Go code, be aware of known quirks (e.g., StringVal vs SliceVal distinction)
 - Binate source uses `pkg/` prefix for packages; `pkg/rt` is the runtime (written in Binate)
-- Builtins (`make`, `make_slice`, `box`, `cast`, `bit_cast`, `len`, `unsafe_index`) are keywords, not functions
+- Builtins (`make`, `make_slice`, `box`, `cast`, `bit_cast`, `len`, `unsafe_index`, `sizeof`, `alignof`, `present`, `same`) are keywords, not functions
 
 ### Problem-Solving Approach
 
