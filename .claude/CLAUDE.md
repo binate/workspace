@@ -244,7 +244,11 @@ code too.
 5. **Cherry-pick** the commit onto local main (in `~/binate/binate`).
 6. **Push** from local main.
 7. **Resync** the worktree against local main.
-8. **Review the landed commit for test coverage** and address any gaps. If
+8. **Update the status in any plan / todo list / etc.** to reflect the landed
+   work (mark the item done, note the commit, move it to the done log, etc.).
+   Commit and push that doc change promptly (see the `explorations/`
+   shared-checkout discipline above).
+9. **Review the landed commit for test coverage** and address any gaps. If
    there are gaps, prepare the follow-up commit, then seek approval and get it
    landed sooner rather than later (don't let coverage debt accumulate).
 
