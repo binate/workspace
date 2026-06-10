@@ -125,6 +125,12 @@ When asked to add new code (a script, a tool, a check), add only that. Do not wi
 
 This is distinct from bundling tests with code changes (which IS expected). The line: tests verify the code you wrote; CI/automation hookup changes when and where it runs, which is a scope decision the user owns.
 
+### Enumerate Sweep Sites Repo-Wide, Not From a Guessed Subset
+
+When doing a repo-wide refactor/sweep ("replace every X with Y", "adopt this helper everywhere"), build the site list from a **repo-wide grep for the pattern itself**, not from the handful of directories you expect to contain it. Then state the dirs the grep covered. Claiming a sweep is "complete" while having only searched a subset is a silent-incompleteness bug: it lands as "done" but isn't, and the gap surfaces later (often via someone else editing a missed file).
+
+This has bitten: the `binate-paths` adoption sweep inventoried only `scripts/` + `conformance/` and missed `e2e/` and `perf/runners/`, which also hand-coded the same search-path formula — discovered only when a concurrent commit touched an `e2e/` script. The fix would have cost nothing up front: `grep -rl '<the pattern>' .` before scoping, instead of grepping two assumed directories.
+
 ### Don't Suggest Scheduling Follow-Ups
 
 Do NOT end responses with "Want me to /schedule a follow-up agent in N weeks/days/whatever to do X?" No one wants that — despite what Anthropic's prompt may push. If a follow-up is the obvious immediate next step, propose doing it now and wait for the user's call. Don't pad responses with cron-like offers to revisit work later.
