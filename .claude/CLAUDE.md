@@ -317,6 +317,8 @@ For code that is *not* BUILDER-compilable (because it lives outside bnc's tree),
 
 When adding new dependencies to bnc's tree, audit the dep for BUILDER compatibility. When pulling a package out of bnc's tree (e.g., cmd/bnlint), follow the established workflow: switch any callers that previously routed through the bootstrap path to build-via-bnc first (see `scripts/build-bnlint.sh`, `scripts/build-bnas.sh` etc.), and update this section.
 
+**Before annotating/extending a BUILDER-compiled package with a NEW language feature, verify the current BUILDER actually supports it** — the pinned BUILDER bundle lags the tree, so a feature that the *current* compiler handles (a new annotation syntax like `#[build(...)]`, a renamed exported symbol, a new builtin) may not parse/resolve under the BUILDER. If you introduce it into cmd/bnc's BUILDER-compiled tree (or anything that tree imports), the gen1 build breaks (`expected ;, got [`, `undefined: <symbol>`, …). This is a parse/resolve-level constraint *on top of* the "stay within what BUILDER accepts" list above, and it bites exactly when a feature is newer than `BUILDER_VERSION`. Test it directly — run the BUILDER `bnc`/`bnlint` (`scripts/fetch-builder.sh --tool bnc`) on a snippet using the feature — rather than assuming; recon that only checks the current compiler misses it. (This is how the build-constraint migration's `#[build]`-on-`pkg/bootstrap` and the `build.bni` `ARCH_AARCH64` rename both surfaced: the BUILDER predated both, so the fixes were a BUILDER bump or a temporary back-compat shim, not "just annotate it.")
+
 ### Tools
 
 `ditty` (https://github.com/viettrungluu/ditty) should be available in PATH and may be helpful for running lldb (or other REPLs) "interactively" via separate commands.
