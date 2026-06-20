@@ -267,6 +267,25 @@ When told to "resync your worktree" (for the binate repo), rebase against the **
 
 Or equivalently, if the worktree already tracks the same repo, `git -C <worktree-path> rebase main` (but never `git rebase origin/main` unless explicitly told to). Do NOT run any git command inside `~/binate/binate` itself.
 
+### Read the Hygiene OVERALL Result — Never Grep It So Narrowly That a FAIL Hides
+
+When you run `scripts/hygiene/run.sh`, judge it by its **final overall line** —
+`=== N hygiene check(s) passed ===` (success) versus `=== N of M hygiene
+check(s) failed: <names> ===` (failure) — or by grepping for `^FAIL:`. Do NOT
+filter the output through a narrow `grep` that only matches a couple of checks
+or a per-check summary. This has bitten: a grep like `grep -E
+'spec-coverage|=== [0-9]+ (error|hygiene)' | tail -2` matched `PASS:
+spec-coverage` and a check's internal `=== 0 error(s), N warning(s) ===` line
+but NOT `FAIL: conformance-imports` nor the failure summary (the failure form
+`=== 1 of 15 … failed ===` doesn't match `=== [0-9]+ (error|hygiene)` because
+"of" follows the number) — so a real hygiene failure looked green, a commit was
+made on a red base, and it was reported "ready to land." The rule: a hygiene run
+is green ONLY if you have SEEN the `=== N hygiene check(s) passed ===` line (or
+confirmed zero `FAIL:` lines). If your grep returns fewer lines than you expect,
+that is a signal to look at the full output, not to assume success. The same
+applies before claiming a commit is landable: "I ran hygiene" is not "hygiene
+passed" unless you actually read the overall result.
+
 ### Re-Run Hygiene After the Landing Rebase — Never Skip It on "Identical Content"
 
 The landing procedure is: rebase → **check hygiene** → quick smoke → cherry-pick → push → resync. The hygiene step after the rebase is NOT optional, and "my own files didn't change in the rebase, so hygiene is still green" is a FALSE shortcut. Hygiene checks **global, cross-file invariants** — unique conformance test numbers (`conformance-test-numbers`), version-sync, file-length, etc. — that another worker's just-rebased-in commit can violate even though your files are byte-identical. The classic failure (this has bitten): you pick `conformance/606_foo` when 606 is free; a concurrent worker lands `606_bar`; you rebase (no git conflict — different filenames), skip hygiene because "606_foo is unchanged," and land a DUPLICATE-number collision that `conformance-test-numbers` would have caught instantly. A smoke test does NOT catch this — it *runs* the tests (they pass) but never checks numbering/version/length invariants. So: after every landing rebase that pulls in any other commit, run `scripts/hygiene/run.sh` (it's fast — seconds) before cherry-picking. This is distinct from the "no slow test suites during landing" rule: hygiene is not a test suite.
