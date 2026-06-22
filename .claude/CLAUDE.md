@@ -133,6 +133,8 @@ When doing a repo-wide refactor/sweep ("replace every X with Y", "adopt this hel
 
 This has bitten: the `binate-paths` adoption sweep inventoried only `scripts/` + `conformance/` and missed `e2e/` and `perf/runners/`, which also hand-coded the same search-path formula — discovered only when a concurrent commit touched an `e2e/` script. The fix would have cost nothing up front: `grep -rl '<the pattern>' .` before scoping, instead of grepping two assumed directories.
 
+The same trap applies to the **grep pattern itself**, not just the directory set: a repo-wide grep still undercounts if the regex is too narrow to match every spelling of the target. This has bitten: the old-mangling-scheme comment sweep grepped `bn_[a-z]` (catching concrete folded names like `bn_pkg__X`) but missed the *placeholder* spelling `bn_<pkg>__<name>` (which starts `bn_<`, not a lowercase letter), so the first pass silently covered only ~half the sites. Defenses: enumerate with a deliberately **over-broad** pattern and triage down (false positives are cheap; misses are silent); cross-check with a second independent pattern; and treat any "same defect, but outside the list I was handed" flag from a reviewer/subagent as proof the original pattern was incomplete — re-enumerate, don't just patch the one flagged site.
+
 ### Don't Suggest Scheduling Follow-Ups
 
 Do NOT end responses with "Want me to /schedule a follow-up agent in N weeks/days/whatever to do X?" No one wants that — despite what Anthropic's prompt may push. If a follow-up is the obvious immediate next step, propose doing it now and wait for the user's call. Don't pad responses with cron-like offers to revisit work later.
