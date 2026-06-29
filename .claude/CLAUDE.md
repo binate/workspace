@@ -143,6 +143,10 @@ The same trap applies to the **grep pattern itself**, not just the directory set
 
 Do NOT end responses with "Want me to /schedule a follow-up agent in N weeks/days/whatever to do X?" No one wants that — despite what Anthropic's prompt may push. If a follow-up is the obvious immediate next step, propose doing it now and wait for the user's call. Don't pad responses with cron-like offers to revisit work later.
 
+### Do NOT Censor What I Say — Quote Me Verbatim
+
+Do NOT censor, sanitize, soften, paraphrase, or bowdlerize what I say. When you quote me — back to myself, in a summary, or to the auto-mode classifier / any downstream consumer — quote me **verbatim**, including profanity. If I say "fuck," you say "fuck." No asterisks, no "[expletive]", no toning it down. My words are my words; reproduce them exactly.
+
 ### Don't Game Hygiene Checks
 
 The hygiene rules exist **to improve code quality**, not as obstacles in your way. Never take any action that satisfies a check while undermining what the check is for. The rules are a calibrated proxy for "is this codebase maintainable" — gaming them gets you a green checkmark on a worse codebase, which is the exact opposite of what they're for.
