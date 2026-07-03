@@ -378,6 +378,17 @@ We are building a language that can operate in a C-free system. The *only* reaso
 
 **NEVER change language semantics (type system rules, implicit conversions, assignability, etc.) without explicitly asking the user first.** This includes adding new implicit conversions (e.g., `[]T → @[]T`), changing type compatibility rules, or modifying how the type checker accepts or rejects code. If a type error blocks your work, fix the code that's wrong — don't change the language rules to make it compile.
 
+### The Compiler Emits NO Warnings; "Unused X" Is a Lint, Never a Compiler Diagnostic
+
+Binate's compiler (`bnc`) does **not** emit warnings, and does **not** emit errors for "unused" anything (unused local, unused import, unused private func/global/type, write-only local, …). Unused-entity detection is a **lint concern** — it belongs in `bnlint` (`pkg/binate/lint/`), which only runs when explicitly invoked (hygiene / CI), never on every compile.
+
+This has bitten (2026-07-02): item `(b)` unused-locals was implemented **checker-side**, emitting an `addCheckWarning` that `bnc` prints on every compile — and since the unit-test runner treats any compiler warning as a build failure, it became an always-on, whole-tree hammer (a write-only-detection refinement then flagged ~231 locals, every one a build failure). It was **reverted** (`8d8f7314`). The other unused-* rules (`(a)` import, `(c)` func, `(d)` global, `(e)` type) are all `bnlint` rules; `(b)` must be too.
+
+Concretely:
+- Do NOT add `addCheckWarning` / `addCheckError` for unused/dead/style findings in `pkg/binate/types` (or anywhere in `bnc`'s tree). If you're reaching for a checker warning to flag "the user wrote something suboptimal but valid," STOP — that's a `bnlint` rule.
+- The checker (and `bnc`) only reject code that is genuinely **ill-typed / illegal** (a hard error). "Valid but unused/dead" is never a compiler concern.
+- A lint rule needing per-scope local liveness (like unused-locals) must build that scope-walk **in bnlint**, not borrow the checker's scope machinery by emitting warnings from it.
+
 ### Terminology
 
 Use "managed-slice" (hyphenated) for `@[]T`, because it is a distinct type from `@([]T)`. Similarly "managed-pointer" for `@T` is technically correct but rarely needed since `@(*T)` is rare. "Managed struct" (two words, no hyphen) is fine — it's just a struct that happens to be managed.
