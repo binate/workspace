@@ -232,6 +232,8 @@ This includes **any** git operation in the main checkout (`~/binate/binate`): do
 
 Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase conflicts and you have to resolve it, the resolution is a *new* code decision (not the original commit) and the resulting commit + push need fresh approval — show the user the resolution before pushing it anywhere.
 
+**Exception — mechanical rename/renumber conflicts do NOT void approval.** Renaming or renumbering is an allowed last-minute change (e.g., renumbering a conformance test to dodge a number collision found during the landing rebase — see Landing Procedure step 1), and a conflict that is *purely the mechanical consequence* of that rename does NOT count as a semantic conflict resolution. The canonical case: you renumber `NNN_foo` → `MMM_foo` in the add-commit, then a later commit that *deletes* `NNN_foo`'s `.xfail` markers hits a `rename/delete` conflict — resolving it by deleting the renamed `MMM_foo.xfail.*` (identical intent) is part of the rename, not new code. Resolve it and proceed on the EXISTING approval, **provided** you verify the resolved tree is byte-identical to the clean rebase except the renames (`git diff <clean-rebase> HEAD` shows only pure renames — 0 insertions, 0 deletions of content). Only a conflict whose resolution changes actual code or semantics needs fresh approval.
+
 **Standing authorizations are scoped to the task the user named.** If the user says "cherry-pick/push/resync without asking again for the remainder of <X>," that authorization ends when <X> ends. The next task — even if it superficially looks like more of the same workflow (commit → cherry-pick → resync) — is a fresh task, and the first cherry-pick of that new task needs explicit approval. When in doubt, treat the authorization as narrow, not broad.
 
 **The "carry-over from a wrapped-up series" trap.** When a multi-step task ends ("step 2 / 3 / 4 ... ditto"), the workflow doesn't carry. If the user then says "let's do 5" or "what's next" → "do X", that authorizes the *work*, not the cherry-pick. After committing on the worktree, STOP. Even — especially — if the previous N rounds all flowed `commit → cherry-pick → push → resync` without the user re-authorizing each one, the moment the named series ends the muscle-memory must reset. This trap has now bitten more than once; if you find yourself about to run `git -C ~/binate/binate cherry-pick` after a "let's do 5" / "what's next" type prompt, stop and ask first.
@@ -258,7 +260,9 @@ code too.
    ~/binate/binate main && git -C <worktree> rebase FETCH_HEAD`). If there are
    **substantial conflicts** that need resolving, the approval is **canceled**
    until the commit is ready again — a conflict resolution is new code, so
-   re-seek approval.
+   re-seek approval. (A *purely mechanical* rename/renumber conflict is NOT
+   substantial and does NOT cancel approval — see the rename/renumber exception
+   under "NEVER cherry-pick or push to main without explicit user approval".)
 3. **Check hygiene** (`scripts/hygiene/run.sh`) and address any issues. If
    there are **substantial issues** (e.g., a file needs to be split), the
    approval is **canceled** until the commit is ready again.
