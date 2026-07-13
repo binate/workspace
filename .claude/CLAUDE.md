@@ -177,6 +177,12 @@ In particular, "breadcrumbs" for when things are moved are not required: if `foo
 
 On a similar vein, instead of commenting that a change fixes bug X, instead say "Do Y because otherwise Z, which shows up as `<description of X or similar>`." "Fixing" is an action, which makes no sense in a snapshot; instead, explain the subtlety in its own terms.
 
+### Don't Reference Non-Visible Work Branches or Artifacts
+
+Documentation, todos, plan docs, comments, and commit messages must **not** refer to work branches or other artifacts that are not generally visible — e.g. a local `work-2` / `temp-binate-N` branch, an un-pushed commit, or anything not on `main` / not published to GitHub. Such references are meaningless (and often misleading) to anyone reading outside the authoring session: the branch may be renamed, deleted, rebased away, or simply never visible to them. This has bitten — a `claude-todo.md` entry said some packages "live on the `work-2` branch, NOT main," which was both non-actionable for any other reader and already stale (the packages had since landed on main).
+
+Refer instead to durable, visible things: `main`, a merged commit hash, a released version (`bnc-0.0.x`), a published plan/spec doc, or the current state of a tracked file. If work is genuinely in-flight on a branch, describe it by its landed/visible artifacts or say "not yet landed" rather than naming the private branch.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
