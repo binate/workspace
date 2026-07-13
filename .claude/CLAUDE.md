@@ -38,7 +38,7 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 
 Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
 
-For active work items, open bugs, and what's next, see `explorations/claude-todo.md` (and `explorations/claude-todo-done.md` for what's been resolved). Plan docs for in-flight projects live in `explorations/plan-*.md`.
+For active work items, open bugs, and what's next, see `explorations/claude-todo.md` (with `explorations/claude-todo-done.md` for what's been resolved and `explorations/claude-todo-v2.md` for work deferred to v2 / post-1.0). Plan docs for in-flight projects live in `explorations/plan-*.md`.
 
 ## Conformance Tests
 
@@ -182,6 +182,14 @@ On a similar vein, instead of commenting that a change fixes bug X, instead say 
 Documentation, todos, plan docs, comments, and commit messages must **not** refer to work branches or other artifacts that are not generally visible — e.g. a local `work-2` / `temp-binate-N` branch, an un-pushed commit, or anything not on `main` / not published to GitHub. Such references are meaningless (and often misleading) to anyone reading outside the authoring session: the branch may be renamed, deleted, rebased away, or simply never visible to them. This has bitten — a `claude-todo.md` entry said some packages "live on the `work-2` branch, NOT main," which was both non-actionable for any other reader and already stale (the packages had since landed on main).
 
 Refer instead to durable, visible things: `main`, a merged commit hash, a released version (`bnc-0.0.x`), a published plan/spec doc, or the current state of a tracked file. If work is genuinely in-flight on a branch, describe it by its landed/visible artifacts or say "not yet landed" rather than naming the private branch.
+
+### What Belongs in the Todo File vs the Done File
+
+`explorations/claude-todo.md` holds ONLY active, actionable work — things still to be done, with the context needed to do them. Anything finished, or decided-not-to-do (won't-fix / retired / superseded), belongs in `explorations/claude-todo-done.md`, not the todo file. If an entry's remaining content is just history, a superseded status, or a "for the record" note, it's done — move it. A done entry can and should record how/why something was resolved or declined (with the landed commit), so nothing is lost by moving it.
+
+The one nuance is larger, multi-step todos: keep only the still-open steps in the todo file, and move each sub-piece to the done file as it lands (rather than waiting for the whole thing), so the entry shrinks to just what's left.
+
+Work deliberately deferred past the current milestone goes in `explorations/claude-todo-v2.md` (v2 / post-1.0), not the active todo file — keep the active todo focused on the current milestone.
 
 ### Learning From Mistakes
 
