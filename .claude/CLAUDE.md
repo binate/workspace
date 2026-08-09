@@ -17,7 +17,6 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - `explorations/claude-notes.md` — Language design summary (decisions, status, rationale overview)
 - `explorations/claude-discussion-detailed-notes.md` — Extended rationale and discussion
 - `docs/spec/binate.ebnf` — Authoritative (canonical) grammar specification; Annex A (`docs/spec/annex-a-grammar-summary.md`) is generated from it via `docs/scripts/gen-annex-a.py`. (The old `explorations/grammar.ebnf` is retired — a redirect tombstone.)
-- `explorations/claude-plan-2.md` — Self-hosted toolchain plan (Phase 5)
 - `explorations/ir-backend-guidelines.md` — IR vs backend responsibility split
 
 ## Language Overview
