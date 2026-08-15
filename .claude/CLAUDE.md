@@ -127,6 +127,10 @@ Write plans and memory files to `explorations/` (and commit them), not to the de
 
 **NEVER create a git worktree inside `explorations/` (and NEVER spawn a subagent or workflow with `isolation: worktree` for work that targets the explorations repo).** The worktree-isolation mechanism parks a checkout at `explorations/.claude/worktrees/agent-<id>/` — a nested git repo *inside* the shared explorations working tree. That is broken on two counts: (1) the next worker's `git add -A` picks it up and stages it as an embedded-repo gitlink, corrupting the commit (this has happened); (2) explorations is docs/plans, not code — there is nothing to isolate, and the shared-checkout discipline above already governs it. If a task genuinely needs an isolated worktree, it is a *code* task and belongs in the binate repo (`isolation: worktree` / `git -C binate worktree ...` against binate), never explorations. Plain `explorations/` edits use the edit→commit→push discipline above, with no worktree at all.
 
+### Don't Change the Mode
+
+Do NOT change the session mode (e.g., switch to plan mode). You will typically be in **auto mode**, and you should **stay in auto mode** — do not call `EnterPlanMode` or otherwise switch out of it. If you want to lay out a plan before acting, write it to `explorations/` (per **Plans and Memories** above); that is where plans go, not plan mode.
+
 ### Stay Within the Asked Scope
 
 When asked to add new code (a script, a tool, a check), add only that. Do not wire it up to other systems on your own — CI workflows, hooks, schedulers, runners, or any pipeline that triggers automation. "Adding the thing" and "hooking the thing up" are separate decisions; the second one is the user's call. If you think wiring it up is the obvious next step, propose it and wait.
