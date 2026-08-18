@@ -414,6 +414,12 @@ We are building a language that can operate in a C-free system. The *only* reaso
 
 **NEVER change language semantics (type system rules, implicit conversions, assignability, etc.) without explicitly asking the user first.** This includes adding new implicit conversions (e.g., `[]T → @[]T`), changing type compatibility rules, or modifying how the type checker accepts or rejects code. If a type error blocks your work, fix the code that's wrong — don't change the language rules to make it compile.
 
+### Don't Make Shit Up About the Binate Language
+
+Don't make shit up about the Binate language. If something is unknown, the **spec** (`docs/spec/`, with `docs/spec/binate.ebnf` the canonical grammar) is the authoritative source — go read it. Do NOT "infer" properties you think *should* be true based on other languages (e.g., Go): Binate is its own language and diverges deliberately (no built-in maps/append, refcounting not GC, raw vs managed slices, explicit interfaces, `@T`/`*T` pointers, …). "Go does X, so Binate probably does X" is exactly the failure mode to avoid.
+
+When the spec is genuinely ambiguous or silent, the discussion docs (`explorations/claude-notes.md`, `explorations/claude-discussion-detailed-notes.md`, and the other `explorations/` design docs) are references for **intent** — use them to understand *why* a decision was made and where the language is headed. If a question remains after consulting the spec and the discussion docs, **discuss it with the user** rather than inventing an answer or silently picking one. State plainly when you don't know; a checked "I looked and the spec says X" or an honest "the spec doesn't cover this — here's what the notes suggest, what do you want?" both beat a confident fabrication. (See also **Never Fabricate Language** in memory: don't state Binate behavior as fact without checking.)
+
 ### The Compiler Emits NO Warnings; "Unused X" Is a Lint, Never a Compiler Diagnostic
 
 Binate's compiler (`bnc`) does **not** emit warnings, and does **not** emit errors for "unused" anything (unused local, unused import, unused private func/global/type, write-only local, …). Unused-entity detection is a **lint concern** — it belongs in `bnlint` (`pkg/binate/lint/`), which only runs when explicitly invoked (hygiene / CI), never on every compile.
