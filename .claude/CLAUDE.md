@@ -398,6 +398,25 @@ When adding new dependencies to bnc's tree, audit the dep for BUILDER compatibil
 
 **Before annotating/extending a BUILDER-compiled package with a NEW language feature, verify the current BUILDER actually supports it** — the pinned BUILDER bundle lags the tree, so a feature that the *current* compiler handles (a new annotation syntax like `#[build(...)]`, a renamed exported symbol, a new builtin) may not parse/resolve under the BUILDER. If you introduce it into cmd/bnc's BUILDER-compiled tree (or anything that tree imports), the gen1 build breaks (`expected ;, got [`, `undefined: <symbol>`, …). This is a parse/resolve-level constraint *on top of* the "stay within what BUILDER accepts" list above, and it bites exactly when a feature is newer than `BUILDER_VERSION`. Test it directly — run the BUILDER `bnc`/`bnlint` (`scripts/fetch-builder.sh --tool bnc`) on a snippet using the feature — rather than assuming; recon that only checks the current compiler misses it. (This is how the build-constraint migration's `#[build]`-on-`pkg/bootstrap` and the `build.bni` `ARCH_AARCH64` rename both surfaced: the BUILDER predated both, so the fixes were a BUILDER bump or a temporary back-compat shim, not "just annotate it.")
 
+### A BUILDER Release Is Expensive — Never Rush One to Unblock a Task
+
+Cutting a new BUILDER (a released `bnc` used to build gen1, pinned via
+`BUILDER_VERSION` / fetched by `scripts/fetch-builder.sh`) has **permanent,
+cumulative cost**: every future build forever bootstraps through it, so each release
+adds a rung to the bootstrap/build ladder that can never be removed. A BUILDER
+release is therefore **never** justified merely to unblock the task in front of you —
+proposing one to make dependent work land sooner is optimizing for your own
+convenience at a permanent cost to the project (this has drawn a sharp "don't be so
+selfish" correction).
+
+Concretely, when a fix must be *in the BUILDER* before some dependent work can land
+(e.g. a checker fix that forwarder-using generic packages depend on, before those
+packages can be promoted): land the fix normally (it builds through the *current*
+BUILDER since it adds no new-to-BUILDER feature), **park** the dependent work on a
+branch, and let a BUILDER cut happen only when independently justified — batched with
+other reasons, at a natural release point. Surface the dependency and let the user
+own the timing; do not frame "cut a BUILDER" as the obvious next step.
+
 ### Tools
 
 `ditty` (https://github.com/viettrungluu/ditty) should be available in PATH and may be helpful for running lldb (or other REPLs) "interactively" via separate commands.
