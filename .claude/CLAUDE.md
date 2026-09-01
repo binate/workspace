@@ -191,11 +191,23 @@ On a similar vein, instead of commenting that a change fixes bug X, instead say 
 
 **Development-progress labels are meaningless in the tree — never put them in code.** Increment / step / phase / milestone tags like `Inc 6`, `Inc 3b`, `step 2`, `phase 4`, `P4`, `v2 part (b)` are ephemeral bookkeeping from a plan doc or a session's task sequence; nobody reading the code in a week — let alone a year — knows or cares what "Inc 6" was. They fail the stand-alone test hard. This has bitten: the within-package inliner's comments were saturated with `Inc 1..6` / `Inc 3a/3b` / `Inc 5a/5b`, which say nothing about what the code does. Describe the mechanism in its own terms instead: not "Inc 3b: clone the pad," but "a single-block non-empty cleanup pad is cloned into the caller and chained into the call-site pad." The same goes for referring to sibling code by its increment ("the Inc 3a machinery") — name what it does ("the empty-pad-reuse path"). Plan docs and `claude-todo.md` MAY use increment labels (they are development-tracking artifacts); code, comments, and durable docs must not. (Commit messages are borderline: prefer describing the change; a bare "Inc 6" in a subject line is nearly as opaque as in code.)
 
+### Repo Text References Durable Docs Only — Never Plans, Todos, or Plan-Internal Content
+
+All durable text in the repos — code comments, doc comments, READMEs, the spec, the guide/overview — must **stand alone** (per "Comments Stand Alone" above) and may reference, at most, **durable docs**: the specification (`docs/spec/`, ideally by stable rule-ID), a released version, a merged commit hash. It must **not** reference development-tracking artifacts — `plan-*.md`, `design-*.md`, `claude-notes.md`, `claude-todo*.md` — nor content that only makes sense inside a plan (increment/phase labels, option letters like "option (b)", "Chunk 2a", adversarial-review verdicts). A reader of the tree has none of that context: plans move, get archived, and die; the spec and the code are what remain. Explain the reasoning in the text's own terms rather than citing where it was decided.
+
+Exceptions:
+- **Clearly-labeled, temporary `// TODO:` comments** may point at a todo entry or plan — they are explicitly ephemeral bookkeeping that dies with the work.
+- **`explorations/` artifacts referencing each other** — plans, todos, and notes are development-tracking artifacts and freely cross-reference (including increment labels).
+- **Two implementation "specs" treated as normative until rehomed**: `explorations/ir-backend-guidelines.md` and `explorations/pkg-layout-spec.md` (rehoming tracked in `claude-todo.md`).
+- **Commit messages**: prefer a self-contained description of the change; a plan reference is acceptable supporting context, never a substitute for saying what changed.
+
+This generalizes two in-effect efforts: the spec self-containedness sweep (the spec references `explorations/` only in clearly-marked provenance headers) and the code-comment sweep stripping `plan-*.md`/`design-*.md`/notes pointers.
+
 ### Don't Reference Non-Visible Work Branches or Artifacts
 
 Documentation, todos, plan docs, comments, and commit messages must **not** refer to work branches or other artifacts that are not generally visible — e.g. a local `work-2` / `temp-binate-N` branch, an un-pushed commit, or anything not on `main` / not published to GitHub. Such references are meaningless (and often misleading) to anyone reading outside the authoring session: the branch may be renamed, deleted, rebased away, or simply never visible to them. This has bitten — a `claude-todo.md` entry said some packages "live on the `work-2` branch, NOT main," which was both non-actionable for any other reader and already stale (the packages had since landed on main).
 
-Refer instead to durable, visible things: `main`, a merged commit hash, a released version (`bnc-0.0.x`), a published plan/spec doc, or the current state of a tracked file. If work is genuinely in-flight on a branch, describe it by its landed/visible artifacts or say "not yet landed" rather than naming the private branch.
+Refer instead to durable, visible things: `main`, a merged commit hash, a released version (`bnc-0.0.x`), a published plan/spec doc (subject to "Repo Text References Durable Docs Only" above — code and durable docs cite the spec, not plans), or the current state of a tracked file. If work is genuinely in-flight on a branch, describe it by its landed/visible artifacts or say "not yet landed" rather than naming the private branch.
 
 ### What Belongs in the Todo File vs the Done File
 
