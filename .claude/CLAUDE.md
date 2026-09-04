@@ -35,7 +35,7 @@ Binate is a systems programming language with dual-mode execution (compiled + in
 
 ## Project Status
 
-Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp), with all conformance modes green in CI. The bytecode VM (cmd/bni / pkg/vm) also passes all unit-test packages.
+Self-hosted toolchain is implemented and stable. The Go bootstrap interpreter has been retired (2026-05-21); builds use a prebuilt BUILDER bnc tarball (BUILDER_VERSION) via `scripts/fetch-builder.sh`. Self-compilation works through gen1 and gen2 (builder-comp-comp / builder-comp-comp-comp). For the current pass/fail state of any conformance mode or test suite, run it (`conformance/run.sh <mode>`, `--test`) or check CI — status claims written in docs go stale.
 
 For active work items, open bugs, and what's next, see `explorations/claude-todo.md` (with `explorations/claude-todo-done.md` for what's been resolved and `explorations/claude-todo-v2.md` for work deferred to v2 / post-1.0). Plan docs for in-flight projects live in `explorations/plan-*.md`.
 
@@ -43,7 +43,7 @@ For active work items, open bugs, and what's next, see `explorations/claude-todo
 
 Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER bnc, `int` = bytecode VM, `comp` = compiler. Default modes: `builder-comp`, `builder-comp-int`, `builder-comp-int-int`, `builder-comp-comp`, `builder-comp-comp-int`, `builder-comp-comp-comp`. Cross-compile / alternate-backend modes: `builder-comp_native_aa64-comp_native_aa64`, `builder-comp_native_x64_darwin-comp_native_x64_darwin`, `builder-comp_native_arm32_baremetal`, `builder-comp_arm32_baremetal`, `builder-comp_arm32_linux`. See `conformance/run.sh --help` for the full list.
 
-**CRITICAL — two arm32 modes, easily confused (this HAS bitten):** `builder-comp_arm32_baremetal` / `builder-comp_arm32_linux` (NO `native`) are the **LLVM** arm32 cross-compile — mature, ~2634 passing, and they do **NOT** exercise `pkg/binate/native/arm32` at all. `builder-comp_native_arm32_baremetal` (WITH `native`) is the **native arm32 backend** (the P4 self-hosted project) — currently incomplete (~2026 pass / 611 fail). When verifying ANY change to `pkg/binate/native/arm32`, you MUST use `builder-comp_native_arm32_baremetal`; running the non-`native` mode gives a green result that tested the LLVM backend, not your code. (Same distinction for aa64/x64: the `native` in the mode name is load-bearing.) The ≥2007-passing baseline referenced in `plan-native-arm32.md` is the **native** mode.
+**CRITICAL — two arm32 modes, easily confused (this HAS bitten):** `builder-comp_arm32_baremetal` / `builder-comp_arm32_linux` (NO `native`) are the **LLVM** arm32 cross-compile and do **NOT** exercise `pkg/binate/native/arm32` at all. `builder-comp_native_arm32_baremetal` (WITH `native`) is the **native arm32 backend**. When verifying ANY change to `pkg/binate/native/arm32`, you MUST use `builder-comp_native_arm32_baremetal`; running the non-`native` mode gives a green result that tested the LLVM backend, not your code. (Same distinction for aa64/x64: the `native` in the mode name is load-bearing.) For any mode's current pass/fail state, run it — don't trust numbers written down in docs (including this file); they go stale.
 
 ## Working With This Codebase
 
