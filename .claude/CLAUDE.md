@@ -458,6 +458,15 @@ Don't make assumptions or value judgements about what's "worth doing" or "not wo
 
 We are building a language that can operate in a C-free system. The *only* reason to ever use C is to interface with existing C-based systems (e.g., to do "syscalls", since we don't want to implement our own direct syscalls yet).
 
+### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
+
+The **native backend is THE backend** — the intended, permanent code generator. The **LLVM/clang backend is a STOPGAP** that exists only until native reaches parity, and is slated for eventual deletion. It is NOT a "production backend" and native is NOT a "bare-metal-only fallback." Do NOT invert this: never describe native as existing "for targets where clang isn't available," never frame clang as the real/fast backend that native merely approximates for special cases. That is fabricated and backwards (this drew a furious correction — "CLANG IS A FUCKING STOPGAP … we'll just have to delete clang support so it's clear").
+
+**Consequences that must shape performance work:**
+- The **native↔LLVM codegen performance gap is a first-class problem that must be NARROWED**, full stop. When native-generated code is slower than LLVM-generated code for the same program, that is a defect in the native backend to be fixed — not an acceptable tradeoff, and not something to reframe as "well, is the ratio even the goal?" **It is the goal.** Do not entertain, amplify, or "surface for decision" any framing that questions whether closing the gap is worth it (e.g. "maybe just make native builds faster in absolute terms instead"). Reject such framings; they are wrong.
+- **"General throughput" wins (faster on BOTH backends) do NOT close the gap** and are therefore a *different, lower-priority* objective for this effort — the earlier instinct to keep them distinct from gap-closers was correct. A gap-closer makes native match what LLVM already does (e.g. LLVM vectorizes a loop that native emits scalar → make native vectorize it too).
+- Where LLVM's win comes from a **libc call it emits** (e.g. it lowers a zero-fill loop to `bzero`/`memset`, a byte-copy to `memcpy`), closing the gap means writing an **equally-fast native implementation in our own asm** (DC ZVA / NEON / SSE) — that is C-free-legal (asm is not C) and is exactly the work, not a reason to declare the gap unclosable.
+
 ### Language Semantics
 
 **NEVER change language semantics (type system rules, implicit conversions, assignability, etc.) without explicitly asking the user first.** This includes adding new implicit conversions (e.g., `[]T → @[]T`), changing type compatibility rules, or modifying how the type checker accepts or rejects code. If a type error blocks your work, fix the code that's wrong — don't change the language rules to make it compile.
