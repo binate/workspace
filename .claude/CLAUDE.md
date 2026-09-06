@@ -45,6 +45,19 @@ Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER 
 
 **CRITICAL — two arm32 modes, easily confused (this HAS bitten):** `builder-comp_arm32_baremetal` / `builder-comp_arm32_linux` (NO `native`) are the **LLVM** arm32 cross-compile and do **NOT** exercise `pkg/binate/native/arm32` at all. `builder-comp_native_arm32_baremetal` (WITH `native`) is the **native arm32 backend**. When verifying ANY change to `pkg/binate/native/arm32`, you MUST use `builder-comp_native_arm32_baremetal`; running the non-`native` mode gives a green result that tested the LLVM backend, not your code. (Same distinction for aa64/x64: the `native` in the mode name is load-bearing.) For any mode's current pass/fail state, run it — don't trust numbers written down in docs (including this file); they go stale.
 
+## Backend and Architecture Priorities
+
+**All three architectures — aa64, x64, and arm32 — are equally important.** Do
+not treat any of them as a second-class or "exotic" target when prioritizing
+work, triaging bugs, or deciding test coverage.
+
+**The native backends are just as important as the clang/LLVM backend — and
+really more so, since they are the future.** Do not frame native-backend gaps
+as acceptable because "the LLVM path works," deprioritize native-backend bugs
+relative to LLVM ones, or treat the LLVM backend as the reference the natives
+merely approximate. Where a convention is currently pinned to what LLVM emits,
+that is for interoperability, not a statement of rank.
+
 ## Working With This Codebase
 
 - When editing bootstrap Go code, be aware of known quirks (e.g., StringVal vs SliceVal distinction)
