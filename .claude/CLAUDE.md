@@ -244,6 +244,14 @@ The one nuance is larger, multi-step todos: keep only the still-open steps in th
 
 Work deliberately deferred past the current milestone goes in `explorations/claude-todo-v2.md` (v2 / post-1.0), not the active todo file — keep the active todo focused on the current milestone.
 
+### Claim a Todo Before Working It — Mark It In-Progress and Push FIRST
+
+Before starting work on ANY todo entry — whether you're picking one up, the user assigns you one, or you just raised one and the user says "fix it now" — **mark that entry claimed/in-progress in `explorations/claude-todo.md` and commit+push it BEFORE writing any fix code.** `explorations/` is a shared checkout across concurrent worker sessions, and an unclaimed OPEN entry is an open invitation for another session to grab the same bug. The claim is the ONLY signal other sessions have that you're on it.
+
+This has bitten: I raised the arm32 hard-float "fixed float in a variadic `__c_call` rides VFP" MAJOR bug as `🔴 OPEN`, the user said "fix it now," and I went straight into the fix without claiming it. ~13 seconds after my code commit a concurrent session claimed and independently fixed the exact same bug (identical `callIsVariadic` approach) — fully duplicated work, and theirs landed first. Marking the entry `🟡 IN PROGRESS (claimed <date>, work-N/session)` and pushing it the moment I took the task would have prevented the whole collision.
+
+The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
