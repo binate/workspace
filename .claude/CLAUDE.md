@@ -323,6 +323,14 @@ tie together the approval rule above and the resync/hygiene sections below.
 procedures (no full test-suite runs) — because others may be waiting to land
 code too.
 
+0. **Preliminary: all nontrivial changes require at least a minimal
+   adversarial review** before asking for permission to land. Exceptions:
+   simple test changes, where the fact that the test passes (or fails)
+   suffices; minor updates to a change in response to a review (which implies
+   the change itself was already reviewed aside from some requested updates).
+   So — unless an exception applies — get a minimal adversarial review, THEN
+   ask for approval to land.
+
 1. **Get explicit approval to cherry-pick the commit** (per-instance, with
    the verbatim-quote checkpoint above). The commit should be *ready*, modulo
    any last-minute changes that might still be needed (e.g., renumbering a
