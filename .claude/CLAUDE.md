@@ -273,6 +273,18 @@ If user code creates a use-after-free (e.g., storing a temporary's raw slice in 
 
 Concretely: `consumeTemp` should only be used when ownership genuinely transfers (e.g., `var x @T = make(T)` — the variable owns it). It must NOT be used to "borrow" backing for raw slices — the temp stays in cleanup and gets RefDec'd at end of statement.
 
+**"NEVER leak" is absolute — a leak's rarity or trigger does NOT downgrade it.** Do
+NOT classify a genuine leak as "MINOR / degenerate trigger / acceptable for now,"
+and do NOT propose deferring one to v2/post-1.0 on those grounds. The severity of
+a *leak* is not up for negotiation: it must be root-caused and fixed. (This
+bit: a moved-arg-on-stack-overflow leak was framed as MINOR and a v2 deferral was
+floated — wrong. The correct response is to fix it, and if the fix reveals a
+broader gap — e.g. that recoverable stack-overflow is only checked at `pushFrame`
+while most `vm.SP` temp-growth points are unchecked and would SILENTLY CORRUPT on
+overflow — fix that properly too; silent memory corruption is worse than a leak,
+never a reason to defer either.) When a fix looks big, surface the *scope* for a
+decision on HOW/WHEN — never propose tolerating the leak itself.
+
 ### Git
 
 Since the repos are sibling directories (not a monorepo), use `git -C <path>` rather than `cd <path> && git ...`. For example: `git -C bootstrap status`, `git -C explorations push`.
