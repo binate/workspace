@@ -16,3 +16,6 @@
 [submodule "examples"]
 	path = examples
 	url = https://github.com/binate/examples.git
+[submodule "benchmarks"]
+	path = benchmarks
+	url = https://github.com/binate/benchmarks.git
