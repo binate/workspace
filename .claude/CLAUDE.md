@@ -206,7 +206,7 @@ defect is strictly better than a green CI that hides one.
 
 ### Take Warnings Seriously
 
-Take warnings seriously, and take action on them as soon as convenient. In all cases, don't make things even worse. For example, for file lengths, do not make files above the soft limit (length warning) even longer; instead, take time to split them properly (try to avoid putting them above the soft limit in the first place, but if you do then an immediate follow-up should be to split the file). That is, warnings give you time to act and are not meant to be ignored.
+Take warnings seriously, and take action on them as soon as convenient. In all cases, don't make things even worse — a warning is a signal to act, not to ignore. For file lengths specifically, the check is a hard cap with no warn/grace band: a `.bn` over 500 lines, or a `.bni` over 1500, fails immediately on the first offender. There is no warning window to lean on, so keep files well under the cap and split a growing file along natural boundaries before it gets close — do not add to a file that is already near the limit (one sitting right at the cap reds the tree the moment another line lands).
 
 ### Comments Stand Alone
 
