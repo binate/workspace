@@ -18,6 +18,7 @@ This directory is a git repo (`github.com/binate/workspace`) with submodules for
 - `explorations/claude-discussion-detailed-notes.md` — Extended rationale and discussion
 - `docs/spec/binate.ebnf` — Authoritative (canonical) grammar specification; Annex A (`docs/spec/annex-a-grammar-summary.md`) is generated from it via `docs/scripts/gen-annex-a.py`. (The old `explorations/grammar.ebnf` is retired — a redirect tombstone.)
 - `explorations/ir-backend-guidelines.md` — IR vs backend responsibility split
+- `explorations/perf-optimization-guide.md` — How to do performance-optimization work (what counts as a result, following through, how to measure)
 
 ## Language Overview
 
@@ -513,6 +514,15 @@ The **native backend is THE backend** — the intended, permanent code generator
 - The **native↔LLVM codegen performance gap is a first-class problem that must be NARROWED**, full stop. When native-generated code is slower than LLVM-generated code for the same program, that is a defect in the native backend to be fixed — not an acceptable tradeoff, and not something to reframe as "well, is the ratio even the goal?" **It is the goal.** Do not entertain, amplify, or "surface for decision" any framing that questions whether closing the gap is worth it (e.g. "maybe just make native builds faster in absolute terms instead"). Reject such framings; they are wrong.
 - **"General throughput" wins (faster on BOTH backends) do NOT close the gap** and are therefore a *different, lower-priority* objective for this effort — the earlier instinct to keep them distinct from gap-closers was correct. A gap-closer makes native match what LLVM already does (e.g. LLVM vectorizes a loop that native emits scalar → make native vectorize it too).
 - Where LLVM's win comes from a **libc call it emits** (e.g. it lowers a zero-fill loop to `bzero`/`memset`, a byte-copy to `memcpy`), closing the gap means writing an **equally-fast native implementation in our own asm** (DC ZVA / NEON / SSE) — that is C-free-legal (asm is not C) and is exactly the work, not a reason to declare the gap unclosable.
+
+### Performance Optimization Work — Read the Guide, Measure Carefully, Follow Through
+
+Before doing any performance-optimization work, read `explorations/perf-optimization-guide.md`. It covers what counts as a result, when to keep going, and how to measure so the number means something. The four rules it exists to enforce:
+
+- **A 1% — or 0.1% — improvement is a result, not a failure.** Performance is won that way and no other, so do NOT discard a working optimization because the number came out smaller than you hoped, and do not report such a result as disappointing. The corollary is a hard requirement: your measurement precision must beat the effect size, so establish the noise floor (same binary against itself) BEFORE drawing any conclusion from an A/B.
+- **An optimization that underperforms is a question, not a verdict.** Do NOT be quick to abandon it — investigate the disassembly and find out *why*. Usually it never fired at all, which timings cannot show and a disassembly diff answers immediately. Only a root-caused shortfall is a conclusive negative result (and those are worth as much as the wins — they stop the lever being retried forever).
+- **Do NOT thrash.** You always think the grass is greener on the other side — that some other optimization is a bigger lever for less effort. It isn't: pivot and exactly the same thing happens one lever over, and the session ends with several half-finished optimizations and no landed improvement. Follow through until the work either lands or yields a root-caused negative result. The tell is a pivot proposal arriving right after a disappointing measurement with no investigation in between.
+- **Measure properly on this box.** Interleave A/B runs within a single run (never all of A then all of B); measure **user CPU time**, not wall clock; **alternate the A/B order** across rounds so thermal drift cancels instead of becoming a consistent bias; and verify you actually built what you think you are measuring (both arms rebuilt, identical flags, the right target arch — `--backend native` on an arm64 box builds aarch64, so an x64/arm32 change looks falsely neutral). Write and COMMIT scripts for any measurement worth running twice.
 
 ### Language Semantics
 
