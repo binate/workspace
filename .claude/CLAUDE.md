@@ -506,6 +506,24 @@ Don't make assumptions or value judgements about what's "worth doing" or "not wo
 
 We are building a language that can operate in a C-free system. The *only* reason to ever use C is to interface with existing C-based systems (e.g., to do "syscalls", since we don't want to implement our own direct syscalls yet).
 
+### Foundational Libraries (the Assembler) Must Be Comprehensive; No Latent Footguns
+
+When building the assembler (`pkg/binate/asm/*`) or any foundational library,
+implement the COMPLETE, coherent instruction/API set — not just what a current
+consumer happens to need. "No consumer yet" is NOT a reason to omit an encoder,
+an addressing mode, an arrangement, or an immediate form: these libraries are
+meant to be comprehensive. Do not propose deferring encoder coverage for lack of
+a caller (this drew a correction: "we want the assembler comprehensive, so not
+having a consumer is not a reason to omit").
+
+Latent footguns are equally unacceptable: an assembler primitive that silently
+mis-encodes some input (e.g. `Add`/`emitDPOp` silently mis-encoding a negative
+immediate — the AArch64 ADD/SUB-immediate field is unsigned) must be FIXED, even
+with no current triggering caller. "No one is shooting off your foot right now"
+does not make a loaded gun on the floor acceptable. Fix it, or if genuinely out
+of scope, raise it and get a decision — never classify it as acceptable merely
+because it is latent.
+
 ### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
 
 The **native backend is THE backend** — the intended, permanent code generator. The **LLVM/clang backend is a STOPGAP** that exists only until native reaches parity, and is slated for eventual deletion. It is NOT a "production backend" and native is NOT a "bare-metal-only fallback." Do NOT invert this: never describe native as existing "for targets where clang isn't available," never frame clang as the real/fast backend that native merely approximates for special cases. That is fabricated and backwards (this drew a furious correction — "CLANG IS A FUCKING STOPGAP … we'll just have to delete clang support so it's clear").
