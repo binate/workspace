@@ -245,6 +245,8 @@ The one nuance is larger, multi-step todos: keep only the still-open steps in th
 
 Work deliberately deferred past the current milestone goes in `explorations/claude-todo-v2.md` (v2 / post-1.0), not the active todo file — keep the active todo focused on the current milestone.
 
+**When removing an entry by position (scripted edit), end the cut at the next heading of ANY level, and check the diff before committing.** This has bitten: a script that cut an entry "up to the next `### `" also swept away the `## Performance` section header and its how-to-measure intro that sat between the entry and the next `###` — pushed, and only noticed several commits later. Stop at the first line starting with `#` of any level, then read `git diff` to confirm only the intended entry is gone.
+
 ### Claim a Todo Before Working It — Mark It In-Progress and Push FIRST
 
 Before starting work on ANY todo entry — whether you're picking one up, the user assigns you one, or you just raised one and the user says "fix it now" — **mark that entry claimed/in-progress in `explorations/claude-todo.md` and commit+push it BEFORE writing any fix code.** `explorations/` is a shared checkout across concurrent worker sessions, and an unclaimed OPEN entry is an open invitation for another session to grab the same bug. The claim is the ONLY signal other sessions have that you're on it.
