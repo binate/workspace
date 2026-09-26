@@ -524,6 +524,20 @@ does not make a loaded gun on the floor acceptable. Fix it, or if genuinely out
 of scope, raise it and get a decision — never classify it as acceptable merely
 because it is latent.
 
+**Making an encoder fail loud can break a caller that relied on its silent
+behavior — audit for RELIANCE, not just for out-of-range callers.** This has
+bitten: the arm32 Operand2 encoder was changed to reject immediates outside the
+32-bit range instead of silently keeping the low 32 bits; native
+`emitConstInt32` fed `IntVal` straight into `Mov(Imm(val))` and depended on that
+truncation (IR-gen hands it an int-typed constant wider than 32 bits), so every
+native arm32 program failed to build. The implementer had flagged exactly this
+dependency in an open question, and it was not resolved before the change went
+to review. When tightening a foundational primitive: grep its backend callers
+for any that pass values whose meaning depends on the old truncate/mask/drop
+behavior, move that intent into the caller explicitly, treat any implementer or
+reviewer open question about such a dependency as a blocker for the same change,
+and run that arch's native conformance before calling the change done.
+
 ### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
 
 The **native backend is THE backend** — the intended, permanent code generator. The **LLVM/clang backend is a STOPGAP** that exists only until native reaches parity, and is slated for eventual deletion. It is NOT a "production backend" and native is NOT a "bare-metal-only fallback." Do NOT invert this: never describe native as existing "for targets where clang isn't available," never frame clang as the real/fast backend that native merely approximates for special cases. That is fabricated and backwards (this drew a furious correction — "CLANG IS A FUCKING STOPGAP … we'll just have to delete clang support so it's clear").
