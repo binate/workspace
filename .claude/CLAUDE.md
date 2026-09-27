@@ -318,6 +318,10 @@ Each submodule is an independent repo, pushed on its own — that push is the so
 
 Do NOT use `git stash` — it constantly leads to lost work. Instead, create a temporary branch and commit your changes there.
 
+### Don't Leave Backup Branches Behind
+
+Work on your assigned branch (e.g. `work-2`); a rebase, squash or reword does not need a backup branch, because the reflog (`git reflog work-2`) already keeps the pre-rewrite commits. If you do make a branch to save work, delete it the moment its content lands or is superseded. This has bitten: nine `work-2-prerebase*` / `-presquash*` / `-prereword*` snapshots of one landed batch (plus a stale `-perop-checkpoint` from an earlier session) piled up in the shared repo, where every session's `git branch` shows them as garbage.
+
 ### Stay Close to Main
 
 When working in a branch (as one typically does), work as close to upstream (main) as possible. Typically, this entails frequent resynching/rebasing, working with small commits that are cherry-picked to main as soon as possible. (This also means that you should structure work so that each commit is self-contained and keeps everything green.)
