@@ -160,6 +160,21 @@ This has bitten: the `binate-paths` adoption sweep inventoried only `scripts/` +
 
 The same trap applies to the **grep pattern itself**, not just the directory set: a repo-wide grep still undercounts if the regex is too narrow to match every spelling of the target. This has bitten: the old-mangling-scheme comment sweep grepped `bn_[a-z]` (catching concrete folded names like `bn_pkg__X`) but missed the *placeholder* spelling `bn_<pkg>__<name>` (which starts `bn_<`, not a lowercase letter), so the first pass silently covered only ~half the sites. Defenses: enumerate with a deliberately **over-broad** pattern and triage down (false positives are cheap; misses are silent); cross-check with a second independent pattern; and treat any "same defect, but outside the list I was handed" flag from a reviewer/subagent as proof the original pattern was incomplete — re-enumerate, don't just patch the one flagged site.
 
+### Be Efficient — Time, Machine Resources, and Tokens
+
+Consider the time and resource efficiency of your actions. E.g., full
+conformance and unit-test runs are usually overkill, even more so across
+multiple architectures or configurations — run tests locally in a **targeted**
+way (the changed packages' unit tests, the relevant conformance subset, the
+relevant e2e), and rely on **CI** for comprehensive coverage; trying to run
+everything locally wastes time and machine resources.
+
+Relatedly, consider **token usage and efficiency**: running lots of
+subagents/subworkflows is typically less efficient than running a few; tokens
+are a precious resource and should be used efficiently (see the batching and
+concurrency rules below). Before fanning work out or launching a long run, ask
+whether a narrower action gets the same answer.
+
 ### Subagent Use: Batch the Work, Cap the Concurrency
 
 Subagents (and workflows) cost tokens, and the user is subject to **session and weekly token limits**. Be mindful of token usage and efficiency whenever you fan work out.
