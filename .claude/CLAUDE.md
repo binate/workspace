@@ -590,6 +590,18 @@ Don't make shit up about the Binate language. If something is unknown, the **spe
 
 When the spec is genuinely ambiguous or silent, the discussion docs (`explorations/claude-notes.md`, `explorations/claude-discussion-detailed-notes.md`, and the other `explorations/` design docs) are references for **intent** — use them to understand *why* a decision was made and where the language is headed. If a question remains after consulting the spec and the discussion docs, **discuss it with the user** rather than inventing an answer or silently picking one. State plainly when you don't know; a checked "I looked and the spec says X" or an honest "the spec doesn't cover this — here's what the notes suggest, what do you want?" both beat a confident fabrication. (See also **Never Fabricate Language** in memory: don't state Binate behavior as fact without checking.)
 
+### Binate Slices Are Views — No Capacity, So `Append` Can Never Be Amortized
+
+A Binate slice (raw `*[]T` or managed `@[]T`) is a **view**: a pointer and a length (a managed-slice's
+extra words reference and reference-count its backing allocation — spec §7.6 — they are not a capacity).
+Binate slices are NOT Go slices: there is no capacity and no in-place growth.  `slices.Append` allocates `len+1` and copies on every call — O(n) per
+call, inherently — so a loop that builds a list with it is O(n²), and the fix is ALWAYS to build the list
+with `std/containers/vec` (amortized `Push`), never "make `Append` amortized".  This has bitten: a plan
+doc listed "fix per site or make Append amortized" as a pending library decision, and I relayed it to the
+user as a live option after the user had already said it is impossible ("Append CAN'T FUCKING BE
+AMORTIZED, because Binate slices ARE NOT FUCKING GO SLICES").  Before relaying an option from a doc,
+check it against the language; a doc's "open decision" can be one the user already settled.
+
 ### The Compiler Emits NO Warnings; "Unused X" Is a Lint, Never a Compiler Diagnostic
 
 Binate's compiler (`bnc`) does **not** emit warnings, and does **not** emit errors for "unused" anything (unused local, unused import, unused private func/global/type, write-only local, …). Unused-entity detection is a **lint concern** — it belongs in `bnlint` (`pkg/binate/lint/`), which only runs when explicitly invoked (hygiene / CI), never on every compile.
