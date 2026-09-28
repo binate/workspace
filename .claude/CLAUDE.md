@@ -405,6 +405,17 @@ code too.
    there are gaps, prepare the follow-up commit, then seek approval and get it
    landed sooner rather than later (don't let coverage debt accumulate).
 
+**An urgent fix follows the same order — never cherry-pick first and check after
+(this HAS bitten).** Asked to land a one-line fix for a test I had broken on main,
+I cherry-picked it straight onto local main and THEN ran hygiene inside the main
+checkout — leaving local main ahead of origin (and me running tooling in the shared
+checkout) for minutes.  The user: "You're not fucking supposed to land stuff on
+local main and then fucking run hygiene checks."  Urgency changes nothing: put the
+fix alone on the worktree branch rebased onto current local main (reorder it below
+any unlanded work), run hygiene IN THE WORKTREE on exactly that commit, then
+cherry-pick and push back-to-back.  Local main is only ever touched by the
+cherry-pick immediately followed by the push.
+
 ### Resyncing a Worktree
 
 When told to "resync your worktree" (for the binate repo), rebase against the **local** `main` branch (checked out in `~/binate/binate`), not `origin/main`. The local main may be ahead of origin. Command form:
