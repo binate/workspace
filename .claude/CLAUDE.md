@@ -590,6 +590,20 @@ Don't make shit up about the Binate language. If something is unknown, the **spe
 
 When the spec is genuinely ambiguous or silent, the discussion docs (`explorations/claude-notes.md`, `explorations/claude-discussion-detailed-notes.md`, and the other `explorations/` design docs) are references for **intent** — use them to understand *why* a decision was made and where the language is headed. If a question remains after consulting the spec and the discussion docs, **discuss it with the user** rather than inventing an answer or silently picking one. State plainly when you don't know; a checked "I looked and the spec says X" or an honest "the spec doesn't cover this — here's what the notes suggest, what do you want?" both beat a confident fabrication. (See also **Never Fabricate Language** in memory: don't state Binate behavior as fact without checking.)
 
+### Never Recommend a Go Rule Without Checking It Against Binate's Own Principles
+
+A proposal that is "Go's rule" is not a recommendation — Binate is not Go.  Before recommending any
+language rule (mine or a reviewer's/subagent's), check it against Binate's own principles, and never
+present Go's behavior as the default answer.  This has bitten: for operators on TYPED constants I
+recommended Go's "exact result must fit the type" (so `cast(uint8, 200) + cast(uint8, 100)` would be a
+compile error) — relaying an adversarial reviewer's Go-derived proposal — when it makes `x + y` behave
+differently depending on whether `x` is a typed variable or a typed constant, which is obvious nonsense
+("Binate is NOT FUCKING Go.  That is a bullshit recommendation and calls into question everything you
+say").  The Binate principle: an operation on typed operands is defined by the TYPE — a typed constant
+behaves exactly like a value of that type (wraps, `~` at its width, …); only UNTYPED constants are exact.
+A subagent's recommendation is input to weigh, not an answer to pass on; when it cites Go, that is a
+reason for more scrutiny, not less.
+
 ### Binate Slices Are Views — No Capacity, So `Append` Can Never Be Amortized
 
 A Binate slice (raw `*[]T` or managed `@[]T`) is a **view**: a pointer and a length (a managed-slice's
