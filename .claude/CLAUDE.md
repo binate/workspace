@@ -455,6 +455,15 @@ Instead of directly grepping (etc.) the output of commands — especially ones t
 
 Example: `go run ... --test pkg/foo 2>&1 | tee /tmp/test_foo.out | tail -5` then `grep FAIL /tmp/test_foo.out`.
 
+### Test a Partial Revert IN the Worktree — Never Copy the Source Tree to Scratch
+
+To check that a test covers one piece of a multi-part fix (or to build any variant of the tree), do it in
+your worktree: commit the fix, overwrite just the file/hunk with its pre-fix version (`git -C <wt> show
+HEAD~1:<path> > <path>`), build, test, then restore it (`git -C <wt> checkout -- <path>`).  Do NOT export
+or copy the tree into a scratch directory to build a variant — this has bitten (a `git ls-files | tar`
+copy of the whole tree into the scratchpad to build a partial-revert gen1), and scratch tree copies are
+already ruled out; the in-worktree revert costs the same one build and leaves nothing behind.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
