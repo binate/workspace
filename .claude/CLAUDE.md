@@ -444,6 +444,17 @@ that is a signal to look at the full output, not to assume success. The same
 applies before claiming a commit is landable: "I ran hygiene" is not "hygiene
 passed" unless you actually read the overall result.
 
+**Hygiene's lint does NOT exercise this tree's checker.** `scripts/hygiene/lint.sh`
+runs the pinned CHECK_TOOLS bnlint by default (only `--from-source` builds bnlint
+from the tree), so a green hygiene run says nothing about whether the tree still
+type-checks under a checker change you just made.  This has bitten: after
+tightening `types.Identical`, I told the user "hygiene passes; its lint step
+type-checks the whole tree under the new rule" — false.  To validate a checker
+change against the tree, use what the tree's checker actually compiles: the
+changed packages' unit tests, a `build-bnc.sh` / `build-bni.sh` build (stage 2 is
+compiled by gen1, which carries the new checker), `lint.sh --from-source`, and a
+targeted conformance subset.
+
 ### Re-Run Hygiene After the Landing Rebase — Never Skip It on "Identical Content"
 
 The landing procedure is: rebase → **check hygiene** → quick smoke → cherry-pick → push → resync. The hygiene step after the rebase is NOT optional, and "my own files didn't change in the rebase, so hygiene is still green" is a FALSE shortcut. Hygiene checks **global, cross-file invariants** — unique conformance test numbers (`conformance-test-numbers`), version-sync, file-length, etc. — that another worker's just-rebased-in commit can violate even though your files are byte-identical. The classic failure (this has bitten): you pick `conformance/606_foo` when 606 is free; a concurrent worker lands `606_bar`; you rebase (no git conflict — different filenames), skip hygiene because "606_foo is unchanged," and land a DUPLICATE-number collision that `conformance-test-numbers` would have caught instantly. A smoke test does NOT catch this — it *runs* the tests (they pass) but never checks numbering/version/length invariants. So: after every landing rebase that pulls in any other commit, run `scripts/hygiene/run.sh` (it's fast — seconds) before cherry-picking. This is distinct from the "no slow test suites during landing" rule: hygiene is not a test suite.
