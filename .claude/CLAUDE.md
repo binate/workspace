@@ -296,6 +296,8 @@ If user code creates a use-after-free (e.g., storing a temporary's raw slice in 
 
 Concretely: `consumeTemp` should only be used when ownership genuinely transfers (e.g., `var x @T = make(T)` — the variable owns it). It must NOT be used to "borrow" backing for raw slices — the temp stays in cleanup and gets RefDec'd at end of statement.
 
+**Never propose hidden RefInc/RefDec to make a pattern "safe".** Refcount operations are determined by the source (copies acquire, destroys release); the compiler does not insert extra acquire/release pairs to keep something alive that the program's own references don't. This has bitten: `f(s, g())` where `g` reassigns `s` frees the borrowed `s` mid-expression, and I recommended having the compiler take a reference whenever a later operand contains a call — a hidden RefInc/RefDec that is also needlessly expensive most of the time (the later call usually doesn't touch the earlier value). The user: "That's a hidden refinc/refdec, which we don't like. Remember that Binate IS NOT FUCKING GO. STOP TRYING TO FUCKING MAKE IT SO." The Binate answer to such a pattern is to spec it as undefined behavior (user error), possibly with a `bnlint` check — not to buy Go-style safety with invisible runtime cost.
+
 **"NEVER leak" is absolute — a leak's rarity or trigger does NOT downgrade it.** Do
 NOT classify a genuine leak as "MINOR / degenerate trigger / acceptable for now,"
 and do NOT propose deferring one to v2/post-1.0 on those grounds. The severity of
