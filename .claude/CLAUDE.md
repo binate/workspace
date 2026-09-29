@@ -506,6 +506,15 @@ or copy the tree into a scratch directory to build a variant — this has bitten
 copy of the whole tree into the scratchpad to build a partial-revert gen1), and scratch tree copies are
 already ruled out; the in-worktree revert costs the same one build and leaves nothing behind.
 
+### Rebuild Tools From the Current Tree — a Stale Scratch Build Can Silently Corrupt Files
+
+Build `bnfmt` (and any other tool you run over source) from the tree you are working on
+(`scripts/build-bnfmt.sh -o <scratch path>`) when you start using it, and rebuild it after a resync
+rather than reusing a copy from an earlier day.  This has bitten: a day-old scratch `bnfmt` silently
+replaced every `defer` statement with a blank line under `-w`; it surfaced only because a new test's
+deferred output went missing (the current `bnfmt` keeps them).  A formatter that drops a statement
+turns a green test red at best, and at worst deletes code nobody notices.
+
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
