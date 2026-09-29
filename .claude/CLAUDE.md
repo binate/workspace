@@ -378,6 +378,16 @@ code too.
    So — unless an exception applies — get a minimal adversarial review, THEN
    ask for approval to land.
 
+   **Also run `scripts/hygiene/run.sh` on the EXACT commit you are about to ask
+   to land — and see it pass — BEFORE asking.** A commit that fails hygiene is
+   not ready, and asking for approval on it wastes the approval (this has
+   bitten: a commit with over-length / unformatted new files was put up for
+   landing, its hygiene failed only during the landing step, and the user had
+   to cancel and re-approve).  When the commit sits under other work on the
+   branch, check it out detached (`git -C <wt> checkout --detach <commit>`),
+   run hygiene there, and return to the branch.  Step 3's post-rebase hygiene
+   run is IN ADDITION to this, not instead of it.
+
 1. **Get explicit approval to cherry-pick the commit** (per-instance, with
    the verbatim-quote checkpoint above). The commit should be *ready*, modulo
    any last-minute changes that might still be needed (e.g., renumbering a
