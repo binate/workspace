@@ -477,6 +477,15 @@ or copy the tree into a scratch directory to build a variant — this has bitten
 copy of the whole tree into the scratchpad to build a partial-revert gen1), and scratch tree copies are
 already ruled out; the in-worktree revert costs the same one build and leaves nothing behind.
 
+### Never Switch a Worktree While a Background Run Uses It
+
+A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
+whole duration, not just when it builds its compiler.  Switching, rebasing or checking out the worktree
+mid-run (to bisect, to test a revert) silently mixes two trees.  This has bitten: a detached-HEAD bisect of
+an unrelated failure, run while a full `builder-comp` conformance run was in progress, produced ~100
+spurious multi-package failures (the older commit's stdlib failed the newer compiler's checks), and the run
+had to be redone.  Stop or finish the background run first, then switch.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
