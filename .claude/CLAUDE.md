@@ -171,7 +171,12 @@ conformance and unit-test runs are usually overkill, even more so across
 multiple architectures or configurations — run tests locally in a **targeted**
 way (the changed packages' unit tests, the relevant conformance subset, the
 relevant e2e), and rely on **CI** for comprehensive coverage; trying to run
-everything locally wastes time and machine resources.
+everything locally wastes time and machine resources.  "The change touches a
+shared path" does not make a full run the default: this has bitten — every
+commit in a series got full conformance on native aa64 AND LLVM plus subsets
+on three more backends, and the user called it "a bit of overkill".  Validate
+with the subsets the change can affect, on each backend it reaches; a full run
+is for when the user asks, and then on one mode.
 
 Relatedly, consider **token usage and efficiency**: running lots of
 subagents/subworkflows is typically less efficient than running a few; tokens
