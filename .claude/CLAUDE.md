@@ -536,6 +536,13 @@ an unrelated failure, run while a full `builder-comp` conformance run was in pro
 spurious multi-package failures (the older commit's stdlib failed the newer compiler's checks), and the run
 had to be redone.  Stop or finish the background run first, then switch.
 
+**Editing files in the worktree mid-run mixes trees the same way** — and it is the easier slip, because
+it feels like "just the next piece of work."  This has bitten twice in one session: a review came back
+while a validation run (unit tests, conformance subsets, hygiene) was still going, and the review-driven
+edits landed in the tree under the run's later steps, so those results no longer described any one commit
+and the run had to be stopped and redone.  While a background run uses the worktree, only READ it; draft
+changes in the scratchpad or wait for the run's completion notice before editing.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
