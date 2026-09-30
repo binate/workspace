@@ -562,6 +562,10 @@ while a validation run (unit tests, conformance subsets, hygiene) was still goin
 edits landed in the tree under the run's later steps, so those results no longer described any one commit
 and the run had to be stopped and redone.  While a background run uses the worktree, only READ it; draft
 changes in the scratchpad or wait for the run's completion notice before editing.
+It bit a third time right after this rule was written, in the same way: the review report is the
+trigger, so make the check at that moment — when an agent's report (or any notification) arrives, first
+ask "is a run I started on this worktree still going (no completion notice yet)?"; if so, answer or plan
+in text, and make no edit until the notice arrives.
 
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
