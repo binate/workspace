@@ -324,6 +324,18 @@ Each submodule is an independent repo, pushed on its own — that push is the so
 
 Do NOT use `git stash` — it constantly leads to lost work. Instead, create a temporary branch and commit your changes there.
 
+### A Scripted Reorder Takes Its Upstream From Current Main, Never a Remembered Hash
+
+To reorder unlanded commits non-interactively (`GIT_SEQUENCE_EDITOR=<sed script> git rebase -i <upstream>`),
+pass the CURRENT fetched local main (`FETCH_HEAD` right after `git fetch ~/binate/binate main`, or `git
+merge-base HEAD FETCH_HEAD`) as `<upstream>`, and print the todo list's commits (`git log --oneline
+<upstream>..HEAD`) before running it.  This has bitten: I passed a hash from before my last landing, so the
+todo list also held a commit already on main, and the position-based sed moved THAT commit to the top of the
+branch — rewriting a landed commit into a new one.  It was recoverable only because the tree was clean and the
+pre-rebase head was in the reflog (`git reset --hard <old head>`, then redo the reorder on the right base); a
+sed script that picks commits by position silently does the wrong thing when the list is not the one you
+expected.  After any scripted rebase, `git diff <pre-rebase head> HEAD` must be empty when you only reordered.
+
 ### Don't Leave Backup Branches Behind
 
 Work on your assigned branch (e.g. `work-2`); a rebase, squash or reword does not need a backup branch, because the reflog (`git reflog work-2`) already keeps the pre-rewrite commits. If you do make a branch to save work, delete it the moment its content lands or is superseded. This has bitten: nine `work-2-prerebase*` / `-presquash*` / `-prereword*` snapshots of one landed batch (plus a stale `-perop-checkpoint` from an earlier session) piled up in the shared repo, where every session's `git branch` shows them as garbage.
