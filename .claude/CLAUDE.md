@@ -539,7 +539,10 @@ whole duration, not just when it builds its compiler.  Switching, rebasing or ch
 mid-run (to bisect, to test a revert) silently mixes two trees.  This has bitten: a detached-HEAD bisect of
 an unrelated failure, run while a full `builder-comp` conformance run was in progress, produced ~100
 spurious multi-package failures (the older commit's stdlib failed the newer compiler's checks), and the run
-had to be redone.  Stop or finish the background run first, then switch.
+had to be redone.  Stop or finish the background run first, then switch.  Editing a file the run reads is the
+same mistake in smaller form: extending a conformance test with cases the running compiler predates (to test
+a follow-up fix) made that test fail in a full native run, whose result then had to be read around.  Write
+new cases into scratch copies, or edit the tree only after the run has finished.
 
 **Editing files in the worktree mid-run mixes trees the same way** — and it is the easier slip, because
 it feels like "just the next piece of work."  This has bitten twice in one session: a review came back
