@@ -591,6 +591,14 @@ own the timing; do not frame "cut a BUILDER" as the obvious next step.
 
 `ditty` (https://github.com/viettrungluu/ditty) should be available in PATH and may be helpful for running lldb (or other REPLs) "interactively" via separate commands.
 
+**Run tree tools (`bnfmt` etc.) from a CURRENT build — never a stale scratch binary.** A tool that
+rewrites files (`bnfmt -w`) silently corrupts them if it predates a language feature or carries a
+since-fixed bug.  This has bitten: an old scratch `bnfmt` build, reused across a whole session, deleted
+every `defer` statement in a file it formatted (a `defer os.RemoveAll(dir)` vanished from a test; the
+tree's current `bnfmt` keeps it) — caught only by review.  Rebuild with `scripts/build-bnfmt.sh -o <path>`
+at the start of a task (and after a resync that touches `pkg/binate/fmt` or the parser), and read the diff
+of every file a formatter rewrote.
+
 ### Decision-Making
 
 Don't make assumptions or value judgements about what's "worth doing" or "not worth the trouble." When unsure whether to do something (e.g., split a test file, refactor a helper, change an approach), ask the user instead of deciding unilaterally.
