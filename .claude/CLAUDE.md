@@ -470,7 +470,12 @@ is green ONLY if you have SEEN the `=== N hygiene check(s) passed ===` line (or
 confirmed zero `FAIL:` lines). If your grep returns fewer lines than you expect,
 that is a signal to look at the full output, not to assume success. The same
 applies before claiming a commit is landable: "I ran hygiene" is not "hygiene
-passed" unless you actually read the overall result.
+passed" unless you actually read the overall result.  **Never chain a commit
+after a filtered hygiene run** (`hygiene/run.sh | grep … && git commit …`): the
+`&&` tests grep's exit status — which succeeds whenever it prints the FAIL line
+— so the commit runs on a red tree.  This has bitten (a file-length failure
+was amended into a commit).  Run hygiene, read its overall line, then commit in
+a separate command.
 
 **Hygiene's lint does NOT exercise this tree's checker.** `scripts/hygiene/lint.sh`
 runs the pinned CHECK_TOOLS bnlint by default (only `--from-source` builds bnlint
