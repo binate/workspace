@@ -596,6 +596,10 @@ It bit a third time right after this rule was written, in the same way: the revi
 trigger, so make the check at that moment — when an agent's report (or any notification) arrives, first
 ask "is a run I started on this worktree still going (no completion notice yet)?"; if so, answer or plan
 in text, and make no edit until the notice arrives.
+It bit a fourth time (2026-10-01): a review of the commit being validated came back mid-run, its fixes were
+applied, and only then was the run stopped.  When you act on a review of the commit a run is validating, the
+fixes invalidate that run anyway — so make stopping it (TaskStop) the FIRST action, before the first edit,
+and start a fresh run on the new commit afterwards.
 
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
