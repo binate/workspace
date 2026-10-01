@@ -450,8 +450,8 @@ code too.
    there are gaps, prepare the follow-up commit, then seek approval and get it
    landed sooner rather than later (don't let coverage debt accumulate).
 
-**Landing has a hard budget: AT MOST 6 MINUTES from "land it" to the push — and NO conformance
-run of any kind (this HAS bitten, badly).**  After an approval to land I ran a "quick smoke" of five
+**Landing has a hard budget: aim for 3 MINUTES from "land it" to the push, 6 minutes at the very
+outside — and NO conformance run of any kind (this HAS bitten, badly).**  After an approval to land I ran a "quick smoke" of five
 conformance tests in two modes; each mode rebuilds gen1, so it ran past the 600 s tool timeout and blew
 the landing window, and the user pulled the landing ("You've been kicked to the back of the fucking
 queue, because you don't fucking know the fucking meaning of quick").  Everything that needs a compiler
