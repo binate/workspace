@@ -435,6 +435,8 @@ Instead of directly grepping (etc.) the output of commands — especially ones t
 
 Example: `go run ... --test pkg/foo 2>&1 | tee /tmp/test_foo.out | tail -5` then `grep FAIL /tmp/test_foo.out`.
 
+**Never wait on a process with `pgrep -f <pattern>` (or kill with `pkill -f`) from a shell whose own command line contains that pattern** — the pattern matches the waiting shell itself, so `while pgrep -f "x"; do sleep 2; done` never exits (and `pkill -f` kills your own shell). This has bitten during a time-boxed landing: a `while pgrep -f "hygiene/run.sh"` wait loop spun for 10+ minutes after hygiene had already finished, blowing the landing time limit. Wait on a specific PID (`wait $pid` for a child, or `kill -0 $pid`), or poll for the job's output file instead.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
