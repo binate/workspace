@@ -619,6 +619,19 @@ applied, and only then was the run stopped.  When you act on a review of the com
 fixes invalidate that run anyway — so make stopping it (TaskStop) the FIRST action, before the first edit,
 and start a fresh run on the new commit afterwards.
 
+### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
+
+A guard that skips some inputs (`if len(files) == 0 { return }`) may encode a case you cannot see from the
+callers.  This has bitten: a new checker rule ("a `.bni` var the `.bn` files never define is an error")
+skipped packages loaded with no `.bn` files; a review called that an untested gap, I reasoned "every caller
+passes the loader's file list, so no files means an all-`.bni` package" and removed the skip — but the
+loader also has an interface-only mode (an interpreter's injected / compiled-in package, read from its
+`.bni` alone), so every VM run that imported `pkg/std/errors` failed.  My re-validation ran only LLVM
+conformance and lint, which never load a package that way; the VM subset caught it later.  Before dropping
+or narrowing a guard, find the producers of the case it skips (here: who hands the checker an empty file
+list — `grep` the loader for modes, not just the call sites), and validate a checker change on the VM mode
+(`builder-comp-int`) as well as the compiled ones: the interpreter loads packages differently.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
