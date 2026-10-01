@@ -540,6 +540,17 @@ The landing procedure is: rebase → **check hygiene** → quick smoke → cherr
 
 **The same holds for the hash you QUOTE when asking for approval: read it after the last amend, in its own command.**  This has bitten: after a conflicted landing rebase I printed the branch head, then amended the commit message (a function-name fix) in the same command, and asked the user to approve the pre-amend hash.  It was caught at the cherry-pick (the trees were identical, only the message differed), but an approval should name the commit that will actually land.
 
+### After Rebasing Onto a Rework of the Mechanism Your Change Relies On, Check Its Guarantee Directly
+
+A rebase whose upstream reworked the very mechanism your change hooks into (registration order, a pass you
+extend) can leave the change textually intact but inert — and the end-to-end tests may still pass through a
+fallback that never needed the guarantee.  This has bitten: the opaque-types change stamped an opaque export
+so its package emits a public `__dtor_X`; after rebasing onto an upstream pre-registration of named types,
+the drivers registered X before the stamping code ran, so nothing was stamped or emitted — yet conformance
+1480 stayed green, because its importer builds from source and drops X by its underlying, never calling
+`__dtor_X`.  It was reported ready; a review caught it.  After such a rebase, verify the property itself
+(here: the symbol is emitted, in the real driver order), not only tests that may not depend on it.
+
 ### Re-Verify a NEW xfail Against the Post-Rebase Base — a Concurrent Fix Can Make It Born-Stale
 
 When a commit you're landing **adds** an `.xfail.<mode>` marker (or marks a unit test expected-fail), the marker is only valid if the test *actually still fails on the base you cherry-pick onto*. The trap (this has bitten): you discover a failure on your starting base `A`, add an xfail, then the landing rebase moves you onto base `B` where a **concurrent worker already landed the fix** — so the test now PASSES, and you land a *born-stale* xfail (an XPASS). Hygiene does NOT catch this: the conformance runner **skips** xfail'd tests by default (no XPASS check in a normal run), and `conformance-test-numbers`/file-length/etc. don't run the test at all. A normal smoke run is silent too. So the discipline: **immediately before cherry-picking a commit that adds an xfail, re-run that one test on the post-rebase base** (`./conformance/run.sh <mode> <name>` — or temporarily remove the marker and confirm it still fails). If it now passes, a concurrent fix landed it — drop the xfail (and its todo entry) instead of landing the marker. The cost is one fast targeted run; the failure mode is a stale xfail sitting on main until someone's XPASS check goes red.
