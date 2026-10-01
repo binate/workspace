@@ -466,6 +466,13 @@ build — conformance, unit tests, repro builds — happens BEFORE asking for ap
 push: rebase → hygiene → base check → cherry-pick → push, nothing else.  A test-number collision found by
 hygiene is fixed with a rename and a re-run of hygiene, not a test run.
 
+**Extra checks go BEFORE asking for approval, never between the approval and the cherry-pick (this
+HAS bitten).**  Landing a checker change that rejects code which used to compile, I added a step after
+the approval — re-running the conformance tests other sessions had landed since my validation — botched
+its test selection twice, and the user cancelled the approval: "landing permission canceled; you're
+taking too long".  If a change warrants such a check, run it while preparing the commit (or name it when
+asking); once approved, do steps 2–7 and nothing else.
+
 **An urgent fix follows the same order — never cherry-pick first and check after
 (this HAS bitten).** Asked to land a one-line fix for a test I had broken on main,
 I cherry-picked it straight onto local main and THEN ran hygiene inside the main
