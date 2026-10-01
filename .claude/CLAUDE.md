@@ -450,6 +450,15 @@ code too.
    there are gaps, prepare the follow-up commit, then seek approval and get it
    landed sooner rather than later (don't let coverage debt accumulate).
 
+**Landing has a hard budget: AT MOST 6 MINUTES from "land it" to the push — and NO conformance
+run of any kind (this HAS bitten, badly).**  After an approval to land I ran a "quick smoke" of five
+conformance tests in two modes; each mode rebuilds gen1, so it ran past the 600 s tool timeout and blew
+the landing window, and the user pulled the landing ("You've been kicked to the back of the fucking
+queue, because you don't fucking know the fucking meaning of quick").  Everything that needs a compiler
+build — conformance, unit tests, repro builds — happens BEFORE asking for approval.  Between approval and
+push: rebase → hygiene → base check → cherry-pick → push, nothing else.  A test-number collision found by
+hygiene is fixed with a rename and a re-run of hygiene, not a test run.
+
 **An urgent fix follows the same order — never cherry-pick first and check after
 (this HAS bitten).** Asked to land a one-line fix for a test I had broken on main,
 I cherry-picked it straight onto local main and THEN ran hygiene inside the main
