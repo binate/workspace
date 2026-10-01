@@ -164,6 +164,13 @@ This has bitten: the `binate-paths` adoption sweep inventoried only `scripts/` +
 
 The same trap applies to the **grep pattern itself**, not just the directory set: a repo-wide grep still undercounts if the regex is too narrow to match every spelling of the target. This has bitten: the old-mangling-scheme comment sweep grepped `bn_[a-z]` (catching concrete folded names like `bn_pkg__X`) but missed the *placeholder* spelling `bn_<pkg>__<name>` (which starts `bn_<`, not a lowercase letter), so the first pass silently covered only ~half the sites. Defenses: enumerate with a deliberately **over-broad** pattern and triage down (false positives are cheap; misses are silent); cross-check with a second independent pattern; and treat any "same defect, but outside the list I was handed" flag from a reviewer/subagent as proof the original pattern was incomplete — re-enumerate, don't just patch the one flagged site.
 
+The same trap applies to the **file types** a grep covers: a `--include='*.bn'` sweep misses Binate source
+embedded in other files.  This has bitten: making `interp.RunFuncTyped` require a prior `Init`, I found the
+callers with a `*.bn`-only grep, updated `cmd/bnld` and the unit tests, and missed two e2e hosts
+(`e2e/injected-iface-runfunc.sh`, `e2e/runfunc-typed-forwarder.sh`) whose Binate programs live in shell
+heredocs — CI would have gone red; a reviewer caught it.  For an API change, grep the whole tree with no
+`--include` filter (`grep -rln 'Name(' --exclude-dir=.git .`) and triage the hits.
+
 ### Be Efficient — Time, Machine Resources, and Tokens
 
 Consider the time and resource efficiency of your actions. E.g., full
