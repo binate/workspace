@@ -747,6 +747,14 @@ behavior, move that intent into the caller explicitly, treat any implementer or
 reviewer open question about such a dependency as a blocker for the same change,
 and run that arch's native conformance before calling the change done.
 
+**Before calling a clang behaviour a quirk, rule out that a probe's names mean something
+else.**  This has bitten: aliases named `B2`, `B4`…`B7` made `b B2` fail in clang while `b B`
+worked, and I reported "clang rejects a branch to some alias forms" — but `b2`…`b7` are the
+SIMD byte registers, so clang (and our assembler) read `b B2` as a branch to a register.
+Name probe symbols so they cannot be registers, conditions, shifts or other keywords of
+the arch (`lbl`, `A`, `C`, not `B1`/`x3`/`eq`), and when one form fails and a near-identical
+one works, look for what differs in the names before blaming the assembler.
+
 ### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
 
 The **native backend is THE backend** — the intended, permanent code generator. The **LLVM/clang backend is a STOPGAP** that exists only until native reaches parity, and is slated for eventual deletion. It is NOT a "production backend" and native is NOT a "bare-metal-only fallback." Do NOT invert this: never describe native as existing "for targets where clang isn't available," never frame clang as the real/fast backend that native merely approximates for special cases. That is fabricated and backwards (this drew a furious correction — "CLANG IS A FUCKING STOPGAP … we'll just have to delete clang support so it's clear").
