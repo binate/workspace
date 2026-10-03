@@ -379,6 +379,8 @@ code too.
    work (mark the item done, note the commit, move it to the done log, etc.).
    Commit and push that doc change promptly (see the `explorations/`
    shared-checkout discipline above).
+**The landing time limit covers every step, including re-rebases (this HAS bitten).** When the user's approval comes with a time box ("finish landing within a few minutes, otherwise don't land and come back for permission again"), that box runs from the approval to the push. If main moves mid-landing and a re-rebase + re-hygiene would push past it, STOP and ask again — do not keep re-rebasing and re-checking on the old approval. This bit: hygiene + unit tests ran, `ls-remote` showed main had advanced, and the landing re-rebased, re-ran hygiene and pushed, well past the limit, instead of returning for permission. Track elapsed time from the approval; the moment main moves is the natural checkpoint to stop and ask.
+
 9. **Review the landed commit for test coverage** and address any gaps. If
    there are gaps, prepare the follow-up commit, then seek approval and get it
    landed sooner rather than later (don't let coverage debt accumulate).
