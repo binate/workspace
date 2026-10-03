@@ -618,6 +618,12 @@ It bit a fourth time (2026-10-01): a review of the commit being validated came b
 applied, and only then was the run stopped.  When you act on a review of the commit a run is validating, the
 fixes invalidate that run anyway — so make stopping it (TaskStop) the FIRST action, before the first edit,
 and start a fresh run on the new commit afterwards.
+It bit a fifth time (2026-10-02) in a new way: with the previous bug's validation still running, I
+started the NEXT bug — claimed it, investigated it, then split a file it touched — and the run's
+unit-test step built its compiler from that uncommitted split.  Investigation (reading, scratch builds,
+probes against a scratch compiler) is fine during a run; the first edit of the worktree is not, whatever
+task it belongs to.  In a self-driven batch, check for an outstanding run's completion notice before the
+first edit of every new bug.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
