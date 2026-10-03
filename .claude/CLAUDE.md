@@ -547,6 +547,15 @@ The landing procedure is: rebase → **check hygiene** → quick smoke → cherr
 
 **The same holds for the hash you QUOTE when asking for approval: read it after the last amend, in its own command.**  This has bitten: after a conflicted landing rebase I printed the branch head, then amended the commit message (a function-name fix) in the same command, and asked the user to approve the pre-amend hash.  It was caught at the cherry-pick (the trees were identical, only the message differed), but an approval should name the commit that will actually land.
 
+### Cite a Hash Only by Copying It From Git Output — Never Type One From Memory
+
+Every commit hash written into a commit message, a todo / done entry, a doc or a report must be copied
+from the output of a git command run for that purpose (`git log --oneline <range>`), not recalled or
+reconstructed.  This has bitten: a docs commit message, written while landing a batch, cited "binate
+2a0c9f9d0-era fix" for a change whose landed hash was `bf2b7972e` — a hash that exists nowhere — and it was
+pushed before the slip was noticed.  When a message needs landed hashes, list the landed range first and
+copy from that list; if a hash is not in front of you, describe the change by its subject instead.
+
 ### After Rebasing Onto a Rework of the Mechanism Your Change Relies On, Check Its Guarantee Directly
 
 A rebase whose upstream reworked the very mechanism your change hooks into (registration order, a pass you
