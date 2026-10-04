@@ -146,6 +146,15 @@ The reverse also bites — YOUR commit can sweep up ANOTHER session's uncommitte
 
 **Close the edit→commit window to one command — review BEFORE writing, not after (this HAS bitten).**  A scripted `claude-todo.md` edit, followed by two separate tool calls to inspect `git diff`, left the edit uncommitted for a minute; a concurrent session committed in that window, so its "claim" commit carried MY edits instead of its claim (and its claim marker was lost — I had to restore it).  Do the review up front (print the intended replacement text, dry-run the script), then run edit → `git diff --stat` → `add` → `commit` → `push` as ONE `&&`-chained command, so a failed edit stops the chain (never newline-separated — see the Git section) and nothing sits uncommitted between tool calls.  After committing, check the file for a concurrent session's change you may have clobbered (a read-modify-write script replaces the whole file). (This is distinct from binate worktree commits, which are per-session and safe to accumulate; only `main` cherry-picks there need approval.)
 
+**A scripted read-modify-write must READ before it opens the file for writing, and the one-command chain
+must gate on the diff's size (this HAS bitten).**  `open(D, 'w').write(new + open(D).read())` truncates D
+before the inner read runs (Python evaluates `open(D, 'w')` first), so a move-to-done script emptied
+`claude-todo-done.md` (27,000 lines) and the chain `edit && git diff --stat && commit && push` pushed it —
+the `--stat` printed the damage but nothing stopped on it.  Read every file into a variable first, write
+after; and put a guard in the chain that fails on an unexpected size, e.g. `git -C explorations diff
+--numstat | awk '$2 > 200 { exit 1 }'` before the commit (a scripted entry move deletes tens of lines, never
+thousands).
+
 **NEVER create a git worktree inside `explorations/` (and NEVER spawn a subagent or workflow with `isolation: worktree` for work that targets the explorations repo).** The worktree-isolation mechanism parks a checkout at `explorations/.claude/worktrees/agent-<id>/` — a nested git repo *inside* the shared explorations working tree. That is broken on two counts: (1) the next worker's `git add -A` picks it up and stages it as an embedded-repo gitlink, corrupting the commit (this has happened); (2) explorations is docs/plans, not code — there is nothing to isolate, and the shared-checkout discipline above already governs it. If a task genuinely needs an isolated worktree, it is a *code* task and belongs in the binate repo (`isolation: worktree` / `git -C binate worktree ...` against binate), never explorations. Plain `explorations/` edits use the edit→commit→push discipline above, with no worktree at all.
 
 ### Don't Change the Mode
