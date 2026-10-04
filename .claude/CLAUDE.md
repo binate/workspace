@@ -66,6 +66,10 @@ that is for interoperability, not a statement of rank.
 - When editing bootstrap Go code, be aware of known quirks (e.g., StringVal vs SliceVal distinction)
 - Binate source uses `pkg/` prefix for packages; `pkg/rt` is the runtime (written in Binate)
 - Builtins (`make`, `make_slice`, `box`, `cast`, `bit_cast`, `len`, `unsafe_index`, `sizeof`, `alignof`, `present`, `same`) are keywords, not functions
+  — so never name a variable, parameter or field after one (`box`, `len`, `cast`, …).  This has bitten twice in
+  one session: a parameter named `box` in a BUILDER-compiled package broke the gen1 build, and the BUILDER reports
+  only `expected IDENT, got box` with NO file name (`bnc -v` shows which phase failed).  Check new identifiers
+  against this list before building.
 
 ### Problem-Solving Approach
 
