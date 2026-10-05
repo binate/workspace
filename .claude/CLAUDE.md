@@ -495,6 +495,14 @@ its test selection twice, and the user cancelled the approval: "landing permissi
 taking too long".  If a change warrants such a check, run it while preparing the commit (or name it when
 asking); once approved, do steps 2–7 and nothing else.
 
+**Land several commits with one `cherry-pick` per command, chained with `&&` — and recover a broken
+sequence with `--abort`, never `--continue` (this HAS bitten).**  `git cherry-pick A B C` applied A, then hit a
+transient `index.lock` from another process; `cherry-pick --continue` then silently SKIPPED B (never applied)
+and stopped on C with conflicts (C needed B's new file).  Nothing had been pushed, so `cherry-pick --abort`
+returned local main to the pre-sequence commit (= origin), and the landing was redone as
+`cherry-pick A && cherry-pick B && cherry-pick C && push`.  Afterwards confirm the landed tree equals the
+validated branch head (`git diff <branch head> <main head>` empty).
+
 **An urgent fix follows the same order — never cherry-pick first and check after
 (this HAS bitten).** Asked to land a one-line fix for a test I had broken on main,
 I cherry-picked it straight onto local main and THEN ran hygiene inside the main
