@@ -502,6 +502,13 @@ its test selection twice, and the user cancelled the approval: "landing permissi
 taking too long".  If a change warrants such a check, run it while preparing the commit (or name it when
 asking); once approved, do steps 2–7 and nothing else.
 
+**Validate a stack of commits ONCE, on its end result — never per commit (this HAS bitten).**  Re-validating
+after a landing rebase, I ran hygiene on each of four commits plus a build, five unit-test packages, e2e, two
+conformance subsets and the full VM suite; the user: "no one cares about per-commit hygiene -- just run it on the
+end result. This validation is way too fucking heavy, which is why you never manage to fucking land any fucking
+thing".  After a rebase or conflict resolution, check the end result only, and only what the change can affect
+(the resolved packages' unit tests, one targeted conformance subset, hygiene), then ask to land.
+
 **Land several commits with one `cherry-pick` per command, chained with `&&` — and recover a broken
 sequence with `--abort`, never `--continue` (this HAS bitten).**  `git cherry-pick A B C` applied A, then hit a
 transient `index.lock` from another process; `cherry-pick --continue` then silently SKIPPED B (never applied)
