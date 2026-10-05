@@ -315,6 +315,13 @@ Whenever you discover a bug (whether or not you fix it immediately):
 
 This ensures bugs are tracked, reproducible, and visible — even if the fix is deferred.
 
+**A regression test must be seen to PASS with the fix, not only to fail without it.**  This has bitten:
+a conformance test for three code paths was run against the pre-fix build (all three failed, as
+intended) and committed with the fix without ever being run against the fixed build — one path (a
+deferred call, decided by a pre-pass that runs before the function's locals exist) was still broken,
+and only the next validation run caught it.  Run every new test on the fixed build before committing
+it, and isolate per-path variants the same way in both directions.
+
 ### Memory Management: Never Leak
 
 The compiler must NEVER generate code that leaks memory. If a managed allocation is created, it must eventually be RefDec'd. The only acceptable "leaks" are user-created reference cycles (which are user error — Binate uses refcounting, not GC).
