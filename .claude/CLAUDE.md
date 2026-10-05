@@ -329,6 +329,11 @@ deferred call, decided by a pre-pass that runs before the function's locals exis
 and only the next validation run caught it.  Run every new test on the fixed build before committing
 it, and isolate per-path variants the same way in both directions.
 
+**A conformance test's checks must fit a 32-bit `int` — `int` is 32 bits on arm32.**  This has bitten: a
+test packed seven two-digit values into one `int` (`seen = seen * 100 + v`, 14 digits); it passed on every
+64-bit mode and failed on both native arm32 modes with the value wrapped mod 2^32.  Keep a packed accumulator
+under 2^31 (at most four two-digit values), or record values in an array and print them one per line.
+
 ### Memory Management: Never Leak
 
 The compiler must NEVER generate code that leaks memory. If a managed allocation is created, it must eventually be RefDec'd. The only acceptable "leaks" are user-created reference cycles (which are user error — Binate uses refcounting, not GC).
@@ -682,6 +687,10 @@ first edit of every new bug.
 It bit a sixth time (2026-10-04): a review came back while a short confirmation run (one expected-fail test
 on two native modes) was still going, and the review-driven compiler and test edits went in at once.  A run
 counts however small or unrelated it looks — its compiler build reads the whole tree.
+It nearly bit a seventh time (2026-10-05): with two validation runs going, the first one's completion notice
+showed a test failure, and its fix was written while the second run was still going (the edit script
+happened to stop on its own check before writing).  A completion notice covers only its own run: before the
+first edit, check that EVERY run started on the worktree has reported.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
