@@ -679,6 +679,9 @@ unit-test step built its compiler from that uncommitted split.  Investigation (r
 probes against a scratch compiler) is fine during a run; the first edit of the worktree is not, whatever
 task it belongs to.  In a self-driven batch, check for an outstanding run's completion notice before the
 first edit of every new bug.
+It bit a sixth time (2026-10-04): a review came back while a short confirmation run (one expected-fail test
+on two native modes) was still going, and the review-driven compiler and test edits went in at once.  A run
+counts however small or unrelated it looks — its compiler build reads the whole tree.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
