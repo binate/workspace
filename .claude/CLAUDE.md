@@ -186,6 +186,11 @@ callers with a `*.bn`-only grep, updated `cmd/bnld` and the unit tests, and miss
 heredocs — CI would have gone red; a reviewer caught it.  For an API change, grep the whole tree with no
 `--include` filter (`grep -rln 'Name(' --exclude-dir=.git .`) and triage the hits.
 
+**Never cap a sweep's site list with `head`.**  This has bitten: the blank-target sweep for the
+"unresolved identifier" internal error listed IR-gen's `isBlank` sites through `| head -30`, which cut off
+`gen_short_var.bn` — the one site still on `genExpr` — and a review found `x, _ := e, f` crashing the
+compiler.  Print a sweep's whole list (count it first if it may be long), never a truncated prefix.
+
 ### Be Efficient — Time, Machine Resources, and Tokens
 
 Consider the time and resource efficiency of your actions. E.g., full
