@@ -722,6 +722,14 @@ or narrowing a guard, find the producers of the case it skips (here: who hands t
 list — `grep` the loader for modes, not just the call sites), and validate a checker change on the VM mode
 (`builder-comp-int`) as well as the compiled ones: the interpreter loads packages differently.
 
+It bit again (2026-10-07) in a landing-rebase conflict resolution: upstream had made the native parameter
+prologues fail loud on a missing data region (`NeedAlloc`), guarded by `if p.Typ.SizeOf() <= 0`; merging that
+into my extracted aarch64 prologue, I dropped the guard on the register path, reasoning that an argument with a
+register start has a nonzero size — but the classifier gives a zero-size struct a register start, and the
+native aa64 build of bnc failed.  A guard on the side you are merging is a claim about a case: keep it unless
+you have checked that the case cannot reach you, and put the existing test for that case (here conformance
+1072) into the targeted re-validation of the resolution.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
