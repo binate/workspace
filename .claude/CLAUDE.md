@@ -327,6 +327,14 @@ Whenever you discover a bug (whether or not you fix it immediately):
 
 This ensures bugs are tracked, reproducible, and visible — even if the fix is deferred.
 
+**Before adding a todo entry, search `claude-todo.md` for the same area — the file, function and symptom —
+not just the exact wording.**  An entry may already cover it (often claimed by another session).  This has
+bitten: a review turned up the x86-64 `[rbx - 8 + 4]` displacement bug, and I logged it as a new CRITICAL
+entry and later fixed it, while an entry claimed by another session eleven days earlier ("`emitModRM`
+addresses the wrong location … `[base+idx*scale+disp]` misparsed") already listed it and most of what the fix
+covered.  `grep -n 'emitModRM\|x64.*parser\|<function>' claude-todo.md` first; extend or reference an
+existing entry (and check its claim) instead of opening a duplicate.
+
 **A regression test must be seen to PASS with the fix, not only to fail without it.**  This has bitten:
 a conformance test for three code paths was run against the pre-fix build (all three failed, as
 intended) and committed with the fix without ever being run against the fixed build — one path (a
