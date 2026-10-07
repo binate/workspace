@@ -311,6 +311,10 @@ assert them in the script (or check `git diff --numstat`) before the commit.
 Before starting work on ANY todo entry — whether you're picking one up, the user assigns you one, or you just raised one and the user says "fix it now" — **mark that entry claimed/in-progress in `explorations/claude-todo.md` and commit+push it BEFORE writing any fix code.** `explorations/` is a shared checkout across concurrent worker sessions, and an unclaimed OPEN entry is an open invitation for another session to grab the same bug. The claim is the ONLY signal other sessions have that you're on it.
 
 This has bitten: I raised the arm32 hard-float "fixed float in a variadic `__c_call` rides VFP" MAJOR bug as `🔴 OPEN`, the user said "fix it now," and I went straight into the fix without claiming it. ~13 seconds after my code commit a concurrent session claimed and independently fixed the exact same bug (identical `callIsVariadic` approach) — fully duplicated work, and theirs landed first. Marking the entry `🟡 IN PROGRESS (claimed <date>, work-N/session)` and pushing it the moment I took the task would have prevented the whole collision.
+It bit again (2026-10-07) in a self-drive batch: while a validation run held the worktree, I drafted the
+next bug's fix and tests in the scratchpad, which did not feel like "starting work", then applied and
+committed it — and claimed the entry only afterwards.  Investigating a candidate is fine unclaimed;
+the first line of a fix, in the scratchpad or anywhere, comes after the claim is pushed.
 
 The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
 
