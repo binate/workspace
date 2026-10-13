@@ -810,6 +810,16 @@ branch, and let a BUILDER cut happen only when independently justified — batch
 other reasons, at a natural release point. Surface the dependency and let the user
 own the timing; do not frame "cut a BUILDER" as the obvious next step.
 
+### Cutting a Pre-Release: Bump VERSION First, Then Tag the Commit Before the Bump
+
+A pre-release tag `bnc-X.Y.Z-preN` marks the last commit whose `VERSION` is `bnc-X.Y.Z-preN`.  So before
+tagging, land a commit bumping `VERSION` and `pkg/binate/version/version.bn` to `preN+1` (as `457e2956b` did
+after pre1), then tag that commit's PARENT and push the tag: `git -C ~/binate/binate tag bnc-X.Y.Z-preN
+<parent>`, then `git -C ~/binate/binate push origin refs/tags/bnc-X.Y.Z-preN` (tags are lightweight).  The tag
+push starts `.github/workflows/release.yml`, which builds and publishes the bundles.  I once proposed tagging
+main directly, which would leave main's `VERSION` naming a version already released; the user supplied the
+missing step ("Before tagging pre2, you must also push a commit bumping VERSION (and version.bn) to pre3.").
+
 ### Tools
 
 `ditty` (https://github.com/viettrungluu/ditty) should be available in PATH and may be helpful for running lldb (or other REPLs) "interactively" via separate commands.
