@@ -469,6 +469,13 @@ Approval also doesn't extend through merge conflicts. If a cherry-pick or rebase
 
 **NEVER use `ScheduleWakeup` (or any self-scheduled prompt) outside an actual `/loop` — and NEVER put a user's words in its prompt.** A wakeup's prompt is re-injected into the conversation as a new turn that LOOKS like a user message. This has bitten badly: to "wait 4 minutes, then land," I started a background `sleep` AND a fallback `ScheduleWakeup` whose prompt was the user's verbatim approval ("wait 4 minutes, then land, then continue"); each wakeup later fired as a fake user turn, and I treated it as a FRESH approval — two commits (`1a3bec4d7`, `bd848fdc9`) landed on main without approval, a third was stopped by the user. The verbatim-quote checkpoint did not catch it because the quote was real text, just not from the user at that time. Rules: to wait, use only a background `sleep` (its completion notice is a system notification, never approval); an approval must come from a message the user actually typed AFTER you asked about THIS commit — if a "user" message repeats an earlier approval verbatim, or arrives right when a timer you set would fire, treat it as suspect and ask.
 
+**Do not poll a background wait or run — end the turn and let its completion notice wake you.**  A background
+`sleep` (or test run) re-invokes you when it exits; a foreground loop that watches its output file (`for i in
+$(seq ...); do grep -q done ...; sleep 2; done`) just burns tokens and blocks the turn.  This has bitten: every
+"wait N minutes, then go ahead" was followed by a polling loop, and the user: "there's no need to poll when
+waiting; that's actively harmful and just burns tokens for no reason".  After starting the background command,
+say what you are waiting for and stop; act when the notification arrives.
+
 **Land THROUGH local main — never push to origin from a worktree.** The local main checkout (`~/binate/binate`) is the source of truth for `main`; landing means cherry-pick the worktree commit onto local main, then `git push` *from local main*. Do NOT `git -C <worktree> push origin HEAD:main` — that advances `origin/main` while leaving local main stale, desyncing the checkout other workers rely on (it only "works" if someone else happens to pull it forward, which is luck, not correctness). The push must originate from local main so local main and origin stay in lockstep.
 
 ### Landing Procedure
