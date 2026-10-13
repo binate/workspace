@@ -660,6 +660,14 @@ Instead of directly grepping (etc.) the output of commands — especially ones t
 
 Example: `go run ... --test pkg/foo 2>&1 | tee /tmp/test_foo.out | tail -5` then `grep FAIL /tmp/test_foo.out`.
 
+### Check That a "New" File Does Not Already Exist Before Writing It
+
+A `cat > path <<EOF` (or a Write) creating a new test or source file silently replaces a tracked file of
+the same name.  This has bitten: adding float-copy tests, I wrote `x64/x64_copy_test.bn` from scratch and
+erased the existing `TestEmitCopyIsMove` in it; the next unit-test run passed (the lost test was simply
+gone) and only `git ls-files --others` — which did not list the file as new — gave it away.  Before
+creating a file, `ls` the path (or `git ls-files <path>`); if it exists, append to it or pick another name.
+
 ### Test a Partial Revert IN the Worktree — Never Copy the Source Tree to Scratch
 
 To check that a test covers one piece of a multi-part fix (or to build any variant of the tree), do it in
