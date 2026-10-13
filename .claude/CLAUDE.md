@@ -163,7 +163,10 @@ stops the chain with the edit already written and uncommitted, the exact window 
 (this bit three times in one session).  It bit a fourth time right after this note was written: the script
 printed the right count and the chain's guard had the wrong one retyped by hand.  So the script itself must run
 `git -C explorations diff --numstat` after writing and exit non-zero on a mismatch — no number is copied between
-the script and the chain.
+the script and the chain.  Derive the expected counts with git's own diff (`git diff --no-index --numstat` on
+temp copies of the old and new text), never Python's `difflib`: the two pair a moved blank line differently, so a
+correct edit came out 56/17 against difflib's 55/16 and the guard stopped the chain with the edit written
+(2026-10-12).
 
 **NEVER create a git worktree inside `explorations/` (and NEVER spawn a subagent or workflow with `isolation: worktree` for work that targets the explorations repo).** The worktree-isolation mechanism parks a checkout at `explorations/.claude/worktrees/agent-<id>/` — a nested git repo *inside* the shared explorations working tree. That is broken on two counts: (1) the next worker's `git add -A` picks it up and stages it as an embedded-repo gitlink, corrupting the commit (this has happened); (2) explorations is docs/plans, not code — there is nothing to isolate, and the shared-checkout discipline above already governs it. If a task genuinely needs an isolated worktree, it is a *code* task and belongs in the binate repo (`isolation: worktree` / `git -C binate worktree ...` against binate), never explorations. Plain `explorations/` edits use the edit→commit→push discipline above, with no worktree at all.
 
