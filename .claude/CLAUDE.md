@@ -562,6 +562,12 @@ returned local main to the pre-sequence commit (= origin), and the landing was r
 `cherry-pick A && cherry-pick B && cherry-pick C && push`.  Afterwards confirm the landed tree equals the
 validated branch head (`git diff <branch head> <main head>` empty).
 
+**When GitHub has been unreachable, confirm it answers right before the cherry-pick (`git -C
+~/binate/binate ls-remote origin HEAD`), and if the push still fails after the cherry-pick, retry the push at
+once — never leave local main ahead of origin.**  This has bitten (2026-10-13): during a GitHub outage that
+came and went, a landing's cherry-pick went onto local main and its push failed, leaving main one commit
+ahead of origin until a retry loop pushed it ~35 s later.
+
 **An urgent fix follows the same order — never cherry-pick first and check after
 (this HAS bitten).** Asked to land a one-line fix for a test I had broken on main,
 I cherry-picked it straight onto local main and THEN ran hygiene inside the main
