@@ -200,6 +200,12 @@ heredocs — CI would have gone red; a reviewer caught it.  For an API change, g
 `gen_short_var.bn` — the one site still on `genExpr` — and a review found `x, _ := e, f` crashing the
 compiler.  Print a sweep's whole list (count it first if it may be long), never a truncated prefix.
 
+**Never sweep for a keyword in embedded source with `grep -w` (or `\b`).**  In a string literal the keyword
+often follows an escape — `"\tdefer fv()\n"` has a `t` right before `defer`, so there is no word boundary.
+This has bitten: moving every `defer <call>` to `defer { <call> }`, a `git grep -w defer` sweep missed four
+unit tests' embedded programs (`\tdefer`, `\ndefer`); they surfaced only in review, once the parser
+rejected the old form.  Grep the bare word and triage the hits.
+
 ### Be Efficient — Time, Machine Resources, and Tokens
 
 Consider the time and resource efficiency of your actions. E.g., full
