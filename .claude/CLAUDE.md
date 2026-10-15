@@ -437,6 +437,15 @@ before continuing — a conflict resolution is new code, and it needs the same c
 
 Work on your assigned branch (e.g. `work-2`); a rebase, squash or reword does not need a backup branch, because the reflog (`git reflog work-2`) already keeps the pre-rewrite commits. If you do make a branch to save work, delete it the moment its content lands or is superseded. This has bitten: nine `work-2-prerebase*` / `-presquash*` / `-prereword*` snapshots of one landed batch (plus a stale `-perop-checkpoint` from an earlier session) piled up in the shared repo, where every session's `git branch` shows them as garbage.
 
+**Work the user decides not to land is ARCHIVED on a branch, never dropped.**  A backup branch is noise; a
+decision not to land is not the same thing.  When a committed but unlanded change is abandoned (the user picks
+another option, a review shows it is wrong), first put it on a descriptive branch with the date —
+`git -C <wt> branch archive/20261014-asm-got-slot-addends-on-elf <commit>` — then move the work branch off it.
+Do not reset it away and rely on the reflog (it expires, and no one else can find it there).  This has
+bitten: after the user chose to keep rejecting GOT addends, I tried to `reset --hard` the unlanded commit away;
+the user: "you're not supposed to just drop work. Probably you should "archive" the work on a branch
+(descriptively named, with today's date, e.g., 20261014)".
+
 ### Stay Close to Main
 
 When working in a branch (as one typically does), work as close to upstream (main) as possible. Typically, this entails frequent resynching/rebasing, working with small commits that are cherry-picked to main as soon as possible. (This also means that you should structure work so that each commit is self-contained and keeps everything green.)
