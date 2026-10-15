@@ -69,7 +69,10 @@ that is for interoperability, not a statement of rank.
   — so never name a variable, parameter or field after one (`box`, `len`, `cast`, …).  This has bitten twice in
   one session: a parameter named `box` in a BUILDER-compiled package broke the gen1 build, and the BUILDER reports
   only `expected IDENT, got box` with NO file name (`bnc -v` shows which phase failed).  Check new identifiers
-  against this list before building.
+  against this list before building.  It bit twice more on 2026-10-14, in TEST code: a unit-test variable named
+  `box`, and a method named `same` in a unit test's embedded program (the parse failed, so the interpreter test
+  reported an unrelated-looking `IR-gen cannot resolve the type <error>`).  The list covers method names and the
+  programs embedded in test strings, not only variables and parameters.
 
 ### Problem-Solving Approach
 
