@@ -318,7 +318,8 @@ Work deliberately deferred past the current milestone goes in `explorations/clau
 **Read a file BEFORE opening it for writing — `open(p, 'w').write(new + open(p).read())` truncates `p` first and
 prepends to nothing (this HAS bitten).**  A script prepending done entries that way wiped `claude-todo-done.md`
 (27,863 lines) and the chained `diff --stat && commit && push` published it; it was restored from `HEAD~1` a
-minute later.  Read into a variable first, then write.  And READ the `--stat` before the commit runs: a chain
+minute later.  Read into a variable first, then write.  It applies to every file, not only the todo files: it bit again
+(2026-10-15) appending lines to a conformance `.expected` file, which came out with only the appended lines.  And READ the `--stat` before the commit runs: a chain
 that prints `27863 -` and commits anyway gates nothing — when a scripted edit's expected line counts are known,
 assert them in the script (or check `git diff --numstat`) before the commit.
 
