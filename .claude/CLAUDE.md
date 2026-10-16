@@ -757,6 +757,10 @@ It nearly bit a seventh time (2026-10-05): with two validation runs going, the f
 showed a test failure, and its fix was written while the second run was still going (the edit script
 happened to stop on its own check before writing).  A completion notice covers only its own run: before the
 first edit, check that EVERY run started on the worktree has reported.
+It bit an eighth time (2026-10-15): a review report arrived while a conformance + e2e script was still going;
+I read files, probed GNU as in docker, and then wrote the review's fixes into the worktree — the e2e step
+was still running (the four conformance modes had finished, which made it feel over).  A run is over only
+when its completion notice arrives, not when the part of its output you were watching is complete.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
