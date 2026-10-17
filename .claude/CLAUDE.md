@@ -334,6 +334,10 @@ It bit again (2026-10-07) in a self-drive batch: while a validation run held the
 next bug's fix and tests in the scratchpad, which did not feel like "starting work", then applied and
 committed it — and claimed the entry only afterwards.  Investigating a candidate is fine unclaimed;
 the first line of a fix, in the scratchpad or anywhere, comes after the claim is pushed.
+It bit a third time (2026-10-16), the same way: with several bugs pipelined, each drafted as a scratchpad
+apply-script while a run held the worktree, the draft for one bug was written, applied and committed before
+its claim.  Make the claim the first step of picking the next bug, before reading its code closely enough to
+draft anything.
 
 The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
 
