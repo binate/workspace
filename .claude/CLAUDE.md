@@ -170,6 +170,8 @@ the script and the chain.  Derive the expected counts with git's own diff (`git 
 temp copies of the old and new text), never Python's `difflib`: the two pair a moved blank line differently, so a
 correct edit came out 56/17 against difflib's 55/16 and the guard stopped the chain with the edit written
 (2026-10-12).
+It bit again (2026-10-17) on a CLAUDE.md edit: the chain's guard said 13 added lines, the edit added 10, and
+the chain stopped with the edit uncommitted in the shared workspace checkout.
 It bit again (2026-10-17) on a `docs` spec edit: I typed the guard's counts as `9 0` for an edit that also
 rewrote the end of an existing line (`ignored.` → `ignored. A reference …`), which git counts as `10 1`, so the
 chain stopped with the spec edit written.  The rule holds for a scripted edit in ANY shared repo — `docs` and the
