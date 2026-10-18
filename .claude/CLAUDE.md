@@ -817,6 +817,18 @@ native aa64 build of bnc failed.  A guard on the side you are merging is a claim
 you have checked that the case cannot reach you, and put the existing test for that case (here conformance
 1072) into the targeted re-validation of the resolution.
 
+### An Optimization Keyed on "Nothing Touches X After This Point" Must Account for Loops
+
+In a block that can run again, the instructions BEFORE the point run again after it: "no use of x after the
+copy in this block, and none in a block reachable from it" says nothing about the earlier part of the same
+block on the next iteration.  This has bitten (2026-10-18): the copy-prop pass folded `var y = x` into x when x
+was untouched after the copy — but with x declared outside a loop and the copy inside it, the writes through y
+(now writes of x) reached the next iteration's copy, a silent miscompile (`10203` instead of `10101`) caught
+only by review.  The conformance test had a loop, but declared x inside it, so x was re-created each
+iteration.  For any such transform: either require the guarded value to be re-created on each execution of
+the block (its definition in the block before the point) or reject a block that can reach itself, and test
+with the state declared OUTSIDE the loop as well as inside.
+
 ### Debug Miscompiles by Disassembling the Wrong Output EARLY — Don't Theorize Through Rebuild Cycles
 
 When a compiled program misbehaves (hang, crash, wrong output) and a codegen change is suspected, get **concrete disassembly of the broken output and diff it against a known-good build BEFORE theorizing about the codegen mechanism.** The disassembly points directly at the wrong instruction, which usually reveals a simpler root cause than the mechanism you are hypothesizing — and each theory-driven rebuild+test cycle is expensive (a whole-compiler build plus a run).
