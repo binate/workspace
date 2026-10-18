@@ -206,6 +206,9 @@ heredocs — CI would have gone red; a reviewer caught it.  For an API change, g
 "unresolved identifier" internal error listed IR-gen's `isBlank` sites through `| head -30`, which cut off
 `gen_short_var.bn` — the one site still on `genExpr` — and a review found `x, _ := e, f` crashing the
 compiler.  Print a sweep's whole list (count it first if it may be long), never a truncated prefix.
+It bit again (2026-10-17): removing the `_raw_func_addr` alias, the use-site listing went through
+`| head -20` and cut off `vm/vm_test.bn`'s embedded program — caught only because a second, untruncated
+grep ran before the edit.
 
 **Never sweep for a keyword in embedded source with `grep -w` (or `\b`).**  In a string literal the keyword
 often follows an escape — `"\tdefer fv()\n"` has a `t` right before `defer`, so there is no word boundary.
@@ -508,6 +511,10 @@ $(seq ...); do grep -q done ...; sleep 2; done`) just burns tokens and blocks th
 "wait N minutes, then go ahead" was followed by a polling loop, and the user: "there's no need to poll when
 waiting; that's actively harmful and just burns tokens for no reason".  After starting the background command,
 say what you are waiting for and stop; act when the notification arrives.
+**Start a background run with the tool's `run_in_background`, never with a shell `&`.**  A `( … ) &`
+inside a foreground Bash call detaches with NO completion notice, so the only way to learn it finished is
+to poll.  This has bitten (2026-10-17): a validation chain started with `&` needed a separate background
+waiter (`until grep -q … ; do sleep 15; done`) just to get notified.
 
 **Land THROUGH local main — never push to origin from a worktree.** The local main checkout (`~/binate/binate`) is the source of truth for `main`; landing means cherry-pick the worktree commit onto local main, then `git push` *from local main*. Do NOT `git -C <worktree> push origin HEAD:main` — that advances `origin/main` while leaving local main stale, desyncing the checkout other workers rely on (it only "works" if someone else happens to pull it forward, which is luck, not correctness). The push must originate from local main so local main and origin stay in lockstep.
 
@@ -731,6 +738,9 @@ rather than reusing a copy from an earlier day.  This has bitten: a day-old scra
 replaced every `defer` statement with a blank line under `-w`; it surfaced only because a new test's
 deferred output went missing (the current `bnfmt` keeps them).  A formatter that drops a statement
 turns a green test red at best, and at worst deletes code nobody notices.
+It also misleads a CHECK: before judging whether another session's tool fix landed, rebuild the tool.
+This bit (2026-10-17): a scratch `bnfmt` built before work-5's import-annotation fix still dropped the
+`#[build]` annotations, which read as "the fix doesn't work"; a rebuild from the tree showed it working.
 
 ### Never Switch a Worktree While a Background Run Uses It
 
