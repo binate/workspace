@@ -78,6 +78,8 @@ that is for interoperability, not a statement of rank.
   It bit again (2026-10-18) in an e2e host program embedded in a shell heredoc: a parameter named
   `impl` failed the host's build with only `expected expression` at its column.  Check a heredoc
   program's identifiers against `lex.keywords.reserved` as well.
+  It bit again (2026-10-18): a unit-test local holding the record of a type `Box` was named `box` (a
+  type's name lowercased is the usual way in); `bnfmt -w` on the new file caught it before any build.
 
 ### Problem-Solving Approach
 
