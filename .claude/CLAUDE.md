@@ -218,6 +218,9 @@ compiler.  Print a sweep's whole list (count it first if it may be long), never 
 It bit again (2026-10-17): removing the `_raw_func_addr` alias, the use-site listing went through
 `| head -20` and cut off `vm/vm_test.bn`'s embedded program — caught only because a second, untruncated
 grep ran before the edit.
+It bit again (2026-10-18), in a search for tests to update: looking for x86-64 tests that pin `ret` with
+an operand, a `grep … | head` filled its ten lines with aarch64 hits and hid the x86-64 test that expected
+`ret 1` to be rejected; the next unit-test run caught it.  A search for tests a change breaks is a sweep too.
 
 **Never sweep for a keyword in embedded source with `grep -w` (or `\b`).**  In a string literal the keyword
 often follows an escape — `"\tdefer fv()\n"` has a `t` right before `defer`, so there is no word boundary.
