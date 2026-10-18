@@ -413,6 +413,12 @@ the transcript).  Never put `branch -D`, `reset --hard`, `clean`, `rm -rf` or `s
 listing / verification line; a destructive command gets its own invocation, written on purpose, after
 reading what it will remove.
 
+**Quote the heredoc delimiter (`<<'EOF'`) whenever its body is text rather than shell.**  An unquoted
+`<<EOF` expands `$VAR`, and it also runs every backticked span as a command.  This has bitten (2026-10-17): a
+python script fed through `<<EOF` (to interpolate `$S`) held commit-message text with `` `var panic =
+say` `` in it, so the shell ran macOS `say` (text-to-speech, reading stdin) and the tool call hung until it was
+stopped.  Hard-code paths in the script, or pass them as arguments, and quote the delimiter.
+
 ### Don't Routinely Bump Workspace Submodule Pointers
 
 Each submodule is an independent repo, pushed on its own — that push is the source of truth. The workspace repo's recorded submodule pointers are allowed to lag; don't commit a workspace pointer-bump after every submodule change. Update them only occasionally (in batches) or when explicitly asked (e.g. "bump the submodule hashes"). When you do bump, only record commits that are already pushed to the submodule's origin.
