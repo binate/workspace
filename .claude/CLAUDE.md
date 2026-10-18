@@ -75,6 +75,9 @@ that is for interoperability, not a statement of rank.
   programs embedded in test strings, not only variables and parameters.  The reserved keywords
   that Go lacks bite the same way (spec `lex.keywords.reserved`: `in`, `impl`, `readonly`, `Self`,
   …): a local named `in` (2026-10-17) failed the build with `expected IDENT, got in`.
+  It bit again (2026-10-18) in an e2e host program embedded in a shell heredoc: a parameter named
+  `impl` failed the host's build with only `expected expression` at its column.  Check a heredoc
+  program's identifiers against `lex.keywords.reserved` as well.
 
 ### Problem-Solving Approach
 
