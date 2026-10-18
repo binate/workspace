@@ -958,6 +958,20 @@ Don't make shit up about the Binate language. If something is unknown, the **spe
 
 When the spec is genuinely ambiguous or silent, the discussion docs (`explorations/claude-notes.md`, `explorations/claude-discussion-detailed-notes.md`, and the other `explorations/` design docs) are references for **intent** — use them to understand *why* a decision was made and where the language is headed. If a question remains after consulting the spec and the discussion docs, **discuss it with the user** rather than inventing an answer or silently picking one. State plainly when you don't know; a checked "I looked and the spec says X" or an honest "the spec doesn't cover this — here's what the notes suggest, what do you want?" both beat a confident fabrication. (See also **Never Fabricate Language** in memory: don't state Binate behavior as fact without checking.)
 
+### Checking Depends Only on a Package's Sources and Its Dependencies' `.bni` Files
+
+Whether code type-checks must depend only on its own source files and its dependencies' `.bni` files --
+never on the link or host environment (which libraries get linked, what an interpreter injects).  That is
+separate compilation.  A property only the link can decide -- is an extern variable defined anywhere? -- is
+a link / load error where the code is actually linked or lowered, not a check error.  This has bitten: to
+stop the VM aborting on a `.bni`-only package's undefined variable, I recommended and built a checker hook
+asking the VM's registry whether the variable has storage, then proposed giving bnc the same query by
+reading its link inputs.  The user: "1 seems wrong, and violates separate compilation. Compiling a package
+should only depend on its source files and its dependencies .bni files. I'm not sure why the storage query
+is even a recommendation."  The hook was picked to avoid the REPL's prompt rollback, not for any semantic
+reason, and it made bni reject programs bnc accepts (an uninstantiated generic reading such a variable).
+Before recommending a design, ask whether it moves a link-time fact into the checker.
+
 ### Never Recommend a Go Rule Without Checking It Against Binate's Own Principles
 
 A proposal that is "Go's rule" is not a recommendation — Binate is not Go.  Before recommending any
