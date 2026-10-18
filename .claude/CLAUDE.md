@@ -518,7 +518,10 @@ say what you are waiting for and stop; act when the notification arrives.
 **Start a background run with the tool's `run_in_background`, never with a shell `&`.**  A `( … ) &`
 inside a foreground Bash call detaches with NO completion notice, so the only way to learn it finished is
 to poll.  This has bitten (2026-10-17): a validation chain started with `&` needed a separate background
-waiter (`until grep -q … ; do sleep 15; done`) just to get notified.
+waiter (`until grep -q … ; do sleep 15; done`) just to get notified.  It bit twice more (2026-10-17/18) the
+same way: a foreground call that formatted files, then ended with `( tests; hygiene ) > out &` to start the
+run.  When a command line does setup (formatting, an edit) and then starts a run, split it: the setup in one
+call, the run in its own call with run_in_background.
 
 **Land THROUGH local main — never push to origin from a worktree.** The local main checkout (`~/binate/binate`) is the source of truth for `main`; landing means cherry-pick the worktree commit onto local main, then `git push` *from local main*. Do NOT `git -C <worktree> push origin HEAD:main` — that advances `origin/main` while leaving local main stale, desyncing the checkout other workers rely on (it only "works" if someone else happens to pull it forward, which is luck, not correctness). The push must originate from local main so local main and origin stay in lockstep.
 
