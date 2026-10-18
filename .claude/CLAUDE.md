@@ -72,7 +72,9 @@ that is for interoperability, not a statement of rank.
   against this list before building.  It bit twice more on 2026-10-14, in TEST code: a unit-test variable named
   `box`, and a method named `same` in a unit test's embedded program (the parse failed, so the interpreter test
   reported an unrelated-looking `IR-gen cannot resolve the type <error>`).  The list covers method names and the
-  programs embedded in test strings, not only variables and parameters.
+  programs embedded in test strings, not only variables and parameters.  The reserved keywords
+  that Go lacks bite the same way (spec `lex.keywords.reserved`: `in`, `impl`, `readonly`, `Self`,
+  …): a local named `in` (2026-10-17) failed the build with `expected IDENT, got in`.
 
 ### Problem-Solving Approach
 
