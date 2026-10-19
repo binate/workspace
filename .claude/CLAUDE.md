@@ -80,6 +80,8 @@ that is for interoperability, not a statement of rank.
   program's identifiers against `lex.keywords.reserved` as well.
   It bit again (2026-10-18): a unit-test local holding the record of a type `Box` was named `box` (a
   type's name lowercased is the usual way in); `bnfmt -w` on the new file caught it before any build.
+  It bit again (2026-10-19): a unit-test local comparing two sizes was named `same` (its partner was
+  `diff`); `bnfmt` on the file caught it.  `same` reads as an ordinary word -- check comparison locals too.
 
 ### Problem-Solving Approach
 
