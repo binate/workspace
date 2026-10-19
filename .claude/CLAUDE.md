@@ -878,6 +878,13 @@ When adding new dependencies to bnc's tree, audit the dep for BUILDER compatibil
 
 **Before annotating/extending a BUILDER-compiled package with a NEW language feature, verify the current BUILDER actually supports it** — the pinned BUILDER bundle lags the tree, so a feature that the *current* compiler handles (a new annotation syntax like `#[build(...)]`, a renamed exported symbol, a new builtin) may not parse/resolve under the BUILDER. If you introduce it into cmd/bnc's BUILDER-compiled tree (or anything that tree imports), the gen1 build breaks (`expected ;, got [`, `undefined: <symbol>`, …). This is a parse/resolve-level constraint *on top of* the "stay within what BUILDER accepts" list above, and it bites exactly when a feature is newer than `BUILDER_VERSION`. Test it directly — run the BUILDER `bnc`/`bnlint` (`scripts/fetch-builder.sh --tool bnc`) on a snippet using the feature — rather than assuming; recon that only checks the current compiler misses it. (This is how the build-constraint migration's `#[build]`-on-`pkg/bootstrap` and the `build.bni` `ARCH_AARCH64` rename both surfaced: the BUILDER predated both, so the fixes were a BUILDER bump or a temporary back-compat shim, not "just annotate it.")
 
+**Build gen1 (`scripts/build-bnc.sh`) after any change to a package in cmd/bnc's cone, before starting a
+validation run — the unit tests do not exercise the BUILDER.**  `ut.sh` / `bnc --test` compile a package with
+the CURRENT compiler, so a construct only the pinned BUILDER mishandles passes them.  This has bitten
+(2026-10-18): native/common's frame tables moved to `vec.Vec[int64]` beside its `vec.Vec[int]`; every native
+unit test passed, and the whole conformance part of the validation died at "Building gen1 compiler" (bnc-0.0.16
+makes `Vec[int]` and `Vec[int64]` one instance — fixed on main by `50d176225`, after that BUILDER).
+
 ### A BUILDER Release Is Expensive — Never Rush One to Unblock a Task
 
 Cutting a new BUILDER (a released `bnc` used to build gen1, pinned via
