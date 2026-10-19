@@ -700,6 +700,9 @@ reconstructed.  This has bitten: a docs commit message, written while landing a 
 2a0c9f9d0-era fix" for a change whose landed hash was `bf2b7972e` — a hash that exists nowhere — and it was
 pushed before the slip was noticed.  When a message needs landed hashes, list the landed range first and
 copy from that list; if a hash is not in front of you, describe the change by its subject instead.
+It bit again (2026-10-19) in an agent prompt: a review agent was launched in the SAME tool batch as the
+`commit --amend` that made the commit, so its prompt carried an invented hash (`9e4e8ea1c` for `8d8468baf`).
+Never start an agent about a commit in the same batch that creates or rewrites it: read the hash first.
 
 ### After Rebasing Onto a Rework of the Mechanism Your Change Relies On, Check Its Guarantee Directly
 
