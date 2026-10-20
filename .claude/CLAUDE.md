@@ -816,6 +816,10 @@ It bit a ninth time (2026-10-19) through a review agent: my prompt's probe recip
 -o <scratch>/x.exe`, its one probe used `bnc -c`, which writes its objects to the cwd, and seven `.o` files sat
 in the worktree root during my validation run.  A probe recipe, mine or an agent's, keeps the cwd in scratch and
 names the worktree only in `-I` / `-L` paths.
+It bit a tenth time (2026-10-19): a scratch-built bnc was compiling a synthetic package in the background
+against the worktree's `-I` / `-L` paths (a scaling measurement, no compiler build), and I committed a
+review's fix to `pkg/binate/vm` meanwhile.  That run never read the package, so its numbers held -- by luck
+of its dependency set.  A prebuilt tool pointed at the worktree reads it like any run; the rule covers it.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
