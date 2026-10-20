@@ -82,6 +82,9 @@ that is for interoperability, not a statement of rank.
   type's name lowercased is the usual way in); `bnfmt -w` on the new file caught it before any build.
   It bit again (2026-10-19): a unit-test local comparing two sizes was named `same` (its partner was
   `diff`); `bnfmt` on the file caught it.  `same` reads as an ordinary word -- check comparison locals too.
+  It bit again (2026-10-20), in a test written in the scratchpad and applied by script: a local holding a
+  phi whose back-edge input is itself was named `same`.  Run `bnfmt --check` on a drafted test before the
+  script that applies it, not after.
 
 ### Problem-Solving Approach
 
