@@ -901,6 +901,12 @@ the CURRENT compiler, so a construct only the pinned BUILDER mishandles passes t
 unit test passed, and the whole conformance part of the validation died at "Building gen1 compiler" (bnc-0.0.16
 makes `Vec[int]` and `Vec[int64]` one instance — fixed on main by `50d176225`, after that BUILDER).
 
+**Do not select a field straight off a `bit_cast` (`bit_cast(@T, p).f`) in BUILDER-compiled code — bind it to a
+local first (`var d @T = bit_cast(@T, p)`, then `d.f`), the tree's idiom.**  A BUILDER older than binate `ab2e981a`
+emits invalid LLVM IR for the direct form (`ptrtoint i8* … to %T`), so the gen1 build fails.  This bit (2026-10-19):
+the unit tests passed (they are compiled by the current compiler, which has the fix), and only the full build
+failed, costing a validation round.
+
 ### A BUILDER Release Is Expensive — Never Rush One to Unblock a Task
 
 Cutting a new BUILDER (a released `bnc` used to build gen1, pinned via
