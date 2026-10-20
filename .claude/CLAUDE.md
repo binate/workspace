@@ -812,6 +812,10 @@ It bit an eighth time (2026-10-15): a review report arrived while a conformance 
 I read files, probed GNU as in docker, and then wrote the review's fixes into the worktree — the e2e step
 was still running (the four conformance modes had finished, which made it feel over).  A run is over only
 when its completion notice arrives, not when the part of its output you were watching is complete.
+It bit a ninth time (2026-10-19) through a review agent: my prompt's probe recipe was `cd <worktree>; bnc …
+-o <scratch>/x.exe`, its one probe used `bnc -c`, which writes its objects to the cwd, and seven `.o` files sat
+in the worktree root during my validation run.  A probe recipe, mine or an agent's, keeps the cwd in scratch and
+names the worktree only in `-I` / `-L` paths.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
