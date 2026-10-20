@@ -762,6 +762,13 @@ It also misleads a CHECK: before judging whether another session's tool fix land
 This bit (2026-10-17): a scratch `bnfmt` built before work-5's import-annotation fix still dropped the
 `#[build]` annotations, which read as "the fix doesn't work"; a rebuild from the tree showed it working.
 
+
+A before/after compiler comparison (an IR diff, an A/B timing) is valid only when both compilers are built
+from the same base, the change being the only difference.  This bit (2026-10-19): to check a refactor I
+reused a "before" bnc kept from before the last resync as the legacy side; the IR diff then showed upstream's
+changes too (2997 differing programs on the 32-bit target, the self-compile differing) and had to be redone.
+Build the "before" side from the change's parent on the current base (revert just the changed files, build,
+restore), never from a binary kept from an earlier base.
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
