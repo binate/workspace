@@ -390,6 +390,13 @@ deferred call, decided by a pre-pass that runs before the function's locals exis
 and only the next validation run caught it.  Run every new test on the fixed build before committing
 it, and isolate per-path variants the same way in both directions.
 
+**A revert check's edit must stop the run when it does not apply.**  This has bitten (2026-10-20): the
+script removing the fix's call asserted its text occurred once, but the text also occurred one tab deeper
+in the helper's own recursive call, so the assert failed — and the script's next line ran the tests on the
+UNMODIFIED tree, which passed, reading as "the test does not need the fix".  Chain the test run after the
+edit with `&&` (or `set -e`), print that the edit applied, and match a span unique to the site (the call
+with the line after it).
+
 **A conformance test's checks must fit a 32-bit `int` — `int` is 32 bits on arm32.**  This has bitten: a
 test packed seven two-digit values into one `int` (`seen = seen * 100 + v`, 14 digits); it passed on every
 64-bit mode and failed on both native arm32 modes with the value wrapped mod 2^32.  Keep a packed accumulator
