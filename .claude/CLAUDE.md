@@ -294,6 +294,12 @@ Since the repos are sibling directories (not a monorepo), use `git -C <path>` ra
 
 **`-C` EVERY git command — never let one rely on the shell's persistent cwd (this HAS bitten, nearly badly).** A multi-command Bash line intended for `docs` ran with the cwd still at `~/binate/binate` (the MAIN CHECKOUT) left over from an earlier command: every `git add`/`commit` in the chain failed on pathspec, but the trailing bare `git push` still executed — in the main checkout, the exact operation the rules forbid — and was harmless only because local main happened to be in sync with origin (had a concurrent worker had committed-but-unpushed work there, it would have been published). Two disciplines follow: (1) every `git` invocation names its repo explicitly with `-C <path>` — especially the LAST command of a `&&`/`;` chain; (2) never leave a repo-mutating command (`push`, `commit`, `reset`) positioned to run after earlier commands in the same line have failed — a `;`-separated `push` runs regardless of the failures before it. When a chain's adds/commits fail, the line must have nothing left in it that can still mutate a repo. This applies equally to a **python/edit-script heredoc followed by git commands in the same Bash invocation** — newline-separated commands run regardless of the script's failure, so a failed edit script still gets its "edits" committed/pushed (this HAS bitten: an assert-failing edit script was followed by `git mv && commit && push`, publishing a commit whose message described edits it didn't contain). Run the edit script in its own invocation, READ its result, then commit in a later one.
 
+**Copy commit hashes from git output — never type one from memory.** A hash written into a doc, todo or
+commit message must be pasted from a `git log` / `git rev-parse` result you just read. This has nearly bitten:
+a plan-doc update was drafted citing a made-up hash for the ab.py page-cache change (the real one was
+`2f841226d`), caught only on re-reading the diff before committing. After writing a hash, grep the edit for it
+and check it against `git log`.
+
 ### Don't Routinely Bump Workspace Submodule Pointers
 
 Each submodule is an independent repo, pushed on its own — that push is the source of truth. The workspace repo's recorded submodule pointers are allowed to lag; don't commit a workspace pointer-bump after every submodule change. Update them only occasionally (in batches) or when explicitly asked (e.g. "bump the submodule hashes"). When you do bump, only record commits that are already pushed to the submodule's origin.
