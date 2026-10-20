@@ -460,6 +460,12 @@ python script fed through `<<EOF` (to interpolate `$S`) held commit-message text
 say` `` in it, so the shell ran macOS `say` (text-to-speech, reading stdin) and the tool call hung until it was
 stopped.  Hard-code paths in the script, or pass them as arguments, and quote the delimiter.
 
+**Copy commit hashes from git output — never type one from memory.** A hash written into a doc, todo or
+commit message must be pasted from a `git log` / `git rev-parse` result you just read. This has nearly bitten:
+a plan-doc update was drafted citing a made-up hash for the ab.py page-cache change (the real one was
+`2f841226d`), caught only on re-reading the diff before committing. After writing a hash, grep the edit for it
+and check it against `git log`.
+
 ### Don't Routinely Bump Workspace Submodule Pointers
 
 Each submodule is an independent repo, pushed on its own — that push is the source of truth. The workspace repo's recorded submodule pointers are allowed to lag; don't commit a workspace pointer-bump after every submodule change. Update them only occasionally (in batches) or when explicitly asked (e.g. "bump the submodule hashes"). When you do bump, only record commits that are already pushed to the submodule's origin.
