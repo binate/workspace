@@ -215,6 +215,10 @@ callers with a `*.bn`-only grep, updated `cmd/bnld` and the unit tests, and miss
 (`e2e/injected-iface-runfunc.sh`, `e2e/runfunc-typed-forwarder.sh`) whose Binate programs live in shell
 heredocs — CI would have gone red; a reviewer caught it.  For an API change, grep the whole tree with no
 `--include` filter (`grep -rln 'Name(' --exclude-dir=.git .`) and triage the hits.
+It bit again (2026-10-23) with a DIRECTORY filter: changing an exported native/common analysis
+(`AggLoadElision`) to build a per-function index on each call, I listed its callers with a grep over
+`pkg/binate/native` only and missed the LLVM backend (`pkg/binate/codegen`), which calls it once per
+load — the change would have made that path index the whole function per load; a review caught it.
 
 **Never cap a sweep's site list with `head`.**  This has bitten: the blank-target sweep for the
 "unresolved identifier" internal error listed IR-gen's `isBlank` sites through `| head -30`, which cut off
