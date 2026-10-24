@@ -970,6 +970,12 @@ of every file a formatter rewrote.
 
 Don't make assumptions or value judgements about what's "worth doing" or "not worth the trouble." When unsure whether to do something (e.g., split a test file, refactor a helper, change an approach), ask the user instead of deciding unilaterally.
 
+**Every fact in a decision question must be checked in the code it describes.**  This has bitten (2026-10-23):
+asking which ABI rule func-value dispatch should follow for a zero-size argument, I said "LLVM and the VM give it
+no slot", relying on a comment in types/abi that called its predicate the VM's source of truth.  The VM's own
+trampoline maps one word to every parameter, so it sides with native.  The user picked the option my wrong fact
+favored, and the question had to be asked again.  Before putting "X does Y" into a question or a todo entry, read X.
+
 ### C-Free Target
 
 We are building a language that can operate in a C-free system. The *only* reason to ever use C is to interface with existing C-based systems (e.g., to do "syscalls", since we don't want to implement our own direct syscalls yet).
