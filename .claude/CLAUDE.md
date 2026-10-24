@@ -974,6 +974,12 @@ tree's current `bnfmt` keeps it) — caught only by review.  Rebuild with `scrip
 at the start of a task (and after a resync that touches `pkg/binate/fmt` or the parser), and read the diff
 of every file a formatter rewrote.
 
+**The layout hygiene enforces is the PINNED bnfmt's, not the tree's.**  `scripts/hygiene/bnfmt-format.sh`
+checks with the CHECK_TOOLS release's bnfmt (`scripts/fetch-builder.sh --check-tools --tool bnfmt`), and a tree
+build can lay a line out differently (a layout fix not yet released).  This bit (2026-10-23): a file formatted
+with a tree-built bnfmt, which wrapped a long call differently, failed `bnfmt-format`.  Before committing, run the
+pinned bnfmt's `--check` (or `-w`) on the files you changed; keep a tree build for checking a fmt change itself.
+
 ### Decision-Making
 
 Don't make assumptions or value judgements about what's "worth doing" or "not worth the trouble." When unsure whether to do something (e.g., split a test file, refactor a helper, change an approach), ask the user instead of deciding unilaterally.
