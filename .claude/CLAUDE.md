@@ -779,6 +779,10 @@ reused a "before" bnc kept from before the last resync as the legacy side; the I
 changes too (2997 differing programs on the 32-bit target, the self-compile differing) and had to be redone.
 Build the "before" side from the change's parent on the current base (revert just the changed files, build,
 restore), never from a binary kept from an earlier base.
+The same holds for the comparison's INPUTS: produce both sides' outputs from the same tree, in the same round.
+This bit (2026-10-23): after amending a change in a package the comparison corpus compiles, I diffed fresh
+"after" objects against "before" objects kept from the previous round; native/common's object differed only
+because its source had changed, and a rerun of the "before" side on the current tree showed them identical.
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
