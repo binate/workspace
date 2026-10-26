@@ -188,6 +188,9 @@ It bit again (2026-10-17) on a `docs` spec edit: I typed the guard's counts as `
 rewrote the end of an existing line (`ignored.` → `ignored. A reference …`), which git counts as `10 1`, so the
 chain stopped with the spec edit written.  The rule holds for a scripted edit in ANY shared repo — `docs` and the
 workspace as much as `explorations`: compute the counts with `git diff --no-index --numstat` in the script.
+It bit again (2026-10-26) on a small follow-up: a one-off inline python edit, chained to an `awk` guard with
+typed counts (`6 5` for an edit git counts `6 4`), stopped with the todo edit written.  A quick one-off edit
+needs the computed check exactly as much as a planned script does.
 
 **NEVER create a git worktree inside `explorations/` (and NEVER spawn a subagent or workflow with `isolation: worktree` for work that targets the explorations repo).** The worktree-isolation mechanism parks a checkout at `explorations/.claude/worktrees/agent-<id>/` — a nested git repo *inside* the shared explorations working tree. That is broken on two counts: (1) the next worker's `git add -A` picks it up and stages it as an embedded-repo gitlink, corrupting the commit (this has happened); (2) explorations is docs/plans, not code — there is nothing to isolate, and the shared-checkout discipline above already governs it. If a task genuinely needs an isolated worktree, it is a *code* task and belongs in the binate repo (`isolation: worktree` / `git -C binate worktree ...` against binate), never explorations. Plain `explorations/` edits use the edit→commit→push discipline above, with no worktree at all.
 
