@@ -767,6 +767,9 @@ HEAD~1:<path> > <path>`), build, test, then restore it (`git -C <wt> checkout --
 or copy the tree into a scratch directory to build a variant — this has bitten (a `git ls-files | tar`
 copy of the whole tree into the scratchpad to build a partial-revert gen1), and scratch tree copies are
 already ruled out; the in-worktree revert costs the same one build and leaves nothing behind.
+It bit (2026-10-25) when the fix was not committed yet: a revert check restored its file with `git checkout --
+<path>`, which also threw away the fix's own uncommitted hunk in that file (it had to be re-applied).  Commit the
+fix first -- a WIP commit on the work branch is fine -- so the checkout restores the fix, not the HEAD before it.
 
 ### Rebuild Tools From the Current Tree — a Stale Scratch Build Can Silently Corrupt Files
 
