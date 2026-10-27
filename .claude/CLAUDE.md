@@ -546,6 +546,14 @@ $(seq ...); do grep -q done ...; sleep 2; done`) just burns tokens and blocks th
 "wait N minutes, then go ahead" was followed by a polling loop, and the user: "there's no need to poll when
 waiting; that's actively harmful and just burns tokens for no reason".  After starting the background command,
 say what you are waiting for and stop; act when the notification arrives.
+**Not polling is not the same as not looking: when a run is asked about, or is overdue, check that it is
+progressing.**  A step that hangs never sends its completion notice, so "still running" read off its output
+file can be wrong for hours.  This has bitten (2026-10-26): a `check` unit-test step hung for 17 hours in an
+exponential walk the change under test had introduced, and when the user asked, I reported "still running"
+from the output file alone.  When a run is asked about or has taken longer than its steps usually do, look at
+its processes (`ps -o etime,time` against the step's usual time; `sample <pid>` on one that spins), and give
+each step of a validation script a `timeout` (GNU `timeout` kills the step's whole process group, the test
+binary included).
 **Start a background run with the tool's `run_in_background`, never with a shell `&`.**  A `( … ) &`
 inside a foreground Bash call detaches with NO completion notice, so the only way to learn it finished is
 to poll.  This has bitten (2026-10-17): a validation chain started with `&` needed a separate background
