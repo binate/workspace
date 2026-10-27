@@ -698,6 +698,12 @@ after a filtered hygiene run** (`hygiene/run.sh | grep … && git commit …`): 
 was amended into a commit).  Run hygiene, read its overall line, then commit in
 a separate command.
 
+**A check of your own that prints only when it passes hides a failure as a missing line.**  This has
+bitten (2026-10-26): a loop checking four test inputs for a stable second format printed `w1 IDEM`,
+`w3 IDEM` and `w4 IDEM`; the missing `w2 IDEM` went unnoticed, the input went into a unit test, and the
+test failed in the next validation run.  Make every check print its failure too (`… && echo ok || echo
+FAIL`), and count the result lines against the inputs.
+
 **Hygiene's lint does NOT exercise this tree's checker.** `scripts/hygiene/lint.sh`
 runs the pinned CHECK_TOOLS bnlint by default (only `--from-source` builds bnlint
 from the tree), so a green hygiene run says nothing about whether the tree still
