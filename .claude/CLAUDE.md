@@ -443,6 +443,9 @@ It bit a fourth time (2026-10-23) through PARALLEL tool calls: a commit-message 
 --amend -F` that used its output were sent in one message; the script's assertion failed, and the amend ran anyway
 with the unrewritten message.  Tool calls sent together run regardless of each other's results, so a call that
 depends on another's success goes in a later message, after reading that result.
+It bit a fifth time (2026-10-27): one heredoc script edited a source file, then failed its check on a second
+file (a scratchpad test draft), and the apply script on the line after the heredoc wrote the tests from the
+unupdated draft.  A script that edits several files checks every edit before writing any of them.
 
 **A command meant to LOOK must contain nothing that DELETES.**  This has bitten: a line written to list my
 saved branches (`git branch --list …`) also carried a `git branch -D <saved-draft-branch>` — the deletion
