@@ -741,6 +741,8 @@ copy from that list; if a hash is not in front of you, describe the change by it
 It bit again (2026-10-19) in an agent prompt: a review agent was launched in the SAME tool batch as the
 `commit --amend` that made the commit, so its prompt carried an invented hash (`9e4e8ea1c` for `8d8468baf`).
 Never start an agent about a commit in the same batch that creates or rewrites it: read the hash first.
+The same holds for a spec section number: "spec §14.2 stmt.switch.tag" went into a pushed docs commit
+message (2026-10-28) for a rule in §14.10.  Copy the number from the file's headings (`grep -n '^#' <file>`).
 
 ### After Rebasing Onto a Rework of the Mechanism Your Change Relies On, Check Its Guarantee Directly
 
