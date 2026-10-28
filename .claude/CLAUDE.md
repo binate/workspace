@@ -1084,6 +1084,10 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
 Don't make shit up about the Binate language. If something is unknown, the **spec** (`docs/spec/`, with `docs/spec/binate.ebnf` the canonical grammar) is the authoritative source — go read it. Do NOT "infer" properties you think *should* be true based on other languages (e.g., Go): Binate is its own language and diverges deliberately (no built-in maps/append, refcounting not GC, raw vs managed slices, explicit interfaces, `@T`/`*T` pointers, …). "Go does X, so Binate probably does X" is exactly the failure mode to avoid.
 
 When the spec is genuinely ambiguous or silent, the discussion docs (`explorations/claude-notes.md`, `explorations/claude-discussion-detailed-notes.md`, and the other `explorations/` design docs) are references for **intent** — use them to understand *why* a decision was made and where the language is headed. If a question remains after consulting the spec and the discussion docs, **discuss it with the user** rather than inventing an answer or silently picking one. State plainly when you don't know; a checked "I looked and the spec says X" or an honest "the spec doesn't cover this — here's what the notes suggest, what do you want?" both beat a confident fabrication. (See also **Never Fabricate Language** in memory: don't state Binate behavior as fact without checking.)
+It bit (2026-10-28) in a unit test: a switch test put `case 2` beside a `float64` tag, assuming Go's rule
+that an integer constant converts to a float type.  Binate assigns an integer literal only to an integer type
+whose range holds it (`const.untyped`), so `var g float64 = 2` is an error, and the test failed.  Check a
+literal's assignability in §6.1 before writing it into a test.
 
 ### Checking Depends Only on a Package's Sources and Its Dependencies' `.bni` Files
 
