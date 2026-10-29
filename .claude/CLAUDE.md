@@ -1103,6 +1103,14 @@ that an integer constant converts to a float type.  Binate assigns an integer li
 whose range holds it (`const.untyped`), so `var g float64 = 2` is an error, and the test failed.  Check a
 literal's assignability in §6.1 before writing it into a test.
 
+### A Spec Edit Regenerates `spec/rule-ids.txt` in the Same Commit
+
+Every `docs/spec` edit runs `python3 scripts/extract-rule-ids.py` (in `docs`) and commits `spec/rule-ids.txt`
+with it, even when it adds no rule-ID: new wording can move a rule to another bucket ("is rejected" makes it a
+`constraint-candidate`).  This bit (2026-10-28): a sentence added to `stmt.switch.tag` (docs `27051da`) left
+`rule-ids.txt` stale, found only when the next rule's commit ran `extract-rule-ids.py --check`.  Run `--check`
+before the commit; binate's vendored copy (`scripts/spec-coverage/rule-ids.txt`) follows in the binate change.
+
 ### Checking Depends Only on a Package's Sources and Its Dependencies' `.bni` Files
 
 Whether code type-checks must depend only on its own source files and its dependencies' `.bni` files --
