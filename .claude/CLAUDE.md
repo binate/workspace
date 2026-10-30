@@ -454,6 +454,15 @@ the transcript).  Never put `branch -D`, `reset --hard`, `clean`, `rm -rf` or `s
 listing / verification line; a destructive command gets its own invocation, written on purpose, after
 reading what it will remove.
 
+**Never `rm -rf` a path computed from a command's output without checking it is the path you expect.**  This
+has bitten (2026-10-29): a validation script took the test binary's path as the last line of `bnc --test`'s
+output (`tb=$(... | tail -1)`) and cleaned up with `rm -rf "$(dirname "$tb")"`; when the test failed to compile,
+that line was the error, `.../pkg/binate/ir/gen_struct_index_test.bn:13:12: cannot assign ...`, so the `rm`
+deleted the worktree's `pkg/binate/ir` (every file was committed, so `git checkout HEAD -- pkg/binate/ir`
+restored it, but the rest of the run measured a broken tree).  Check the path before removing anything under
+it -- `[ -x "$tb" ] && case "$tb" in /tmp/binate_*/test_bin) rm -rf "$(dirname "$tb")" ;; esac` -- and check
+that a step's output is what it should be before the next step uses it.
+
 **Quote the heredoc delimiter (`<<'EOF'`) whenever its body is text rather than shell.**  An unquoted
 `<<EOF` expands `$VAR`, and it also runs every backticked span as a command.  This has bitten (2026-10-17): a
 python script fed through `<<EOF` (to interpolate `$S`) held commit-message text with `` `var panic =
