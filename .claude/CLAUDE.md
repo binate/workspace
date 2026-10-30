@@ -93,6 +93,8 @@ that is for interoperability, not a statement of rank.
   It bit again (2026-10-20), in a test written in the scratchpad and applied by script: a local holding a
   phi whose back-edge input is itself was named `same`.  Run `bnfmt --check` on a drafted test before the
   script that applies it, not after.
+  It bit again (2026-10-30): a unit-test local holding an impl's declarations was named `impl` (beside
+  `rest`, `h`, `j`); `bnfmt --check` caught it.  A local named for what it holds is the usual way in.
 
 ### Problem-Solving Approach
 
@@ -941,6 +943,10 @@ This has bitten badly (native-backend within-block reload-caching): a hang was a
 If tests are already failing when you start work, that is still your problem. Do not assume your work is fine just because tests were already broken — pre-existing failures can mask new issues introduced by your changes. It is sometimes acceptable to temporarily set aside a pre-existing failure and commit your own work first, but in general you should work to address already-failing tests next (or first), unless there is a good, deliberate reason not to. Ignoring pre-existing failures and moving on compounds the problem.
 
 **Before deep-diagnosing a "pre-existing" failure/hang, confirm it still reproduces on CURRENT main — rebase/resync your worktree first.** Your worktree base can be many commits behind local `main` (concurrent workers land constantly), and a failure you observe may already be fixed upstream. Reproducing on a stale base then investigating is wasted effort. This has bitten: a `pkg/binate/repl` unit-test infinite loop was reproduced ~a dozen times and diagnosed at length on a base ~20 commits stale — it was a `bnc` native-codegen miscompile (the VM ran repl fine; only the compiled `test_bin` spun) that a concurrent codegen commit had **already fixed**; rebasing onto current `main` made it vanish (both interpreted and compiled repl suites green). Cheap defense: `git -C <worktree> fetch <main-checkout> main && git -C <worktree> rebase FETCH_HEAD`, then re-run the failing check, BEFORE sinking time into root-causing. If it still reproduces post-rebase, it is genuinely open; if it disappears, `git log <old-base>..main -- <relevant-pkgs>` finds the fix.
+It nearly bit again (2026-10-30) through a review: the reviewer's "pre-existing, on main too" finding was
+reproduced with a compiler built from the worktree's base, and I filed it as a MAJOR entry and claimed it, while
+current main already had the fix (it landed that day).  A review's "on main" means the main its compiler was
+built from: before filing such a finding as open, reproduce it with a compiler built from current main.
 
 ### IR/Backend Boundary
 
