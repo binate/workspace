@@ -48,6 +48,14 @@ Run via `conformance/run.sh`. Modes are chains of: `builder` = prebuilt BUILDER 
 
 **The arm32 LINUX modes run here, in Docker — never report them as "can't run locally" (the user has said so over and over).**  macOS has no `qemu-arm` user-mode emulator, so `builder-comp_native_arm32_linux` / `builder-comp_arm32_linux` fail to start on the host; the local `binate-ci` image has clang, `gcc-arm-linux-gnueabihf` and `qemu-arm-static`.  Run the mode inside it with the worktree mounted: `docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v <worktree>:/work -w /work binate-ci sh -c "conformance/run.sh builder-comp_native_arm32_linux <tests>"`.  This has bitten: a native-arm32 fix's tests were validated on baremetal only, and the linux mode was reported as unrunnable ("relying on shared code") instead of run.
 
+**A conformance test with an object, a frame or stack arguments past 2 GiB must also be run on LLVM x86-64 before
+landing** — `HOST_ARCH=x64 BINATE_FLAGS="--target x86_64-darwin" conformance/run.sh builder-comp <test>` on this
+host.  That backend rejects a frame past 2^31 - 1 (CI's LLVM lanes run on x86-64), so such a test may need
+`.error.<mode>.x64` markers, or the rejection shows a bug.  This has bitten (2026-10-29): 1718_offsets_past_2gib
+was run that way neither for its own sake nor beside 1711 / 1720 (which were), and the LLVM lanes went red on main
+-- a 2 GiB frame copy that turned out to be a MAJOR bug (a struct of bytes copied through pointers is staged on the
+stack).
+
 ## Backend and Architecture Priorities
 
 **All three architectures — aa64, x64, and arm32 — are equally important.** Do
