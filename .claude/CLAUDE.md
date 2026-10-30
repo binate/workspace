@@ -1016,6 +1016,9 @@ checks with the CHECK_TOOLS release's bnfmt (`scripts/fetch-builder.sh --check-t
 build can lay a line out differently (a layout fix not yet released).  This bit (2026-10-23): a file formatted
 with a tree-built bnfmt, which wrapped a long call differently, failed `bnfmt-format`.  Before committing, run the
 pinned bnfmt's `--check` (or `-w`) on the files you changed; keep a tree build for checking a fmt change itself.
+It bit again (2026-10-29): I formatted the `.bn` files I had edited but not `pkg/binate/asm.bni`, where a new
+struct field re-aligned its neighbours; hygiene failed after a full validation run.  List the files to format
+from git (`git diff --name-only HEAD | grep -E '\.bni?$'`), `.bni` files included, not from memory.
 
 ### Decision-Making
 
