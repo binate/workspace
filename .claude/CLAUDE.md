@@ -95,6 +95,8 @@ that is for interoperability, not a statement of rank.
   script that applies it, not after.
   It bit again (2026-10-30): a unit-test local holding an impl's declarations was named `impl` (beside
   `rest`, `h`, `j`); `bnfmt --check` caught it.  A local named for what it holds is the usual way in.
+  It bit again (2026-10-30) in a conformance test: a loop's count of equal comparisons was named `same`;
+  `bnfmt -w` on the new file caught it.  A count named for what it counts is the usual way in, so check it.
 
 ### Problem-Solving Approach
 
@@ -416,6 +418,13 @@ in the helper's own recursive call, so the assert failed — and the script's ne
 UNMODIFIED tree, which passed, reading as "the test does not need the fix".  Chain the test run after the
 edit with `&&` (or `set -e`), print that the edit applied, and match a span unique to the site (the call
 with the line after it).
+
+**A check's failure message must never be empty — `return fail(x.ErrorMsg)` PASSES when no error happened.**
+A `testing.TestResult` is a string and "" is a pass, so a check that expects an error and reports the error text
+reports nothing when the error is missing.  This has bitten (2026-10-30): asm/parse's
+TestParseLineStrayCharacterIsFatal (`if !x.HasError || … { return fail(x.ErrorMsg) }`) stayed green after `;`
+became a separator on x86-64 and the line assembled; only a review's probe showed the test was failing.  Prefix
+the message with what was checked (`fail(buf.Concat("x64: ", x.ErrorMsg))`).
 
 **A conformance test's checks must fit a 32-bit `int` — `int` is 32 bits on arm32.**  This has bitten: a
 test packed seven two-digit values into one `int` (`seen = seen * 100 + v`, 14 digits); it passed on every
