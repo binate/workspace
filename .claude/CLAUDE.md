@@ -265,6 +265,13 @@ commit in a series got full conformance on native aa64 AND LLVM plus subsets
 on three more backends, and the user called it "a bit of overkill".  Validate
 with the subsets the change can affect, on each backend it reaches; a full run
 is for when the user asks, and then on one mode.
+Pick each check by what it can CATCH for this change, not by habit.  This bit
+(2026-10-30): for a checker cache whose only failure is a missed rejection, the
+validation compared compiled IR (which only compiles accepted programs, so it
+cannot see a missed error), ran the opaque tests on LLVM and the VM (both share
+the checker) and ran irgen's unit tests (irgen sees only accepted programs); the
+user asked whether the run was excessive, and it was cut to the gen1 build, the
+check / repl tests, one conformance mode, the A/B and hygiene.
 
 Relatedly, consider **token usage and efficiency**: running lots of
 subagents/subworkflows is typically less efficient than running a few; tokens
