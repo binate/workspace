@@ -1144,6 +1144,13 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
 - **Do NOT thrash.** You always think the grass is greener on the other side — that some other optimization is a bigger lever for less effort. It isn't: pivot and exactly the same thing happens one lever over, and the session ends with several half-finished optimizations and no landed improvement. Follow through until the work either lands or yields a root-caused negative result. The tell is a pivot proposal arriving right after a disappointing measurement with no investigation in between.
 - **Measure properly on this box.** Interleave A/B runs within a single run (never all of A then all of B); measure **user CPU time**, not wall clock; **alternate the A/B order** across rounds so thermal drift cancels instead of becoming a consistent bias; and verify you actually built what you think you are measuring (both arms rebuilt, identical flags, the right target arch — `--backend native` on an arm64 box builds aarch64, so an x64/arm32 change looks falsely neutral). Write and COMMIT scripts for any measurement worth running twice.
 
+### An Index Expression Reads Its Base Before Its Index
+
+`x[f()] = v` evaluates `x` first, then `f()` (spec `expr.index.eval-order`), so an index call that replaces
+`x` writes into the buffer it replaced.  This bit (2026-10-31): `s.Data[ensureCapacity(s, 1)] = val`, written
+to save a call, indexed the old 1024-byte buffer once the section grew -- index out of bounds in every assembler
+test past 1 KiB and in every native build.  Take such an index into a local first.
+
 ### Language Semantics
 
 **NEVER change language semantics (type system rules, implicit conversions, assignability, etc.) without explicitly asking the user first.** This includes adding new implicit conversions (e.g., `[]T → @[]T`), changing type compatibility rules, or modifying how the type checker accepts or rejects code. If a type error blocks your work, fix the code that's wrong — don't change the language rules to make it compile.
