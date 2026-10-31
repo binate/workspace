@@ -223,6 +223,11 @@ When doing a repo-wide refactor/sweep ("replace every X with Y", "adopt this hel
 This has bitten: the `binate-paths` adoption sweep inventoried only `scripts/` + `conformance/` and missed `e2e/` and `perf/runners/`, which also hand-coded the same search-path formula — discovered only when a concurrent commit touched an `e2e/` script. The fix would have cost nothing up front: `grep -rl '<the pattern>' .` before scoping, instead of grepping two assumed directories.
 
 The same trap applies to the **grep pattern itself**, not just the directory set: a repo-wide grep still undercounts if the regex is too narrow to match every spelling of the target. This has bitten: the old-mangling-scheme comment sweep grepped `bn_[a-z]` (catching concrete folded names like `bn_pkg__X`) but missed the *placeholder* spelling `bn_<pkg>__<name>` (which starts `bn_<`, not a lowercase letter), so the first pass silently covered only ~half the sites. Defenses: enumerate with a deliberately **over-broad** pattern and triage down (false positives are cheap; misses are silent); cross-check with a second independent pattern; and treat any "same defect, but outside the list I was handed" flag from a reviewer/subagent as proof the original pattern was incomplete — re-enumerate, don't just patch the one flagged site.
+It bit again (2026-10-30) in a move to a sub-package: moving the arm32 VFP encoders into `asm/arm32/vfp`, both
+the file listing and the rewrite matched `arm32\.V[A-Z]…`, but every VFP name goes on in lower case (`Vldr64`), so
+only the S / D register constants moved, the files that used none were never listed, and lint caught the calls left
+behind.  Take a rename's pattern from the names actually moving (here the `func` names in the new `.bni`), and
+after the rewrite count the old spelling per file with that same pattern, expecting zero.
 
 The same trap applies to the **file types** a grep covers: a `--include='*.bn'` sweep misses Binate source
 embedded in other files.  This has bitten: making `interp.RunFuncTyped` require a prior `Init`, I found the
