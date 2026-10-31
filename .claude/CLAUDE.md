@@ -907,6 +907,10 @@ It bit a tenth time (2026-10-19): a scratch-built bnc was compiling a synthetic 
 against the worktree's `-I` / `-L` paths (a scaling measurement, no compiler build), and I committed a
 review's fix to `pkg/binate/vm` meanwhile.  That run never read the package, so its numbers held -- by luck
 of its dependency set.  A prebuilt tool pointed at the worktree reads it like any run; the rule covers it.
+It bit an eleventh time (2026-10-30): a unit-test run and a revert check were going on the worktree when a
+timing run on scratch files reported; I read its numbers, worked out a fix, and wrote it into the worktree,
+taking the timing's notice for the run's.  Before the first edit after ANY notice, list the runs started on
+the worktree and check that each one has reported.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
