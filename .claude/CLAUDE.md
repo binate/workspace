@@ -272,6 +272,10 @@ cannot see a missed error), ran the opaque tests on LLVM and the VM (both share
 the checker) and ran irgen's unit tests (irgen sees only accepted programs); the
 user asked whether the run was excessive, and it was cut to the gen1 build, the
 check / repl tests, one conformance mode, the A/B and hygiene.
+Skip a check whose answer is already in hand.  It bit again (2026-10-30): after a small bnfmt extension, a
+run chained unit tests, two revert checks (one already shown by the previous build's output on the test's
+input) and two full corpus comparisons (the second readable from the first's changed-file list); asked
+whether it was excessive, about half of it was.
 
 Relatedly, consider **token usage and efficiency**: running lots of
 subagents/subworkflows is typically less efficient than running a few; tokens
