@@ -384,6 +384,11 @@ assert them in the script (or check `git diff --numstat`) before the commit.
 
 **When removing an entry by position (scripted edit), end the cut at the next heading of ANY level, and check the diff before committing.** This has bitten: a script that cut an entry "up to the next `### `" also swept away the `## Performance` section header and its how-to-measure intro that sat between the entry and the next `###` — pushed, and only noticed several commits later. Stop at the first line starting with `#` of any level, then read `git diff` to confirm only the intended entry is gone.
 
+**Insert a new entry just before a heading, never right after a line you matched inside another entry** — an entry's
+text can continue past its last bullet.  This has bitten (2026-10-30): a new entry went in right after the slow-lane
+entry's last bullet, which split off that entry's closing "Options (decision needed)" paragraph; it sat under the new
+heading until the new entry was moved to done.  Insert before the next heading that follows the entry you append after.
+
 ### Claim a Todo Before Working It — Mark It In-Progress and Push FIRST
 
 Before starting work on ANY todo entry — whether you're picking one up, the user assigns you one, or you just raised one and the user says "fix it now" — **mark that entry claimed/in-progress in `explorations/claude-todo.md` and commit+push it BEFORE writing any fix code.** `explorations/` is a shared checkout across concurrent worker sessions, and an unclaimed OPEN entry is an open invitation for another session to grab the same bug. The claim is the ONLY signal other sessions have that you're on it.
