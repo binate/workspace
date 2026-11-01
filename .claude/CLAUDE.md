@@ -935,6 +935,9 @@ It bit an eleventh time (2026-10-30): a unit-test run and a revert check were go
 timing run on scratch files reported; I read its numbers, worked out a fix, and wrote it into the worktree,
 taking the timing's notice for the run's.  Before the first edit after ANY notice, list the runs started on
 the worktree and check that each one has reported.
+It bit a twelfth time (2026-10-31): a sweep was comparing two prebuilt bnfmts over the worktree's files when a
+probe settled a design point, and I wrote the revised helper into the worktree at once.  A decision reached while
+a run reads the tree goes into a scratchpad draft until the run reports.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
