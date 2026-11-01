@@ -1000,6 +1000,13 @@ If you're adding new functionality to `pkg/codegen`, ask: "would a different bac
 
 Read `explorations/binate-coding-guide.md` before writing Binate code. Key rules: returning a raw slice (`[]T`) from a function that allocates is almost always wrong — use `@[]T` instead. Raw slices borrow; managed-slices own.
 
+**Never keep a managed-slice temporary (`buf.Concat(...)`) in a raw slice that outlives the statement — an element
+of a `@[]*[]readonly char` table in a unit test included.**  The temporary is released at the end of the statement
+and the view dangles.  This bit (2026-10-31): a test's table of `.bni` sources built two entries with
+`buf.Concat`; the parser read freed memory and failed with `test.bni:2:1: expected declaration` in the compiled lane
+and otherwise in the VM lane, which read as a checker bug -- and the next edit to the same test did it again.  Use
+string literals (adjacent literals concatenate), or a `@[]@[]char` table.
+
 ### Builder Compatibility Constraint
 
 The Go bootstrap interpreter has been retired. The operative constraint for cmd/bnc's tree is no longer "the bootstrap subset" (that term was, by definition, what the Go interp supported); it's **"must be compilable by the current BUILDER bnc"**. Do NOT hardcode a version number here — it goes stale. The exact pinned BUILDER is in the tree's **`BUILDER_VERSION`** file; consult that (and the corresponding tagged `bnc` revision, if you need to know precisely what a given release supports) to determine the constraint. The BUILDER bnc is built from a source snapshot, so its accepted language tracks the tree closely and the gap keeps shrinking.
