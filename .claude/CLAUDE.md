@@ -446,6 +446,9 @@ reports nothing when the error is missing.  This has bitten (2026-10-30): asm/pa
 TestParseLineStrayCharacterIsFatal (`if !x.HasError || … { return fail(x.ErrorMsg) }`) stayed green after `;`
 became a separator on x86-64 and the line assembled; only a review's probe showed the test was failing.  Prefix
 the message with what was checked (`fail(buf.Concat("x64: ", x.ErrorMsg))`).
+`buf.Concat` takes exactly two arguments: read a helper's signature in its `.bni` before building a
+test's message with it.  A four-argument call, written as if it were variadic, failed the check package's
+unit-test build and hygiene's lint (2026-10-31), and cost a validation round.
 
 **A conformance test's checks must fit a 32-bit `int` — `int` is 32 bits on arm32.**  This has bitten: a
 test packed seven two-digit values into one `int` (`seen = seen * 100 + v`, 14 digits); it passed on every
