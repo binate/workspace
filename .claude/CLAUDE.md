@@ -277,6 +277,12 @@ cannot see a missed error), ran the opaque tests on LLVM and the VM (both share
 the checker) and ran irgen's unit tests (irgen sees only accepted programs); the
 user asked whether the run was excessive, and it was cut to the gen1 build, the
 check / repl tests, one conformance mode, the A/B and hygiene.
+
+A CI sharding change can add cost to EVERY shard; estimate that per-shard cost before making it, and judge the
+change by CI's own job times afterwards.  This bit (2026-11-01): test-sharding pkg/binate/check and irgen across
+the unit int-int lane's 12 shards made every shard load both packages under the double VM; the shortest shard went
+10.8 -> 34.9 min and 8-9 of 12 hit the 45-min cap, against 2 before, and it was reverted.  A local run of one shard
+showed only that the split worked, not what it cost the other eleven.
 Skip a check whose answer is already in hand.  It bit again (2026-10-30): after a small bnfmt extension, a
 run chained unit tests, two revert checks (one already shown by the previous build's output on the test's
 input) and two full corpus comparisons (the second readable from the first's changed-file list); asked
