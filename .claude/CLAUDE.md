@@ -1008,7 +1008,7 @@ When modifying the compiler backend (`pkg/codegen`) or IR layer (`pkg/ir`), resp
 - **Memory layout** (structs, arrays, slices, managed-slices, managed pointer headers, future interface values) is a **language-level contract** shared by all compiler backends AND the interpreter (for dual-mode interop). It belongs in `pkg/types`, not in any backend.
 - **Other language-semantic logic** (name mangling, string constant collection, runtime function manifest) belongs in a **shared layer** (IR, types, or shared packages), not in any specific backend.
 - **Target-specific logic** (instruction selection, register allocation, calling convention, type representation format, binary format, debug info) belongs in the **backend**.
-- **Type layout functions** (`types.SizeOf`, `types.AlignOf`, `types.FieldOffset`) must be parameterized by target (pointer size, int size, alignment) — do not hardcode 64-bit assumptions.
+- **Type layout functions** (`Size`, `AlignOf` and `Offset` on `types.Type`) must be parameterized by target (pointer size, int size, alignment) — do not hardcode 64-bit assumptions.
 
 If you're adding new functionality to `pkg/codegen`, ask: "would a different backend need this same logic?" If yes, put it in a shared location. For layout-related logic, also ask: "does the interpreter need to agree with this?" If yes, it must be in `pkg/types`.
 
