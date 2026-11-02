@@ -1149,6 +1149,13 @@ behavior, move that intent into the caller explicitly, treat any implementer or
 reviewer open question about such a dependency as a blocker for the same change,
 and run that arch's native conformance before calling the change done.
 
+**A new mnemonic can change how an existing one splits into name, condition and `s`.**  This bit
+(2026-11-01): adding arm32's `sb` made `sbcs` read as `sb` with condition `cs`, not `sbc` with `s`, so
+the bare-metal runtime's `aeabi_int.s` stopped assembling and every bare-metal link failed; the
+earlier steps' case lists had no `sbcs`, so the old-versus-new sweep passed.  When adding names, check
+every existing mnemonic plus a condition or `s` against the new ones, and assemble the runtime `.s`
+files (`runtime/*/`) with the new bnas before the validation run.
+
 **Before calling a clang behaviour a quirk, rule out that a probe's names mean something
 else.**  This has bitten: aliases named `B2`, `B4`…`B7` made `b B2` fail in clang while `b B`
 worked, and I reported "clang rejects a branch to some alias forms" — but `b2`…`b7` are the
