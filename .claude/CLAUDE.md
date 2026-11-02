@@ -1112,6 +1112,16 @@ asking which ABI rule func-value dispatch should follow for a zero-size argument
 no slot", relying on a comment in types/abi that called its predicate the VM's source of truth.  The VM's own
 trampoline maps one word to every parameter, so it sides with native.  The user picked the option my wrong fact
 favored, and the question had to be asked again.  Before putting "X does Y" into a question or a todo entry, read X.
+It bit again (2026-11-02): a todo entry said 25 unit-test files set a 64-bit arch without the LP64 layout -- a
+count of files with no direct `SetTarget` call, relayed from a review.  Each package has a `setTarget64()` helper
+that calls it, and every one of those tests ran it first.  A grep for a call misses the helper that wraps it: read
+the functions, not just the file list.
+
+**A bug with an obvious fix is OPEN, not NEEDS DECISION.**  NEEDS DECISION is for a real choice the user owns (a
+design alternative, a scope or a language question).  This bit (2026-11-02): three pre-existing target-setup bugs
+found by a review were filed as NEEDS DECISION and put to the user that way; the user: "it seems like the former
+should just be fixed? What's the decision?"  There was none.  File such a bug as open, say what the fix is, and
+offer to do it.
 
 ### C-Free Target
 
