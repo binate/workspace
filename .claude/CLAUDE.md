@@ -853,6 +853,11 @@ erased the existing `TestEmitCopyIsMove` in it; the next unit-test run passed (t
 gone) and only `git ls-files --others` — which did not list the file as new — gave it away.  Before
 creating a file, `ls` the path (or `git ls-files <path>`); if it exists, append to it or pick another name.
 
+**A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
+when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
+`link/parse_elf_armattr.bn` went into `relocate_arm32_call_test.bn`, and hygiene failed at the end of a full
+validation run.  Give each new `.bn` its `_test.bn` when you create it.
+
 ### Test a Partial Revert IN the Worktree — Never Copy the Source Tree to Scratch
 
 To check that a test covers one piece of a multi-part fix (or to build any variant of the tree), do it in
