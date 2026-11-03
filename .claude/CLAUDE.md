@@ -1060,6 +1060,9 @@ the CURRENT compiler, so a construct only the pinned BUILDER mishandles passes t
 (2026-10-18): native/common's frame tables moved to `vec.Vec[int64]` beside its `vec.Vec[int]`; every native
 unit test passed, and the whole conformance part of the validation died at "Building gen1 compiler" (bnc-0.0.16
 makes `Vec[int]` and `Vec[int64]` one instance — fixed on main by `50d176225`, after that BUILDER).
+The same holds for any edit made after the last build: `bnfmt --check` only parses, so a local declared twice
+(2026-11-03, a `var real` in a function that already had one) passed it, and every step of the validation run
+that followed failed at the first build.  Run the changed package's unit tests before the validation script.
 
 **Do not select a field straight off a `bit_cast` (`bit_cast(@T, p).f`) in BUILDER-compiled code — bind it to a
 local first (`var d @T = bit_cast(@T, p)`, then `d.f`), the tree's idiom.**  A BUILDER older than binate `ab2e981a`
@@ -1187,6 +1190,10 @@ SIMD byte registers, so clang (and our assembler) read `b B2` as a branch to a r
 Name probe symbols so they cannot be registers, conditions, shifts or other keywords of
 the arch (`lbl`, `A`, `C`, not `B1`/`x3`/`eq`), and when one form fails and a near-identical
 one works, look for what differs in the names before blaming the assembler.
+**Before recording that clang rejects a form, probe it with every feature the form needs in effect.**  This has
+bitten (2026-11-03): "clang rejects `vldr.16 s0, lbl`" went into the plan and a commit message as a kept
+difference, from a probe in the default context, which has no FP16; with `.arch armv8.2-a` and `.arch_extension
+fp16` clang takes it, and a review caught it.  A rejection in a context without the feature is the gate's.
 
 ### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
 
