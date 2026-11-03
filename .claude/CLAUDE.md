@@ -287,6 +287,11 @@ Skip a check whose answer is already in hand.  It bit again (2026-10-30): after 
 run chained unit tests, two revert checks (one already shown by the previous build's output on the test's
 input) and two full corpus comparisons (the second readable from the first's changed-file list); asked
 whether it was excessive, about half of it was.
+It bit again (2026-11-02): an assembler step's validation script was reused whole for the next step -- a
+collision sweep of every existing mnemonic (the change could intercept only `v` / `f` names, and none existed),
+three arm32 conformance modes (one hard-float mode was the only user of the changed encoders), four e2e scripts
+(one ran the changed path) and fourteen unit-test packages (three held changed code).  Write each step's
+validation list afresh from its diff.
 
 Relatedly, consider **token usage and efficiency**: running lots of
 subagents/subworkflows is typically less efficient than running a few; tokens
