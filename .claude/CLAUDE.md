@@ -962,6 +962,9 @@ the worktree and check that each one has reported.
 It bit a twelfth time (2026-10-31): a sweep was comparing two prebuilt bnfmts over the worktree's files when a
 probe settled a design point, and I wrote the revised helper into the worktree at once.  A decision reached while
 a run reads the tree goes into a scratchpad draft until the run reports.
+It bit a thirteenth time (2026-11-03): a validation run's conformance steps showed a compile panic, and I fixed it
+in the worktree while the run's e2e and hygiene steps were still going.  A run whose results already fail is still
+reading the tree until its notice arrives.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
