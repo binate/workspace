@@ -548,6 +548,12 @@ branch — rewriting a landed commit into a new one.  It was recoverable only be
 pre-rebase head was in the reflog (`git reset --hard <old head>`, then redo the reorder on the right base); a
 sed script that picks commits by position silently does the wrong thing when the list is not the one you
 expected.  After any scripted rebase, `git diff <pre-rebase head> HEAD` must be empty when you only reordered.
+**A `reset --soft` squash goes to the commits' own base, never to a freshly fetched main.**  `reset --soft
+FETCH_HEAD` keeps the work tree, so when main has moved the squashed commit carries the old base's tree and
+undoes every upstream commit since.  This nearly bit (2026-11-03): a squash right after a fetch reset onto the new
+main; `git diff <pre-squash head> HEAD` came out empty, which looked right and was the sign of the damage.  Squash
+onto `git merge-base HEAD FETCH_HEAD`, then rebase onto FETCH_HEAD, and check that the result differs from the
+pre-squash head by exactly upstream's files.
 
 ### Resolving a Both-Sides-Append Conflict: Re-Check the Shared Last Line
 
