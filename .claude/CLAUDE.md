@@ -1126,6 +1126,10 @@ It bit again (2026-10-29): I formatted the `.bn` files I had edited but not `pkg
 struct field re-aligned its neighbours; hygiene failed after a full validation run.  List the files to format
 from git (`git diff --name-only HEAD | grep -E '\.bni?$'`), `.bni` files included, not from memory.
 
+**Read a script's argument handling before running it with a flag it may not take.**  A script that ignores an
+unknown flag runs its default action: `docs/scripts/gen-annex-a.py --help`, run to see its usage, rewrote Annex A
+(2026-11-04; the annex was current, so nothing changed).  Read the usage in the script's header instead.
+
 ### Decision-Making
 
 Don't make assumptions or value judgements about what's "worth doing" or "not worth the trouble." When unsure whether to do something (e.g., split a test file, refactor a helper, change an approach), ask the user instead of deciding unilaterally.
