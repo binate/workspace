@@ -466,6 +466,12 @@ test packed seven two-digit values into one `int` (`seen = seen * 100 + v`, 14 d
 64-bit mode and failed on both native arm32 modes with the value wrapped mod 2^32.  Keep a packed accumulator
 under 2^31 (at most four two-digit values), or record values in an array and print them one per line.
 
+**A deep test releases its structure a link at a time -- and drops every other holder of the links first.**  This bit
+(2026-11-04): a unit test released its 200,000-link type chain link by link, but its visited sets (`typeVisits`
+locals that had entered every link) still held them all, and when they went out of scope at the test's return the
+links were freed in table order, each free nesting into the next -- SIGSEGV.  Keep such holders in a helper that
+returns before the release.
+
 ### Memory Management: Never Leak
 
 The compiler must NEVER generate code that leaks memory. If a managed allocation is created, it must eventually be RefDec'd. The only acceptable "leaks" are user-created reference cycles (which are user error — Binate uses refcounting, not GC).
