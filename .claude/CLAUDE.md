@@ -97,6 +97,8 @@ that is for interoperability, not a statement of rank.
   `rest`, `h`, `j`); `bnfmt --check` caught it.  A local named for what it holds is the usual way in.
   It bit again (2026-10-30) in a conformance test: a loop's count of equal comparisons was named `same`;
   `bnfmt -w` on the new file caught it.  A count named for what it counts is the usual way in, so check it.
+  It bit again (2026-11-05): a unit-test helper's parameter holding the declarations of a type `Box` was named
+  `box`; `bnfmt --check` caught it.  A parameter named for the type it declares is the same trap as a local.
 
 ### Problem-Solving Approach
 
