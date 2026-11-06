@@ -919,6 +919,9 @@ The same holds for the comparison's INPUTS: produce both sides' outputs from the
 This bit (2026-10-23): after amending a change in a package the comparison corpus compiles, I diffed fresh
 "after" objects against "before" objects kept from the previous round; native/common's object differed only
 because its source had changed, and a rerun of the "before" side on the current tree showed them identical.
+It bit again (2026-11-05): a validation script kept the "before" compiler (the base had not moved) and also its
+IR of cmd/bnc from the previous round; the amend between the rounds had changed cmd/bnc's own check package, so
+every identity check read DIFFERS.  Keeping a "before" binary is fine; its outputs are made again each round.
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
