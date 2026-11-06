@@ -376,6 +376,9 @@ This generalizes two in-effect efforts: the spec self-containedness sweep (the s
 Documentation, todos, plan docs, comments, and commit messages must **not** refer to work branches or other artifacts that are not generally visible — e.g. a local `work-2` / `temp-binate-N` branch, an un-pushed commit, or anything not on `main` / not published to GitHub. Such references are meaningless (and often misleading) to anyone reading outside the authoring session: the branch may be renamed, deleted, rebased away, or simply never visible to them. This has bitten — a `claude-todo.md` entry said some packages "live on the `work-2` branch, NOT main," which was both non-actionable for any other reader and already stale (the packages had since landed on main).
 
 Refer instead to durable, visible things: `main`, a merged commit hash, a released version (`bnc-0.0.x`), a published plan/spec doc (subject to "Repo Text References Durable Docs Only" above — code and durable docs cite the spec, not plans), or the current state of a tracked file. If work is genuinely in-flight on a branch, describe it by its landed/visible artifacts or say "not yet landed" rather than naming the private branch.
+It bit twice (2026-11-05) in a self-drive batch: todo notes written while the batch's commits were still on
+the work branch cited their hashes (a measurement's build, a fix's).  Until a commit lands, name the change, not
+its hash.
 
 ### What Belongs in the Todo File vs the Done File
 
