@@ -983,6 +983,9 @@ a run reads the tree goes into a scratchpad draft until the run reports.
 It bit a thirteenth time (2026-11-03): a validation run's conformance steps showed a compile panic, and I fixed it
 in the worktree while the run's e2e and hygiene steps were still going.  A run whose results already fail is still
 reading the tree until its notice arrives.
+It bit a fourteenth time (2026-11-05): a review's re-check of a revision reported while that revision's validation
+run was still going, and the next revision was written and committed into the worktree before the run was stopped.
+A finding against the commit a run validates makes the run moot: stop it first, as the fourth instance says.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
