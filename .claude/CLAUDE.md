@@ -798,6 +798,11 @@ bitten (2026-10-26): a loop checking four test inputs for a stable second format
 test failed in the next validation run.  Make every check print its failure too (`… && echo ok || echo
 FAIL`), and count the result lines against the inputs.
 
+**A unit-test run that panics stops at the panicking test -- read its summary and its passed count, not only
+its `--- FAIL` lines.**  This bit (2026-11-06): a new test's program did not parse, the test binary panicked
+there, and a grep for `--- FAIL` showed one failure; the tests after it never ran, and one that should have
+failed read as passing.  A run is whole only when its `PASS: <pkg> (N passed)` line is there.
+
 **Hygiene's lint does NOT exercise this tree's checker.** `scripts/hygiene/lint.sh`
 runs the pinned CHECK_TOOLS bnlint by default (only `--from-source` builds bnlint
 from the tree), so a green hygiene run says nothing about whether the tree still
