@@ -515,6 +515,8 @@ depends on another's success goes in a later message, after reading that result.
 It bit a fifth time (2026-10-27): one heredoc script edited a source file, then failed its check on a second
 file (a scratchpad test draft), and the apply script on the line after the heredoc wrote the tests from the
 unupdated draft.  A script that edits several files checks every edit before writing any of them.
+It bit a sixth time (2026-11-07): an edit script wrote its first file, then stopped on an edit of the second
+whose text bnfmt had re-wrapped.  Collect every file's edits in memory, assert them all, then write them all.
 
 **A command meant to LOOK must contain nothing that DELETES.**  This has bitten: a line written to list my
 saved branches (`git branch --list …`) also carried a `git branch -D <saved-draft-branch>` — the deletion
@@ -919,6 +921,10 @@ replaced every `defer` statement with a blank line under `-w`; it surfaced only 
 deferred output went missing (the current `bnfmt` keeps them).  A formatter that drops a statement
 turns a green test red at best, and at worst deletes code nobody notices.
 It also misleads a CHECK: before judging whether another session's tool fix landed, rebuild the tool.
+**Check a build's exit status before using what it built -- a failed `build-bnas.sh -o <path>` leaves the
+previous binary at `<path>`.**  This bit (2026-11-07): a bnas rebuild failed on two type errors, its output went
+through `grep -i error` (`mismatched types int and uint` has no "error" in it), and the old binary's results were
+read as the change not working.  Chain the use after the build with `&&`, or read the build's last line.
 This bit (2026-10-17): a scratch `bnfmt` built before work-5's import-annotation fix still dropped the
 `#[build]` annotations, which read as "the fix doesn't work"; a rebuild from the tree showed it working.
 
