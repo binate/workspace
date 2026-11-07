@@ -333,7 +333,11 @@ Hygiene rules (file length, line length, doc-comment requirements, naming, etc.)
 Specific anti-patterns that have come up and must not recur:
 - Wrapping individual `const` decls into a `const ( ... )` group purely because the script skips group members. The members are still undocumented; the group form has to reflect a real grouping (a single shared explanation that genuinely covers all members).
 - Trimming individual doc lines to bring a file back under the line/file-length cap. If a file is over cap, split it (and its tests) along natural boundaries; do not vandalize the docs you just added.
-- Reformatting code or rewording prose for the sole purpose of moving a counter under a threshold. If the threshold is in the way, the structural fix (split, refactor, raise the cap) is the right answer; ask if unsure which.
+- Reformatting code or rewording prose for the sole purpose of moving a counter under a threshold. If the threshold is in the way, the structural fix (split, refactor) is the right answer; ask if unsure which.
+- **Never offer raising a cap as an option.**  A file over its length limit is split along a natural boundary
+  (a `.bni` at its cap: move a section that belongs elsewhere into a package of its own).  This has bitten
+  (2026-11-06): with `pkg/binate/types.bni` at its 1000-line cap, I listed "raise the `.bni` cap" beside a split;
+  the user: "Split the file. Stop suggesting raising the fucking caps."
 
 If you find yourself thinking "I just need to shave a few lines so the script passes," stop and ask the user. The check exists because someone decided the property mattered; gaming it silently violates that decision.
 
