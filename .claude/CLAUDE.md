@@ -565,6 +565,9 @@ undoes every upstream commit since.  This nearly bit (2026-11-03): a squash righ
 main; `git diff <pre-squash head> HEAD` came out empty, which looked right and was the sign of the damage.  Squash
 onto `git merge-base HEAD FETCH_HEAD`, then rebase onto FETCH_HEAD, and check that the result differs from the
 pre-squash head by exactly upstream's files.
+A sequence-editor script that picks todo lines by subject must read them as git writes them here: `pick <hash> #
+<subject>`.  One that split off `<subject>` matched nothing (2026-11-06); it exited non-zero, so the rebase did not
+start -- make such a script fail when it matches fewer lines than it expects, as that one did.
 
 ### Resolving a Both-Sides-Append Conflict: Re-Check the Shared Last Line
 
