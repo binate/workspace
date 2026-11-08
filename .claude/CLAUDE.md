@@ -1174,6 +1174,13 @@ asking which ABI rule func-value dispatch should follow for a zero-size argument
 no slot", relying on a comment in types/abi that called its predicate the VM's source of truth.  The VM's own
 trampoline maps one word to every parameter, so it sides with native.  The user picked the option my wrong fact
 favored, and the question had to be asked again.  Before putting "X does Y" into a question or a todo entry, read X.
+
+**Before recommending an option, look for a decision the user already made on the same question.**  This has
+bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
+I recommended "Count it" (the instance calls the new definition) without mentioning plan-irgen-checker-types.md
+decision 7 (2026-10-14: a generic's names mean what they meant where it was declared), which it contradicts; the
+user chose it, and it had to be reconciled nine days later.  Grep the plan docs' decisions and the todo entries for
+the topic, and put any recorded decision into the question.
 It bit again (2026-11-02): a todo entry said 25 unit-test files set a 64-bit arch without the LP64 layout -- a
 count of files with no direct `SetTarget` call, relayed from a review.  Each package has a `setTarget64()` helper
 that calls it, and every one of those tests ran it first.  A grep for a call misses the helper that wraps it: read
