@@ -1265,6 +1265,14 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
 - **Do NOT thrash.** You always think the grass is greener on the other side — that some other optimization is a bigger lever for less effort. It isn't: pivot and exactly the same thing happens one lever over, and the session ends with several half-finished optimizations and no landed improvement. Follow through until the work either lands or yields a root-caused negative result. The tell is a pivot proposal arriving right after a disappointing measurement with no investigation in between.
 - **Measure properly on this box.** Interleave A/B runs within a single run (never all of A then all of B); measure **user CPU time**, not wall clock; **alternate the A/B order** across rounds so thermal drift cancels instead of becoming a consistent bias; and verify you actually built what you think you are measuring (both arms rebuilt, identical flags, the right target arch — `--backend native` on an arm64 box builds aarch64, so an x64/arm32 change looks falsely neutral). Write and COMMIT scripts for any measurement worth running twice.
 
+### Putting a Call Under a Condition Also Skips Its Arguments' Side Effects
+
+Before wrapping a call in an `if`, read its arguments: one may do work the code after it relies on.  This bit
+(2026-11-08): gating `noteGenericImplDecl(gc, d, pkg, di.use(gc, d))` on a new predicate also skipped
+`di.use`, which points the import aliases at d's file for the `collectImportedImplsFromDecl` call on the
+next line; the stage-2 bnc build died with "generic interface hash.Hasher ... was never registered".  Hoist
+such an argument into a local before the condition.
+
 ### An Index Expression Reads Its Base Before Its Index
 
 `x[f()] = v` evaluates `x` first, then `f()` (spec `expr.index.eval-order`), so an index call that replaces
