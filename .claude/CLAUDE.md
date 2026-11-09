@@ -1246,6 +1246,11 @@ one works, look for what differs in the names before blaming the assembler.
 bitten (2026-11-03): "clang rejects `vldr.16 s0, lbl`" went into the plan and a commit message as a kept
 difference, from a probe in the default context, which has no FP16; with `.arch armv8.2-a` and `.arch_extension
 fp16` clang takes it, and a review caught it.  A rejection in a context without the feature is the gate's.
+**Derive a field's bit layout from values whose bits differ, and sweep every value of a small field.**  This bit
+(2026-11-08): arm32 VFMAL's Q-form lane (two bits, M:Vm<3>) was laid out as Vm<3>:M from clang's words for lanes 0
+and 3, which encode alike either way, and the comparison corpus had no lane 1 or 2, so lanes 1 and 2 silently
+swapped and the commit message claimed every encoding agreed; a review caught it.  Probe lanes 1 and 2, registers
+with one bit set (1, 2, 4, 8, 16), and put a sweep of every lane and a spread of registers in the corpus.
 
 ### The Native Backend Is the Goal; LLVM/clang Is a Stopgap — Closing the Gap Is the Point
 
