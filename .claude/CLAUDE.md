@@ -253,6 +253,11 @@ It bit again (2026-10-18), in a search for tests to update: looking for x86-64 t
 an operand, a `grep … | head` filled its ten lines with aarch64 hits and hid the x86-64 test that expected
 `ret 1` to be rejected; the next unit-test run caught it.  A search for tests a change breaks is a sweep too.
 
+**A sweep's "none left" check must be seen to find something first.**  `git grep -E` here has no `\b`
+(it matches nothing), so a check like `git grep -E 'x64\.(Name|…)\b'` reported "none left" whatever the tree
+held (2026-11-10, the SSE split; only the build showed no old name remained).  Try the pattern on a revision
+that has hits, or scan with Python's `re`.
+
 **Never sweep for a keyword in embedded source with `grep -w` (or `\b`).**  In a string literal the keyword
 often follows an escape — `"\tdefer fv()\n"` has a `t` right before `defer`, so there is no word boundary.
 This has bitten: moving every `defer <call>` to `defer { <call> }`, a `git grep -w defer` sweep missed four
