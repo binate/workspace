@@ -1006,6 +1006,9 @@ reading the tree until its notice arrives.
 It bit a fourteenth time (2026-11-05): a review's re-check of a revision reported while that revision's validation
 run was still going, and the next revision was written and committed into the worktree before the run was stopped.
 A finding against the commit a run validates makes the run moot: stop it first, as the fourth instance says.
+It bit a fifteenth time (2026-11-09): a unit-test run and a bnas rebuild were started together; the tests' failure
+notice arrived, and the fix went into the worktree while the rebuild was still compiling it, so that bnas had to be
+thrown away.  Two runs started together report separately: wait for the second notice too.
 
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
