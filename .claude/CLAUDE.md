@@ -1010,6 +1010,13 @@ It bit a fifteenth time (2026-11-09): a unit-test run and a bnas rebuild were st
 notice arrived, and the fix went into the worktree while the rebuild was still compiling it, so that bnas had to be
 thrown away.  Two runs started together report separately: wait for the second notice too.
 
+**Stopping a run can leave the worktree in the state its script put it in -- read `git status` after a
+TaskStop, before the first edit.**  A validation script that reverts files for an old-compiler build restores
+them only if it reaches its restore step.  This nearly bit (2026-11-09): a validation stopped during that build
+(a review's fixes made it moot) left six check files reverted; `git status` showed it before any edit, and `git
+checkout HEAD -- pkg/binate/check` restored them.  An edit made on top of that tree would have been mixed into the
+reverted files.
+
 ### Before Widening a Check Past a Guard, Find What the Guard Excludes — and Validate on Every Mode
 
 A guard that skips some inputs (`if len(files) == 0 { return }`) may encode a case you cannot see from the
