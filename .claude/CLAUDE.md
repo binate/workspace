@@ -252,6 +252,9 @@ grep ran before the edit.
 It bit again (2026-10-18), in a search for tests to update: looking for x86-64 tests that pin `ret` with
 an operand, a `grep … | head` filled its ten lines with aarch64 hits and hid the x86-64 test that expected
 `ret 1` to be rejected; the next unit-test run caught it.  A search for tests a change breaks is a sweep too.
+It bit again (2026-11-10), in a check of a reviewer's claim: listing `EliminatePhis`'s callers through
+`| head` cut off the VM's two calls, which nearly put "the VM does not run it" into a todo entry.  A list
+that backs a claim is a sweep too.
 
 **A sweep's "none left" check must be seen to find something first.**  `git grep -E` here has no `\b`
 (it matches nothing), so a check like `git grep -E 'x64\.(Name|…)\b'` reported "none left" whatever the tree
