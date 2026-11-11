@@ -532,6 +532,10 @@ ran, removing the only ref to an unlanded draft (recovered from the commit hash,
 the transcript).  Never put `branch -D`, `reset --hard`, `clean`, `rm -rf` or `stash drop` into a status /
 listing / verification line; a destructive command gets its own invocation, written on purpose, after
 reading what it will remove.
+It bit again (2026-11-10) with a command that MUTATES: looking into why a landing's cherry-pick had failed, a
+status line in the main checkout also carried `git cherry-pick --no-commit <c>`, which staged the change on
+local main.  (Its tree matched the approved commit's, so it was committed with `commit -C <c>` and pushed as
+the landing.)  A look line holds only reads -- no `cherry-pick`, `commit`, `reset`, `checkout` or `push`.
 
 **Never `rm -rf` a path computed from a command's output without checking it is the path you expect.**  This
 has bitten (2026-10-29): a validation script took the test binary's path as the last line of `bnc --test`'s
@@ -755,6 +759,11 @@ and stopped on C with conflicts (C needed B's new file).  Nothing had been pushe
 returned local main to the pre-sequence commit (= origin), and the landing was redone as
 `cherry-pick A && cherry-pick B && cherry-pick C && push`.  Afterwards confirm the landed tree equals the
 validated branch head (`git diff <branch head> <main head>` empty).
+
+**Never pipe a landing step through `tail` or `grep` -- `cmd | tail -1 && push` tests tail's status, not cmd's.**
+This bit (2026-11-10): `git cherry-pick <c> 2>&1 | tail -1 && git push origin main` printed `fatal: cherry-pick
+failed` and ran the push anyway (nothing was ahead, so it pushed nothing).  Run the cherry-pick and the push bare,
+chained with `&&`, and read their output.
 
 **When GitHub has been unreachable, confirm it answers right before the cherry-pick (`git -C
 ~/binate/binate ls-remote origin HEAD`), and if the push still fails after the cherry-pick, retry the push at
