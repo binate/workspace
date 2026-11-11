@@ -427,6 +427,9 @@ It bit a third time (2026-10-16), the same way: with several bugs pipelined, eac
 apply-script while a run held the worktree, the draft for one bug was written, applied and committed before
 its claim.  Make the claim the first step of picking the next bug, before reading its code closely enough to
 draft anything.
+It bit a fourth time (2026-11-10): asked to "investigate" a regression after a related change, I found its cause
+while validating that change and wrote the fix into the same work, claiming the entry only after both were
+committed.  When an investigation turns into a fix, push the claim before the fix's first line.
 
 The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
 
