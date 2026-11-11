@@ -523,6 +523,9 @@ depends on another's success goes in a later message, after reading that result.
 It bit a fifth time (2026-10-27): one heredoc script edited a source file, then failed its check on a second
 file (a scratchpad test draft), and the apply script on the line after the heredoc wrote the tests from the
 unupdated draft.  A script that edits several files checks every edit before writing any of them.
+It bit a seventh time (2026-11-10): a heredoc edit script was followed, on the next line, by `git add && git commit`
+for a local WIP commit; the script's assertion failed (an anchor missed its line's `for` prefix) and the commit ran
+with only the new file.  A local commit is no exception: the commit goes in the next tool call.
 It bit a sixth time (2026-11-07): an edit script wrote its first file, then stopped on an edit of the second
 whose text bnfmt had re-wrapped.  Collect every file's edits in memory, assert them all, then write them all.
 
