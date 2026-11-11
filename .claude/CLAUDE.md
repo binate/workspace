@@ -903,6 +903,11 @@ erased the existing `TestEmitCopyIsMove` in it; the next unit-test run passed (t
 gone) and only `git ls-files --others` — which did not list the file as new — gave it away.  Before
 creating a file, `ls` the path (or `git ls-files <path>`); if it exists, append to it or pick another name.
 
+**A scripted text edit replaces a span, not lines -- end its match at a newline.**  A comment edit whose old text
+ended mid-line (`holds\n// again.`) left the rest of that line, the next sentence, after the new text: a 144-character
+line that only hygiene caught, at the end of a validation run (2026-11-10).  After a scripted edit, check the line
+lengths of what it wrote before starting the run.
+
 **A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
 when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
 `link/parse_elf_armattr.bn` went into `relocate_arm32_call_test.bn`, and hygiene failed at the end of a full
