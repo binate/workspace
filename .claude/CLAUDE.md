@@ -295,6 +295,10 @@ change by CI's own job times afterwards.  This bit (2026-11-01): test-sharding p
 the unit int-int lane's 12 shards made every shard load both packages under the double VM; the shortest shard went
 10.8 -> 34.9 min and 8-9 of 12 hit the 45-min cap, against 2 before, and it was reverted.  A local run of one shard
 showed only that the split worked, not what it cost the other eleven.
+Dropping a lane's skip marker because its tests now pass there is the same kind of change: time them on that lane
+first.  It bit (2026-11-07): once bare metal had a bigger test heap I deleted check's `TestDeep` skip there ("all
+pass there now"); under QEMU those 81 tests take 29 min locally, on a 30-min lane, and CI timed the lane out once a
+later heap increase let them all run.
 Skip a check whose answer is already in hand.  It bit again (2026-10-30): after a small bnfmt extension, a
 run chained unit tests, two revert checks (one already shown by the previous build's output on the test's
 input) and two full corpus comparisons (the second readable from the first's changed-file list); asked
