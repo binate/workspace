@@ -929,6 +929,11 @@ ended mid-line (`holds\n// again.`) left the rest of that line, the next sentenc
 line that only hygiene caught, at the end of a validation run (2026-11-10).  After a scripted edit, check the line
 lengths of what it wrote before starting the run.
 
+**The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
+definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
+`isUniverseAny(pkg, name)` added to irgen collided with an existing `isUniverseAny(m, iface)`, and a validation run
+stopped at its first build.
+
 **A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
 when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
 `link/parse_elf_armattr.bn` went into `relocate_arm32_call_test.bn`, and hygiene failed at the end of a full
