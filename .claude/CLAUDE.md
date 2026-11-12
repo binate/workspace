@@ -99,6 +99,8 @@ that is for interoperability, not a statement of rank.
   `bnfmt -w` on the new file caught it.  A count named for what it counts is the usual way in, so check it.
   It bit again (2026-11-05): a unit-test helper's parameter holding the declarations of a type `Box` was named
   `box`; `bnfmt --check` caught it.  A parameter named for the type it declares is the same trap as a local.
+  It bit again (2026-11-11): a checker local holding whether two signatures are alike was named `same`;
+  `bnfmt -w` on the edited file caught it.  A boolean named for the comparison it records is the usual way in.
 
 ### Problem-Solving Approach
 
