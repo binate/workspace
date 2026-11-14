@@ -986,6 +986,10 @@ because its source had changed, and a rerun of the "before" side on the current 
 It bit again (2026-11-05): a validation script kept the "before" compiler (the base had not moved) and also its
 IR of cmd/bnc from the previous round; the amend between the rounds had changed cmd/bnc's own check package, so
 every identity check read DIFFERS.  Keeping a "before" binary is fine; its outputs are made again each round.
+Keep a "before" binary only for the base it was built from: when main has moved, it is no longer main's.  This
+bit (2026-11-14): a bnfmt built to validate an earlier formatter commit was reused as main's to compare the next
+change, two formatter commits later; their changes read as the new one's (9 review probes wider) until a build of
+main's own source showed the same output.  Build the base from the change's parent each time main has moved.
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
