@@ -1240,6 +1240,10 @@ It bit again (2026-11-11): recommending a per-function block-label counter, I sa
 had dropped "always names an undefined label".  The dropped block is freed at the next `AddBlock` (`appendBlock`
 drops the builder that held it), so the jump dangles; a review found it after the user had chosen that option.
 A claim about where a raw pointer leads is a claim about what keeps its target alive: check that too.
+It bit again (2026-11-14): asking whether to remove bnfmt's signature hold (`claimHeldGap`) as dead, I said no
+valid source reaches it, reasoning from the types' gaps alone; a line comment inside a `__c_global` (which prints
+none of its comments) in a signature type's array length still does.  "Unreachable" is a claim about every path
+in: list them, the known open gaps included, and probe each.
 
 **Before recommending an option, look for a decision the user already made on the same question.**  This has
 bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
