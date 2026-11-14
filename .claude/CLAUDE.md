@@ -931,6 +931,8 @@ creating a file, `ls` the path (or `git ls-files <path>`); if it exists, append 
 ended mid-line (`holds\n// again.`) left the rest of that line, the next sentence, after the new text: a 144-character
 line that only hygiene caught, at the end of a validation run (2026-11-10).  After a scripted edit, check the line
 lengths of what it wrote before starting the run.
+It bit again (2026-11-13): a doc edit's old text ended at `(check_instance_lenders.bn).`, mid-line, and the length
+check I ran after it used 120 characters; hygiene's `line-length` cap is 100, and it failed the validation run.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
