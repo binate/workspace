@@ -439,6 +439,9 @@ draft anything.
 It bit a fourth time (2026-11-10): asked to "investigate" a regression after a related change, I found its cause
 while validating that change and wrote the fix into the same work, claiming the entry only after both were
 committed.  When an investigation turns into a fix, push the claim before the fix's first line.
+It bit a fifth time (2026-11-14): a review found a regression in my commit, and its fix -- always give a var's
+type room for ` =` -- was word for word an open, unclaimed entry's; I found the entry only after writing the fix.
+Before fixing a review finding, grep the todo file for its area, as for a new bug, and claim what matches.
 
 The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
 
