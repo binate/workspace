@@ -776,6 +776,9 @@ validated branch head (`git diff <branch head> <main head>` empty).
 This bit (2026-11-10): `git cherry-pick <c> 2>&1 | tail -1 && git push origin main` printed `fatal: cherry-pick
 failed` and ran the push anyway (nothing was ahead, so it pushed nothing).  Run the cherry-pick and the push bare,
 chained with `&&`, and read their output.
+It nearly bit again (2026-11-13) with a shared-doc edit: `python3 edit.py --write | grep -E 'ok|MISMATCH' && git add
+&& git commit && git push` -- the script exits 1 on a line-count mismatch, but grep prints `MISMATCH` and succeeds, so
+the commit would have run.  Chain the edit script bare and let it print its own result.
 
 **When GitHub has been unreachable, confirm it answers right before the cherry-pick (`git -C
 ~/binate/binate ls-remote origin HEAD`), and if the push still fails after the cherry-pick, retry the push at
