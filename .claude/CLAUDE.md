@@ -1259,6 +1259,11 @@ It bit again (2026-11-11): recommending a per-function block-label counter, I sa
 had dropped "always names an undefined label".  The dropped block is freed at the next `AddBlock` (`appendBlock`
 drops the builder that held it), so the jump dangles; a review found it after the user had chosen that option.
 A claim about where a raw pointer leads is a claim about what keeps its target alive: check that too.
+It bit again (2026-11-15): asking how far the back-end deep-nesting stages should go, I said the 1024-level type
+depth cap "already bounds every recursion over a type's parts".  type.named.depth ends a chain at a cycle through an
+indirect part, so a ring of 20,000 structs (each holding a pointer to the next) nests two levels, and LLVM codegen's
+struct discovery, which follows a pointer into the next struct's definition, crashed on it; a review found it after
+the user had chosen.  A bound stated in a question is a claim about every input: read the rule's exceptions.
 It bit again (2026-11-14): asking whether to remove bnfmt's signature hold (`claimHeldGap`) as dead, I said no
 valid source reaches it, reasoning from the types' gaps alone; a line comment inside a `__c_global` (which prints
 none of its comments) in a signature type's array length still does.  "Unreachable" is a claim about every path
