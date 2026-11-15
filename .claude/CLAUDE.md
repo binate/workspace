@@ -786,6 +786,8 @@ chained with `&&`, and read their output.
 It nearly bit again (2026-11-13) with a shared-doc edit: `python3 edit.py --write | grep -E 'ok|MISMATCH' && git add
 && git commit && git push` -- the script exits 1 on a line-count mismatch, but grep prints `MISMATCH` and succeeds, so
 the commit would have run.  Chain the edit script bare and let it print its own result.
+It nearly bit again (2026-11-14) as `edit.py --write | tail -1 && git add && …`: `tail` succeeds whatever the
+script returns, and only a second guard on the diff's size stood behind it.  No pipe after the edit script.
 
 **When GitHub has been unreachable, confirm it answers right before the cherry-pick (`git -C
 ~/binate/binate ls-remote origin HEAD`), and if the push still fails after the cherry-pick, retry the push at
