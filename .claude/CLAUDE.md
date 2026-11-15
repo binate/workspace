@@ -858,6 +858,10 @@ change against the tree, use what the tree's checker actually compiles: the
 changed packages' unit tests, a `build-bnc.sh` / `build-bni.sh` build (stage 2 is
 compiled by gen1, which carries the new checker), `lint.sh --from-source`, and a
 targeted conformance subset.
+The gen1 build type-checks only cmd/bnc's cone, so a checker change that can reject code also needs
+`e2e/bnlint-self.sh` (`lint.sh --from-source`), which type-checks every package.  This bit (2026-11-14): the
+instance view-root change (binate `ed737493f`) was validated with the gen1 build, the check / repl tests and
+conformance; pkg/binate/format, outside the cone, stopped type-checking and every unit lane on main went red.
 
 ### Re-Run Hygiene After the Landing Rebase — Never Skip It on "Identical Content"
 
