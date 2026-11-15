@@ -473,6 +473,10 @@ deferred call, decided by a pre-pass that runs before the function's locals exis
 and only the next validation run caught it.  Run every new test on the fixed build before committing
 it, and isolate per-path variants the same way in both directions.
 
+**When tests' cases move into another test, check each old case off against the new one.**  This bit (2026-11-14):
+merging two removed tests' cases into one new test dropped a case (`same(a, __c_global(...))`) and a comment from
+another, and the commit message said the cases had all moved; a review found it.
+
 **A revert check's edit must stop the run when it does not apply.**  This has bitten (2026-10-20): the
 script removing the fix's call asserted its text occurred once, but the text also occurred one tab deeper
 in the helper's own recursive call, so the assert failed — and the script's next line ran the tests on the
@@ -936,6 +940,8 @@ line that only hygiene caught, at the end of a validation run (2026-11-10).  Aft
 lengths of what it wrote before starting the run.
 It bit again (2026-11-13): a doc edit's old text ended at `(check_instance_lenders.bn).`, mid-line, and the length
 check I ran after it used 120 characters; hygiene's `line-length` cap is 100, and it failed the validation run.
+It bit again (2026-11-14), caught by the dry run's length check: four bnfmt doc edits each ended mid-line.  Match
+whole comment blocks, and have the script assert that each old text starts and ends at a line boundary.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
