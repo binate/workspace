@@ -1275,6 +1275,10 @@ It bit again (2026-11-02): a todo entry said 25 unit-test files set a 64-bit arc
 count of files with no direct `SetTarget` call, relayed from a review.  Each package has a `setTarget64()` helper
 that calls it, and every one of those tests ran it first.  A grep for a call misses the helper that wraps it: read
 the functions, not just the file list.
+It bit again (2026-11-14): the option text for x86-64 `@GOTPCREL` operands said a written addend would be taken, as
+clang does, and the user chose it; the user had decided on 2026-10-14 (AArch64's GOT forms) to keep rejecting GOT
+addends, and the conflict surfaced only while implementing.  An option's details are claims too: grep the todo and
+plan files for each one (here `GOT.*addend`) before putting it in a question.
 
 **A bug with an obvious fix is OPEN, not NEEDS DECISION.**  NEEDS DECISION is for a real choice the user owns (a
 design alternative, a scope or a language question).  This bit (2026-11-02): three pre-existing target-setup bugs
