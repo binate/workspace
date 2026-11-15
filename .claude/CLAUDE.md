@@ -1254,6 +1254,11 @@ It bit again (2026-11-14): asking whether to remove bnfmt's signature hold (`cla
 valid source reaches it, reasoning from the types' gaps alone; a line comment inside a `__c_global` (which prints
 none of its comments) in a signature type's array length still does.  "Unreachable" is a claim about every path
 in: list them, the known open gaps included, and probe each.
+It bit again the same day, after that note: I listed the hold's gaps by the token each one starts after, ruled each
+out by the line break that token forces, and probed after those tokens; a 77,672-file corpus sweep agreed.  But a
+gap can span an opener the printer drops (a single result's `(`), and a review found three sources and a comment
+the hold deletes.  For each gap, list every token from its start to its end, dropped ones included, and probe a
+line comment after each where one can stand.
 
 **Before recommending an option, look for a decision the user already made on the same question.**  This has
 bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
