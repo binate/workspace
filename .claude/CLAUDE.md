@@ -953,6 +953,8 @@ whole comment blocks, and have the script assert that each old text starts and e
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
 `isUniverseAny(pkg, name)` added to irgen collided with an existing `isUniverseAny(m, iface)`, and a validation run
 stopped at its first build.
+It bit again (2026-11-14): the grep was for the name first planned (`writeBreakingOpenGap`), and the helper was then
+written as `writeBreakingGap`, which bnfmt's print_typegaps.bn already defines.  Grep the name the code ends up using.
 
 **A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
 when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
