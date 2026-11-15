@@ -1060,6 +1060,10 @@ A finding against the commit a run validates makes the run moot: stop it first, 
 It bit a fifteenth time (2026-11-09): a unit-test run and a bnas rebuild were started together; the tests' failure
 notice arrived, and the fix went into the worktree while the rebuild was still compiling it, so that bnas had to be
 thrown away.  Two runs started together report separately: wait for the second notice too.
+It bit a sixteenth time (2026-11-14): a survey compiling scratch programs with a prebuilt bnc, its `-I` / `-L` on
+the worktree, was still going when a backtrace from another bnc settled a fix, and the fix went into the worktree.
+The programs read only the stdlib, so the numbers held -- by luck, as in the tenth instance.  A survey of scratch
+programs is a run too: before the first edit, list every process started against the worktree.
 
 **Stopping a run can leave the worktree in the state its script put it in -- read `git status` after a
 TaskStop, before the first edit.**  A validation script that reverts files for an old-compiler build restores
