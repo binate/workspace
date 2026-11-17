@@ -1296,6 +1296,10 @@ source wrapped "stays wrapped (fill style)", and its preview showed one kept on 
 call's argument list re-fills onto one line when it fits, keeping a break only after an opener that ends its line,
 so the code built to the option joined that block.  When an option borrows another construct's behavior, run that
 construct through the tool before describing it.
+It bit again (2026-11-17), in a todo entry: I filed `#[x] /* c */ import "b"` printing `import /* c */ "b"` as
+bnfmt moving a comment, judging it by a declaration's output, and the user said yes to fixing it; the import printer
+does it on purpose (TestFormatImportCommentBeforePathTravels pins it, and a test of my own from the day before did
+too).  Before calling a tool's output a bug, grep its tests for the construct (`grep -n '\*/ import' <pkg>/*_test.bn`).
 
 **Before recommending an option, look for a decision the user already made on the same question.**  This has
 bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
