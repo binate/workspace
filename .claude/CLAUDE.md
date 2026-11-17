@@ -544,6 +544,9 @@ for a local WIP commit; the script's assertion failed (an anchor missed its line
 with only the new file.  A local commit is no exception: the commit goes in the next tool call.
 It bit a sixth time (2026-11-07): an edit script wrote its first file, then stopped on an edit of the second
 whose text bnfmt had re-wrapped.  Collect every file's edits in memory, assert them all, then write them all.
+It bit an eighth time (2026-11-16): a heredoc rewriting a commit message stopped on its own line-length check, and the
+`commit --amend -F` on the line after it amended with the old message.  The amend goes in the next tool call, after
+reading that the script wrote.
 
 **A command meant to LOOK must contain nothing that DELETES.**  This has bitten: a line written to list my
 saved branches (`git branch --list …`) also carried a `git branch -D <saved-draft-branch>` — the deletion
