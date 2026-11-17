@@ -1276,6 +1276,11 @@ out by the line break that token forces, and probed after those tokens; a 77,672
 gap can span an opener the printer drops (a single result's `(`), and a review found three sources and a comment
 the hold deletes.  For each gap, list every token from its start to its end, dropped ones included, and probe a
 line comment after each where one can stand.
+It bit again (2026-11-16): asking how bnas should treat `xacquire` / `xrelease`, I wrote that GNU as takes them
+before "an xchg with memory"; every register xchg I had probed used the accumulator (`xchg eax, ebx`, the 90+r form),
+and GNU as goes by encoding -- it takes `xacquire xchg ecx, ebx` (87 /r).  A review found it after the user chose.
+Before stating a reference tool's rule, probe each operand form the rule separates, with operands that avoid the
+special encodings (the accumulator, a count of 1).
 It bit again (2026-11-16): an option for bnfmt's annotation-block layout, "Like a call's args", said a block the
 source wrapped "stays wrapped (fill style)", and its preview showed one kept on two lines; the user chose it.  A
 call's argument list re-fills onto one line when it fits, keeping a break only after an opener that ends its line,
