@@ -1195,6 +1195,9 @@ makes `Vec[int]` and `Vec[int64]` one instance — fixed on main by `50d176225`,
 The same holds for any edit made after the last build: `bnfmt --check` only parses, so a local declared twice
 (2026-11-03, a `var real` in a function that already had one) passed it, and every step of the validation run
 that followed failed at the first build.  Run the changed package's unit tests before the validation script.
+It bit again (2026-11-17) in a conformance fixture: a `var Sub` added to a test package's `.bni` after the test's
+last run had no `.bn` definition; `bnfmt --check` passed it, and the test failed in every mode of the validation
+run.  Run each test edited since its last run with a prebuilt compiler before starting the validation script.
 
 **Do not select a field straight off a `bit_cast` (`bit_cast(@T, p).f`) in BUILDER-compiled code — bind it to a
 local first (`var d @T = bit_cast(@T, p)`, then `d.f`), the tree's idiom.**  A BUILDER older than binate `ab2e981a`
