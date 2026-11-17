@@ -1273,6 +1273,11 @@ out by the line break that token forces, and probed after those tokens; a 77,672
 gap can span an opener the printer drops (a single result's `(`), and a review found three sources and a comment
 the hold deletes.  For each gap, list every token from its start to its end, dropped ones included, and probe a
 line comment after each where one can stand.
+It bit again (2026-11-16): an option for bnfmt's annotation-block layout, "Like a call's args", said a block the
+source wrapped "stays wrapped (fill style)", and its preview showed one kept on two lines; the user chose it.  A
+call's argument list re-fills onto one line when it fits, keeping a break only after an opener that ends its line,
+so the code built to the option joined that block.  When an option borrows another construct's behavior, run that
+construct through the tool before describing it.
 
 **Before recommending an option, look for a decision the user already made on the same question.**  This has
 bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
