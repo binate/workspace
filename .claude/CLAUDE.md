@@ -553,6 +553,8 @@ whose text bnfmt had re-wrapped.  Collect every file's edits in memory, assert t
 It bit an eighth time (2026-11-16): a heredoc rewriting a commit message stopped on its own line-length check, and the
 `commit --amend -F` on the line after it amended with the old message.  The amend goes in the next tool call, after
 reading that the script wrote.
+It bit a ninth time (2026-11-18), the same way, with a squash: the message script stopped on its length check, and the
+`reset --soft` and `commit --amend -F` on the lines after the heredoc squashed with the old message.
 
 **A command meant to LOOK must contain nothing that DELETES.**  This has bitten: a line written to list my
 saved branches (`git branch --list …`) also carried a `git branch -D <saved-draft-branch>` — the deletion
