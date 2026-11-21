@@ -423,6 +423,9 @@ that prints `27863 -` and commits anyway gates nothing — when a scripted edit'
 assert them in the script (or check `git diff --numstat`) before the commit.
 
 **When removing an entry by position (scripted edit), end the cut at the next heading of ANY level, and check the diff before committing.** This has bitten: a script that cut an entry "up to the next `### `" also swept away the `## Performance` section header and its how-to-measure intro that sat between the entry and the next `###` — pushed, and only noticed several commits later. Stop at the first line starting with `#` of any level, then read `git diff` to confirm only the intended entry is gone.
+A line of a body can start with `#` too -- a wrapped `#[build(...)]` -- so test for a heading as `#` marks and a
+space (`re.match(r'#{1,6} ', line)`), and wrap new text so no line of it starts with `#`.  This bit (2026-11-20): a
+cut stopped at a body line starting `` #[x] // c` ``, and only a numstat that came out too small showed it.
 
 **Insert a new entry just before a heading, never right after a line you matched inside another entry** — an entry's
 text can continue past its last bullet.  This has bitten (2026-10-30): a new entry went in right after the slow-lane
@@ -1308,6 +1311,9 @@ It bit again (2026-11-17), in a todo entry: I filed `#[x] /* c */ import "b"` pr
 bnfmt moving a comment, judging it by a declaration's output, and the user said yes to fixing it; the import printer
 does it on purpose (TestFormatImportCommentBeforePathTravels pins it, and a test of my own from the day before did
 too).  Before calling a tool's output a bug, grep its tests for the construct (`grep -n '\*/ import' <pkg>/*_test.bn`).
+It bit again (2026-11-20): I filed "an empty import group that ends the section gets a blank line above its
+comments" as a bug; a plain comment after the last import gets the same, and a test pins it.  Before filing
+behavior in one construct as a bug, run the nearest plain construct in the same spot through the tool.
 
 **Before recommending an option, look for a decision the user already made on the same question.**  This has
 bitten (2026-10-30): asked whether uses in a new generic instance's body should make a parked REPL declaration wait,
