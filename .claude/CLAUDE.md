@@ -101,6 +101,8 @@ that is for interoperability, not a statement of rank.
   `box`; `bnfmt --check` caught it.  A parameter named for the type it declares is the same trap as a local.
   It bit again (2026-11-11): a checker local holding whether two signatures are alike was named `same`;
   `bnfmt -w` on the edited file caught it.  A boolean named for the comparison it records is the usual way in.
+  It bit again (2026-11-20) in a scratch probe program: a struct field named `in` (an `Outer` holding an `Inner`);
+  the compile failed with `expected ; or }` at the field's use.  A field named for its type is the same trap.
 
 ### Problem-Solving Approach
 
@@ -969,6 +971,8 @@ definition in the package fails the build, and only the build says so.  This bit
 stopped at its first build.
 It bit again (2026-11-14): the grep was for the name first planned (`writeBreakingOpenGap`), and the helper was then
 written as `writeBreakingGap`, which bnfmt's print_typegaps.bn already defines.  Grep the name the code ends up using.
+It bit again (2026-11-21) in a test file: a helper `countCallsTo(f, name)` appended to iropt's inline_calls_test.bn,
+which already had `countCallsTo(blk, name)`; the package's test build failed.  Test helpers are package-wide too.
 
 **A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
 when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
