@@ -1420,6 +1420,9 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
 - **An optimization that underperforms is a question, not a verdict.** Do NOT be quick to abandon it — investigate the disassembly and find out *why*. Usually it never fired at all, which timings cannot show and a disassembly diff answers immediately. Only a root-caused shortfall is a conclusive negative result (and those are worth as much as the wins — they stop the lever being retried forever).
 - **Do NOT thrash.** You always think the grass is greener on the other side — that some other optimization is a bigger lever for less effort. It isn't: pivot and exactly the same thing happens one lever over, and the session ends with several half-finished optimizations and no landed improvement. Follow through until the work either lands or yields a root-caused negative result. The tell is a pivot proposal arriving right after a disappointing measurement with no investigation in between.
 - **Measure properly on this box.** Interleave A/B runs within a single run (never all of A then all of B); measure **user CPU time**, not wall clock; **alternate the A/B order** across rounds so thermal drift cancels instead of becoming a consistent bias; and verify you actually built what you think you are measuring (both arms rebuilt, identical flags, the right target arch — `--backend native` on an arm64 box builds aarch64, so an x64/arm32 change looks falsely neutral). Write and COMMIT scripts for any measurement worth running twice.
+  An A/A noise floor runs two copies of the binary at different paths: a script that keys its samples by the
+  binary's path pools both sides into one list and reports a ratio of exactly 1.0000.  This bit (2026-11-22): a
+  compile-time A/A read 1.0000 until the base compiler was copied, which then read 0.9924.
 
 ### Putting a Call Under a Condition Also Skips Its Arguments' Side Effects
 
