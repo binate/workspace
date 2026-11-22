@@ -964,6 +964,9 @@ It bit again (2026-11-13): a doc edit's old text ended at `(check_instance_lende
 check I ran after it used 120 characters; hygiene's `line-length` cap is 100, and it failed the validation run.
 It bit again (2026-11-14), caught by the dry run's length check: four bnfmt doc edits each ended mid-line.  Match
 whole comment blocks, and have the script assert that each old text starts and ends at a line boundary.
+It bit again (2026-11-21): the length check ran after a file's first scripted edit but not after its second, which
+rewrote a comment, and hygiene found a 101-character line after the validation run.  Re-check every file the
+diff names (`git diff --name-only HEAD`) after each round of edits, not only the files of the first round.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
