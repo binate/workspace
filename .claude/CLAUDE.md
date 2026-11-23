@@ -975,6 +975,9 @@ whole comment blocks, and have the script assert that each old text starts and e
 It bit again (2026-11-21): the length check ran after a file's first scripted edit but not after its second, which
 rewrote a comment, and hygiene found a 101-character line after the validation run.  Re-check every file the
 diff names (`git diff --name-only HEAD`) after each round of edits, not only the files of the first round.
+It bit again (2026-11-22): the length check measured characters (`len(line)`), and hygiene's `line-length` counts
+BYTES, so two comments with an em dash (3 bytes) passed it at 99 / 100 and failed hygiene at 101 / 102.  Measure
+`len(line.encode())`.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
