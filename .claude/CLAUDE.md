@@ -265,6 +265,9 @@ an operand, a `grep … | head` filled its ten lines with aarch64 hits and hid t
 It bit again (2026-11-10), in a check of a reviewer's claim: listing `EliminatePhis`'s callers through
 `| head` cut off the VM's two calls, which nearly put "the VM does not run it" into a todo entry.  A list
 that backs a claim is a sweep too.
+It nearly bit again (2026-11-22): listing the checker's errors that write a selected method's name, a `grep |
+head -40` filled its lines with other names' writes and cut off both sites in check_method.bn; only a narrower
+grep, run because the cut looked suspect, found them.  Narrow the pattern instead of capping the output.
 
 **A sweep's "none left" check must be seen to find something first.**  `git grep -E` here has no `\b`
 (it matches nothing), so a check like `git grep -E 'x64\.(Name|…)\b'` reported "none left" whatever the tree
@@ -586,6 +589,11 @@ that a step's output is what it should be before the next step uses it.
 python script fed through `<<EOF` (to interpolate `$S`) held commit-message text with `` `var panic =
 say` `` in it, so the shell ran macOS `say` (text-to-speech, reading stdin) and the tool call hung until it was
 stopped.  Hard-code paths in the script, or pass them as arguments, and quote the delimiter.
+
+**Text one script splices into another script's string literal loses a level of escaping at each non-raw
+string it passes through.**  This bit (2026-11-22): a unit test's `\\n` went through an inline python patch of an
+apply script and came out as real newlines inside a Binate string literal; `bnfmt --check` caught it.  Patch the
+target file directly, or use raw strings (`r'''...'''`) at every level, and check the result before using it.
 
 **Copy commit hashes from git output — never type one from memory.** A hash written into a doc, todo or
 commit message must be pasted from a `git log` / `git rev-parse` result you just read. This has nearly bitten:
