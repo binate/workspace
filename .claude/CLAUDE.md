@@ -563,6 +563,8 @@ It bit an eighth time (2026-11-16): a heredoc rewriting a commit message stopped
 reading that the script wrote.
 It bit a ninth time (2026-11-18), the same way, with a squash: the message script stopped on its length check, and the
 `reset --soft` and `commit --amend -F` on the lines after the heredoc squashed with the old message.
+It bit a tenth time (2026-11-23): a heredoc rewrapping a comment stopped on its anchor, and the `bnfmt --check &&
+git add && git commit` on the line after it committed the unfixed file (a local WIP commit, fixed by a fixup).
 It bit a tenth time (2026-11-22): a test edit's old text occurred twice (another test shares the lines), its
 assertion failed, and both the `commit --amend` on the next line and a validation run sent in the same message went
 ahead -- the run checked the unedited test and had to be stopped.  Count an anchor (`grep -c`) before writing the
