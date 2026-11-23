@@ -563,6 +563,10 @@ It bit an eighth time (2026-11-16): a heredoc rewriting a commit message stopped
 reading that the script wrote.
 It bit a ninth time (2026-11-18), the same way, with a squash: the message script stopped on its length check, and the
 `reset --soft` and `commit --amend -F` on the lines after the heredoc squashed with the old message.
+It bit a tenth time (2026-11-22): a test edit's old text occurred twice (another test shares the lines), its
+assertion failed, and both the `commit --amend` on the next line and a validation run sent in the same message went
+ahead -- the run checked the unedited test and had to be stopped.  Count an anchor (`grep -c`) before writing the
+script, and send the commit and the run only after reading that the edit applied.
 
 **A command meant to LOOK must contain nothing that DELETES.**  This has bitten: a line written to list my
 saved branches (`git branch --list …`) also carried a `git branch -D <saved-draft-branch>` — the deletion
