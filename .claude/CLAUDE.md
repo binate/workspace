@@ -1126,6 +1126,9 @@ It bit a sixteenth time (2026-11-14): a survey compiling scratch programs with a
 the worktree, was still going when a backtrace from another bnc settled a fix, and the fix went into the worktree.
 The programs read only the stdlib, so the numbers held -- by luck, as in the tenth instance.  A survey of scratch
 programs is a run too: before the first edit, list every process started against the worktree.
+It bit a seventeenth time (2026-11-23): a review agent and a validation run were started together on one commit;
+the review reported first, and its fixes were written into the worktree while the run was in its IR step.  When a
+review and a validation of one commit run together, the review's report is the moment to TaskStop the validation.
 
 **Stopping a run can leave the worktree in the state its script put it in -- read `git status` after a
 TaskStop, before the first edit.**  A validation script that reverts files for an old-compiler build restores
