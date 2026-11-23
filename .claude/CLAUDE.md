@@ -982,6 +982,9 @@ definition in the package fails the build, and only the build says so.  This bit
 stopped at its first build.
 It bit again (2026-11-14): the grep was for the name first planned (`writeBreakingOpenGap`), and the helper was then
 written as `writeBreakingGap`, which bnfmt's print_typegaps.bn already defines.  Grep the name the code ends up using.
+It bit again (2026-11-22) with a TEST helper: `namedOver`, added to check_opaque_pointee_test.bn, was already a
+helper of check_opaque_free_test.bn, and the package's test build failed.  Test files share the package's names:
+grep `func <name>(` across the package, `_test.bn` files included, for helpers too.
 It bit again (2026-11-21) in a test file: a helper `countCallsTo(f, name)` appended to iropt's inline_calls_test.bn,
 which already had `countCallsTo(blk, name)`; the package's test build failed.  Test helpers are package-wide too.
 
