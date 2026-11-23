@@ -952,6 +952,11 @@ Instead of directly grepping (etc.) the output of commands — especially ones t
 
 Example: `go run ... --test pkg/foo 2>&1 | tee /tmp/test_foo.out | tail -5` then `grep FAIL /tmp/test_foo.out`.
 
+**The Bash tool's shell is zsh: an unquoted `$T` holding several words is ONE argument.**  So `conformance/run.sh
+<mode> $T` with a list of test names in `$T` runs one test or none, and `set -- $spec` splits nothing.  It bit three
+times on 2026-11-22 (a timing loop that timed nothing, two conformance subsets that each ran 1 test).  Put such runs
+in an `sh` script (or write `${=T}`), and read the run's passed count against the length of the list.
+
 **Never wait on a process with `pgrep -f <pattern>` (or kill with `pkill -f`) from a shell whose own command line contains that pattern** — the pattern matches the waiting shell itself, so `while pgrep -f "x"; do sleep 2; done` never exits (and `pkill -f` kills your own shell). This has bitten during a time-boxed landing: a `while pgrep -f "hygiene/run.sh"` wait loop spun for 10+ minutes after hygiene had already finished, blowing the landing time limit. Wait on a specific PID (`wait $pid` for a child, or `kill -0 $pid`), or poll for the job's output file instead. It recurred with `pkill -f 'level.py 3000'`, issued to stop a simulation before restarting it: the pattern matched the issuing shell, which died before running the edit queued after it. So when starting a background job you may need to stop, save `$!` to a pid file and later `kill` that PID.
 
 **Format with the CHECK_TOOLS `bnfmt`, never the BUILDER's** — `~/.cache/binate/builders/<CHECK_TOOLS_VERSION>/linux-x64/bundle/bin/bnfmt` (the one `scripts/hygiene/bnfmt-format.sh` uses). The BUILDER bundle's `bnfmt` can lag known formatter fixes: bnc-0.0.16's `bnfmt -w` silently DELETES `defer f(x)` statements. This has bitten: a tree-wide rename was reformatted with the BUILDER `bnfmt` and dropped a `defer os.RemoveAll(dir)` from a test — caught only because lint then flagged `os` as an unused import.
