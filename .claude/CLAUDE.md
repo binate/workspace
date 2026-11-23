@@ -1325,6 +1325,10 @@ depth cap "already bounds every recursion over a type's parts".  type.named.dept
 indirect part, so a ring of 20,000 structs (each holding a pointer to the next) nests two levels, and LLVM codegen's
 struct discovery, which follows a pointer into the next struct's definition, crashed on it; a review found it after
 the user had chosen.  A bound stated in a question is a claim about every input: read the rule's exceptions.
+It bit again (2026-11-23): asking whether to close the cast retype's quadratic, I gave the parser's nesting limit
+(512) as the bound on a retype's depth; a chain of aliases (`type S0 = @[]S1`, ...) nests a type past it, to the
+1,024-level type cap, and a review found it after the user had chosen.  Declarations compose a type's nesting: a
+bound on one type expression is not one on a type.
 It bit again (2026-11-22): offering to split native/common.bni to make room, I said its aggregate-load elision
 section was about 85 lines and would move on its own; it was 37, and its code shares funcUses and the alloca scope
 check with PlanFrame's analyses, so they had to move too.  The user had chosen the split, and the question was asked
