@@ -1303,6 +1303,10 @@ depth cap "already bounds every recursion over a type's parts".  type.named.dept
 indirect part, so a ring of 20,000 structs (each holding a pointer to the next) nests two levels, and LLVM codegen's
 struct discovery, which follows a pointer into the next struct's definition, crashed on it; a review found it after
 the user had chosen.  A bound stated in a question is a claim about every input: read the rule's exceptions.
+It bit again (2026-11-22): offering to split native/common.bni to make room, I said its aggregate-load elision
+section was about 85 lines and would move on its own; it was 37, and its code shares funcUses and the alloca scope
+check with PlanFrame's analyses, so they had to move too.  The user had chosen the split, and the question was asked
+again.  Before offering to move a section, count its lines and grep what its code calls and who calls that.
 It bit again (2026-11-14): asking whether to remove bnfmt's signature hold (`claimHeldGap`) as dead, I said no
 valid source reaches it, reasoning from the types' gaps alone; a line comment inside a `__c_global` (which prints
 none of its comments) in a signature type's array length still does.  "Unreachable" is a claim about every path
