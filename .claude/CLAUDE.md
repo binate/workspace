@@ -995,6 +995,8 @@ BYTES, so two comments with an em dash (3 bytes) passed it at 99 / 100 and faile
 It bit again (2026-11-23): two review-fix comment edits each ended their old text mid-sentence, leaving 117- and
 159-byte lines; the byte check before the commit caught them.  Make an edit script assert that each old text ends at
 a newline, so such an edit stops before writing.
+It bit again (2026-11-23) in another way: comments rewrapped by splitting into words (`' '.join(...)`,
+`textwrap`) lost the two spaces after each sentence, in landed files too.  A rewrap keeps a run of spaces as two.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
