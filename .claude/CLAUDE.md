@@ -1136,6 +1136,10 @@ programs is a run too: before the first edit, list every process started against
 It bit a seventeenth time (2026-11-23): a review agent and a validation run were started together on one commit;
 the review reported first, and its fixes were written into the worktree while the run was in its IR step.  When a
 review and a validation of one commit run together, the review's report is the moment to TaskStop the validation.
+It bit an eighteenth time (2026-11-23): with a unit-test run of two packages going, a scratch script generating
+tests for a third package wrote its files straight into the worktree.  The run did not build that package, so its
+results held -- by luck.  A script that writes test files is an edit: point it at the scratchpad until the run
+reports.
 
 **Stopping a run can leave the worktree in the state its script put it in -- read `git status` after a
 TaskStop, before the first edit.**  A validation script that reverts files for an old-compiler build restores
