@@ -1461,6 +1461,10 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
   An A/A noise floor runs two copies of the binary at different paths: a script that keys its samples by the
   binary's path pools both sides into one list and reports a ratio of exactly 1.0000.  This bit (2026-11-22): a
   compile-time A/A read 1.0000 until the base compiler was copied, which then read 0.9924.
+  Compare stack use across backends by everything the prologue takes, pushes included: aarch64 LLVM saves its
+  callee-saved registers with pre-indexed `stp ..., [sp, #-N]!` before its `sub sp`, while native keeps them inside
+  the frame it subtracts.  Counting only the `sub sp`, I reported native's frames at 2.4x, then 1.6x LLVM's for
+  irgen; with the pushes counted the ratio was 1.24x (2026-11-23).
 
 ### Putting a Call Under a Condition Also Skips Its Arguments' Side Effects
 
