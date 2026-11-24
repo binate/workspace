@@ -1058,6 +1058,10 @@ Keep a "before" binary only for the base it was built from: when main has moved,
 bit (2026-11-14): a bnfmt built to validate an earlier formatter commit was reused as main's to compare the next
 change, two formatter commits later; their changes read as the new one's (9 review probes wider) until a build of
 main's own source showed the same output.  Build the base from the change's parent each time main has moved.
+It bit again (2026-11-23): the landing rebase of one step moved the work branch onto three upstream commits, and the
+next step's validation used a compiler built before that rebase as its parent; a review found the native code and
+two spec tests differing by upstream's changes.  A landing rebase moves the base too: build the next step's parent
+after it.
 ### Never Switch a Worktree While a Background Run Uses It
 
 A conformance or unit-test run reads the worktree's files — the tests, the stdlib, the runtime — for its
