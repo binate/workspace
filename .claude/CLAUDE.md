@@ -992,6 +992,9 @@ diff names (`git diff --name-only HEAD`) after each round of edits, not only the
 It bit again (2026-11-22): the length check measured characters (`len(line)`), and hygiene's `line-length` counts
 BYTES, so two comments with an em dash (3 bytes) passed it at 99 / 100 and failed hygiene at 101 / 102.  Measure
 `len(line.encode())`.
+It bit again (2026-11-23): two review-fix comment edits each ended their old text mid-sentence, leaving 117- and
+159-byte lines; the byte check before the commit caught them.  Make an edit script assert that each old text ends at
+a newline, so such an edit stops before writing.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
