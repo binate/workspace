@@ -251,6 +251,9 @@ load — the change would have made that path index the whole function per load;
 It bit again (2026-11-17) with a FILE filter: changing `instMethodDecl`'s signature, I listed its callers
 through `grep -v _test`, which hid a unit test's call, and the irgen tests failed to build.  An API's
 caller list keeps the test files.
+It bit again (2026-11-23) with a DIRECTORY filter on a deletion: the "none left" grep after deleting
+`CurrentImportPkg` covered `pkg cmd` and missed a conformance test's comment describing it; a review found
+it.  A check that a deleted name is gone is a sweep too: grep the whole tree.
 
 **Never cap a sweep's site list with `head`.**  This has bitten: the blank-target sweep for the
 "unresolved identifier" internal error listed IR-gen's `isBlank` sites through `| head -30`, which cut off
