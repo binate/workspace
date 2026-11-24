@@ -997,6 +997,8 @@ It bit again (2026-11-23): two review-fix comment edits each ended their old tex
 a newline, so such an edit stops before writing.
 It bit again (2026-11-23) in another way: comments rewrapped by splitting into words (`' '.join(...)`,
 `textwrap`) lost the two spaces after each sentence, in landed files too.  A rewrap keeps a run of spaces as two.
+It bit again (2026-11-24), the next day: two doc edits in the next stage ended mid-line, from an edit script
+written without the newline assertion that note asks for.  Put the assertion in the script's edit helper itself.
 
 **The same holds for a new function's name: grep the package for `func <name>(` before adding one.**  A second
 definition in the package fails the build, and only the build says so.  This bit (2026-11-12): a helper
