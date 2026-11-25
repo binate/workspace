@@ -1487,6 +1487,15 @@ Before doing any performance-optimization work, read `explorations/perf-optimiza
   the frame it subtracts.  Counting only the `sub sp`, I reported native's frames at 2.4x, then 1.6x LLVM's for
   irgen; with the pushes counted the ratio was 1.24x (2026-11-23).
 
+### A `same()` Check on a List Is Fooled When It Shrinks and Grows Back in Place
+
+A cache keyed on a list's view (`same(indexFor, list)`: the `{data, len}` pair) passes for current whenever the pair
+matches -- and a list popped in place (a vec's `Pop` keeps the backing) and pushed back to the same length is the
+same pair with other contents.  This bit (2026-11-24): an index of Module.Funcs checked that way went stale after
+the REPL's undo popped functions and later entries pushed as many back; a review's probes showed missed names and
+keys over freed names.  A writer that shrinks the list in place drops the cache, and an append that cannot extend
+the cache drops it, so it can never match again; a cut that the next append answers with a fresh backing is safe.
+
 ### Putting a Call Under a Condition Also Skips Its Arguments' Side Effects
 
 Before wrapping a call in an `if`, read its arguments: one may do work the code after it relies on.  This bit
