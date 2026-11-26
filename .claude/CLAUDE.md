@@ -462,6 +462,13 @@ Before fixing a review finding, grep the todo file for its area, as for a new bu
 
 The discipline (mirrors the "claim to avoid assignment conflicts" note the user gives per-task): the instant a task becomes yours, (1) edit its todo entry to in-progress with a claim marker, (2) `git -C explorations commit` + `push` that edit immediately (per the shared-checkout rule), THEN (3) start the work. Do not batch the claim with the fix; the claim must be visible to other sessions before you sink time into code. "Fix X" / "go ahead" / "take that on" all mean claim-then-fix, not fix-then-maybe-update-status.
 
+**Your worktree's claims are yours: account for every one before saying what is open.**  This has bitten
+(2026-11-25): asked what was still open from a long session, I listed three IN PROGRESS entries claimed by work-3
+(the CI slow lanes, the Ubuntu 26.04 runner, native DWARF) as older than the session.  They were the same
+session's, from before its context was summarized; two ended in "confirm on CI's next runs", and nobody had.
+Before reporting what is open, grep the todo file for every IN PROGRESS entry claimed by your work-N and check each
+one's state (CI, its plan doc): a summarized session has forgotten them, not finished them.
+
 ### Learning From Mistakes
 
 Whenever you make a mistake (rejected edit, wrong assumption, incorrect behavior, etc.), update this CLAUDE.md file with a note or instruction that prevents the same mistake in future conversations.
