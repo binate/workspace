@@ -1496,6 +1496,15 @@ the REPL's undo popped functions and later entries pushed as many back; a review
 keys over freed names.  A writer that shrinks the list in place drops the cache, and an append that cannot extend
 the cache drops it, so it can never match again; a cut that the next append answers with a fresh backing is safe.
 
+### A Table's `Put` Keeps the Key It Is Given
+
+A table's `Put` on a key already present stores the key it is given, not just the value (table.bni: "Keeping the
+freshest key"), so with a borrow key (`*[]readonly char`) every `Put` must pass a key whose bytes outlive the entry.
+This bit (2026-11-25): a name list counting its names in a table re-`Put` each count with the entry's own name -- on
+a pop, the entry just popped, freed on return -- reasoning that the key stayed the first entry's; the commit's own
+test failed and a review traced it.  Give the value the owning copy (`{n int; name @[]char}`) and always
+`Put(v.name, v)`, or insert with `GetOrPut` only.
+
 ### Putting a Call Under a Condition Also Skips Its Arguments' Side Effects
 
 Before wrapping a call in an `if`, read its arguments: one may do work the code after it relies on.  This bit
