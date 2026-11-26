@@ -185,6 +185,9 @@ The reverse also bites — YOUR commit can sweep up ANOTHER session's uncommitte
 It bit again (2026-11-16) with a one-off claim: a heredoc script wrote the edit and checked its own numstat, and
 the `add && commit && push` went in the next tool call, so the claim sat uncommitted between calls.  A script
 that checks itself still gets the commit chained after it in the SAME command (`python3 edit.py && git add …`).
+It bit again (2026-11-26): a claim's script, run as an inline heredoc (`python3 - <<'EOF'`), wrote and checked the
+edit, and the commit went in the next tool call -- nothing can be chained after a heredoc's closing line.  Write a
+shared-doc edit script to a file first, then run `python3 <file> && git add … && git commit … && git push`.
 
 **A scripted read-modify-write must READ before it opens the file for writing, and the one-command chain
 must gate on the diff's size (this HAS bitten).**  `open(D, 'w').write(new + open(D).read())` truncates D
