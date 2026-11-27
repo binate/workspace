@@ -1029,6 +1029,11 @@ when the new file's tests are written into another test file.  This bit (2026-11
 `link/parse_elf_armattr.bn` went into `relocate_arm32_call_test.bn`, and hygiene failed at the end of a full
 validation run.  Give each new `.bn` its `_test.bn` when you create it.
 
+**A helper added to a `_test.bn` shares its package's namespace with every other test file's helpers** -- grep
+the package for `^func <name>(` before adding one.  This bit (2026-11-26): a helper `onlyErrorAt`, added to check's
+new program_scope_test.bn in a review round, collided with check_const_bare_test.bn's; the package's tests stopped
+compiling, and a whole validation run, its four revert checks among it, was void.
+
 ### Test a Partial Revert IN the Worktree — Never Copy the Source Tree to Scratch
 
 To check that a test covers one piece of a multi-part fix (or to build any variant of the tree), do it in
