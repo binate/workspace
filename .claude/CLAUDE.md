@@ -1029,6 +1029,11 @@ when the new file's tests are written into another test file.  This bit (2026-11
 `link/parse_elf_armattr.bn` went into `relocate_arm32_call_test.bn`, and hygiene failed at the end of a full
 validation run.  Give each new `.bn` its `_test.bn` when you create it.
 
+**Deleting a function can leave an import unused -- and neither the build nor the unit tests notice; only
+hygiene's lint does.**  This bit (2026-11-27): deleting `requireRegisteredIface` left gen_checker_type.bn's
+`iriface` import unused, and the validation run's last step, hygiene, failed on it.  After deleting code, check the
+edited files' imports (each import's last segment used as `name.` somewhere) before the validation run.
+
 **A helper added to a `_test.bn` shares its package's namespace with every other test file's helpers** -- grep
 the package for `^func <name>(` before adding one.  This bit (2026-11-26): a helper `onlyErrorAt`, added to check's
 new program_scope_test.bn in a review round, collided with check_const_bare_test.bn's; the package's tests stopped
