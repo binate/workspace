@@ -215,6 +215,9 @@ workspace as much as `explorations`: compute the counts with `git diff --no-inde
 It bit again (2026-10-26) on a small follow-up: a one-off inline python edit, chained to an `awk` guard with
 typed counts (`6 5` for an edit git counts `6 4`), stopped with the todo edit written.  A quick one-off edit
 needs the computed check exactly as much as a planned script does.
+A script's own checks must stay linear in the file: testing each new line with `ln not in old.splitlines()`
+rescans the whole file per line, and over `claude-todo-done.md`'s 27,000 lines the dry run ran past the tool's
+two-minute timeout -- twice in one session (2026-11-27).  Build the set once (`oldset = set(old.splitlines())`).
 
 **NEVER create a git worktree inside `explorations/` (and NEVER spawn a subagent or workflow with `isolation: worktree` for work that targets the explorations repo).** The worktree-isolation mechanism parks a checkout at `explorations/.claude/worktrees/agent-<id>/` — a nested git repo *inside* the shared explorations working tree. That is broken on two counts: (1) the next worker's `git add -A` picks it up and stages it as an embedded-repo gitlink, corrupting the commit (this has happened); (2) explorations is docs/plans, not code — there is nothing to isolate, and the shared-checkout discipline above already governs it. If a task genuinely needs an isolated worktree, it is a *code* task and belongs in the binate repo (`isolation: worktree` / `git -C binate worktree ...` against binate), never explorations. Plain `explorations/` edits use the edit→commit→push discipline above, with no worktree at all.
 
