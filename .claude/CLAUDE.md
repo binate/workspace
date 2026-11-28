@@ -570,6 +570,8 @@ It bit a fourth time (2026-10-23) through PARALLEL tool calls: a commit-message 
 --amend -F` that used its output were sent in one message; the script's assertion failed, and the amend ran anyway
 with the unrewritten message.  Tool calls sent together run regardless of each other's results, so a call that
 depends on another's success goes in a later message, after reading that result.
+It nearly bit again (2026-11-28): a fix to a todo-filing script and the run of that script, chained to its commit
+and push, went in one message; the fix happened to finish first.  An edit to a script and its run are two messages.
 It bit a fifth time (2026-10-27): one heredoc script edited a source file, then failed its check on a second
 file (a scratchpad test draft), and the apply script on the line after the heredoc wrote the tests from the
 unupdated draft.  A script that edits several files checks every edit before writing any of them.
