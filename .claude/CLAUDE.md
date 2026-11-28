@@ -1030,6 +1030,9 @@ helper of check_opaque_free_test.bn, and the package's test build failed.  Test 
 grep `func <name>(` across the package, `_test.bn` files included, for helpers too.
 It bit again (2026-11-21) in a test file: a helper `countCallsTo(f, name)` appended to iropt's inline_calls_test.bn,
 which already had `countCallsTo(blk, name)`; the package's test build failed.  Test helpers are package-wide too.
+It bit again (2026-11-28): extending an index, a helper `bniMethodKey(typeName, name)` went into check's
+bni_decl_index.bn beside bni_member_read.bn's `bniMethodKey(d)`; the names of the series' earlier commits had been
+grepped, this commit's were not, and a validation run stopped at its first build.  Grep each commit's new names.
 
 **A new `.bn` file needs a `_test.bn` of its own** -- hygiene's `test-coverage` check looks for it by name, even
 when the new file's tests are written into another test file.  This bit (2026-11-01): the tests of a new
