@@ -282,6 +282,10 @@ grep, run because the cut looked suspect, found them.  Narrow the pattern instea
 (it matches nothing), so a check like `git grep -E 'x64\.(Name|…)\b'` reported "none left" whatever the tree
 held (2026-11-10, the SSE split; only the build showed no old name remained).  Try the pattern on a revision
 that has hits, or scan with Python's `re`.
+It bit again (2026-11-28) as an edit: a shell loop dropping each import its `grep -v '^import' f | grep -qE
+"(^|[^.a-zA-Z_])$nm\."` found no use of removed `import "pkg/binate/ast"` from 7 files that use `ast.` dozens of
+times (a local WIP commit; a Python `re` check found it).  Decide what a script removes with Python's `re`, and have
+it print the uses it counted for each file, so a count of zero is seen before anything is written.
 
 **Never sweep for a keyword in embedded source with `grep -w` (or `\b`).**  In a string literal the keyword
 often follows an escape — `"\tdefer fv()\n"` has a `t` right before `defer`, so there is no word boundary.
